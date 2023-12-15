@@ -1,11 +1,24 @@
 import React from "react";
 import Header from "../components/Layouts/Header.jsx";
+import HeroSection from "../components/Home/HeroSection.jsx";
+import Categories from "../components/Home/Categories.jsx";
+import BestDeals from "../components/Home/BestDeals.jsx";
+import FeaturedProduct from "../components/Home/FeaturedProducts.jsx";
+import Events from "../components/Home/Events.jsx";
+import Sponsored from "../components/Home/Sponsored.jsx";
+import Footer from "../components/Layouts/Footer.jsx";
 
 const HomePage = () => {
   return (
     <div>
       <Header />
-      <h1>Home</h1>
+      <HeroSection />
+      <Categories />
+      <BestDeals />
+      <FeaturedProduct />
+      <Events />
+      <Sponsored />
+      <Footer />
     </div>
   );
 };

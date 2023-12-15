@@ -27,7 +27,7 @@ const ActivationPage = () => {
     };
 
     activateAccount();
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     if (activationStatus === "error" && errorMessage) {

@@ -8,6 +8,11 @@ import {
   ForgotPasswordPage,
   SetPasswordPage,
   HomePage,
+  BestSellingPage,
+  ProductsPage,
+  EventsPage,
+  FAQPage,
+  ProductDetailsPage,
 } from "./Routes.js";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
@@ -36,6 +41,11 @@ const App = () => {
           <Route path="/activate/:token" element={<ActivationPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<SetPasswordPage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:productId" element={<ProductDetailsPage />} />
+          <Route path="/best-selling" element={<BestSellingPage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/Faq" element={<FAQPage />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

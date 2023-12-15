@@ -50,7 +50,7 @@ module.exports.signup = async (req, res, next) => {
             email: email,
             password: hashedPassword,
             name: name,
-            avator: updatedImagePath
+            avatar: updatedImagePath
         });
 
         if (!user) {
@@ -385,6 +385,8 @@ module.exports.setPassword = async (req, res, next) => {
 module.exports.loadUser = (req, res, next) => {
     const userId = req.userId;
 
+    console.log(userId);
+
     User.findById(userId)
         .then(user => {
             if (!user) {
@@ -393,9 +395,18 @@ module.exports.loadUser = (req, res, next) => {
                 throw error;
             }
 
+            const userObj = {
+                email: user.email,
+                name: user.name,
+                avatar: user.avatar,
+                isActivated: user.isActivated,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt
+            };
+
             res.status(200).json({
                 message: 'User loaded.',
-                userId: user._id.toString(),
+                user: userObj,
             });
         })
         .catch(err => {

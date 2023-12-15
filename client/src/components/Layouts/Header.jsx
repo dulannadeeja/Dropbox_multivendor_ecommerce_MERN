@@ -17,8 +17,14 @@ import { AiOutlineHeart, AiOutlineShoppingCart } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
 import { useSelector } from "react-redux";
 import { RxCross1 } from "react-icons/rx";
+import { useLocation } from "react-router-dom";
+import { server } from "../../server";
+import Cart from "../cart/Cart";
+import Wishlist from "../Wishlist/Wishlist";
 
 const Header = () => {
+  const { isAuthenticated } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [searchResults, setSearchResults] = React.useState([]);
   const [isFixed, setIsFixed] = React.useState(false);
@@ -26,8 +32,8 @@ const Header = () => {
   const [activeHeading, setActiveHeading] = React.useState(0);
   const [openCart, setOpenCart] = React.useState(false);
   const [openWishlist, setOpenWishlist] = React.useState(false);
-  const { userId, isAuthenticated } = useSelector((state) => state);
   const [mobile, setMobile] = React.useState(false);
+  const location = useLocation();
 
   const wishlist = [1, 2];
   const cart = [1, 2];
@@ -40,9 +46,49 @@ const Header = () => {
     }
   };
 
+  const handleResize = () => {
+    if (window.innerWidth < 800) {
+      setMobile(true);
+    } else {
+      setMobile(false);
+    }
+  };
+
   React.useEffect(() => {
+    // Use location.pathname to get the current path
+    const currentPath = location.pathname;
+
+    // Use currentPath to set activeHeading
+    switch (currentPath) {
+      case "/":
+        setActiveHeading(1);
+        break;
+      case "/best-selling":
+        setActiveHeading(2);
+        break;
+      case "/products":
+        setActiveHeading(3);
+        break;
+      case "/events":
+        setActiveHeading(4);
+        break;
+      case "/faq":
+        setActiveHeading(5);
+        break;
+      default:
+        // Set a default value if the path doesn't match any of the cases
+        setActiveHeading(0);
+        break;
+    }
+  }, [location.pathname]); // Run the effect whenever the route path changes
+
+  React.useEffect(() => {
+    window.addEventListener("resize", handleResize);
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   const handleSearchChange = (e) => {
@@ -129,7 +175,7 @@ const Header = () => {
         } transition hidden 800px:flex items-center justify-between w-full bg-indigo-700 h-[70px]`}
       >
         <div
-          className={`${StyleSheet.section} h-full relative flex justify-between border-red-500 border-2`}
+          className={`${StyleSheet.section} h-full relative flex justify-between`}
         >
           {/* Categories */}
           <div
@@ -202,7 +248,7 @@ const Header = () => {
                 {isAuthenticated ? (
                   <Link to="/profile">
                     <img
-                      src={`${user?.avatar?.url}`}
+                      src={`${server}/${user?.avatar}`}
                       className="w-[35px] h-[35px] rounded-full"
                       alt=""
                     />
@@ -332,11 +378,11 @@ const Header = () => {
               <br />
 
               <div className="flex w-full justify-center">
-                {isAuthenticated ? (
+                {isAuthenticated && user.avatar ? (
                   <div>
                     <Link to="/profile">
                       <img
-                        src={`${user.avatar?.url}`}
+                        src={`${server}/${user?.avatar}`}
                         alt=""
                         className="w-[60px] h-[60px] rounded-full border-[3px] border-[#0eae88]"
                       />
