@@ -16,12 +16,28 @@ const ShopCreate = () => {
   const [avatar, setAvatar] = useState();
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
+  const [visibleConfirmPassword, setConfirmVisible] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("name", name);
+    formData.append("mobile", phoneNumber);
+    formData.append("address", address);
+    formData.append("zipCode", zipCode);
+    formData.append("password", password);
+    formData.append("confirmPassword", confirmPassword);
+    formData.append("image", avatar);
+
     axios
-      .post(`${server}/shop/create-shop`, {})
+      .put(`${server}/shop/shop-create`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((res) => {
         toast.success(res.data.message);
         setName("");
@@ -36,18 +52,6 @@ const ShopCreate = () => {
         console.log(error.response.data.message);
         toast.error(error.response.data.message);
       });
-  };
-
-  const handleFileInputChange = (e) => {
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      if (reader.readyState === 2) {
-        setAvatar(reader.result);
-      }
-    };
-
-    reader.readAsDataURL(e.target.files[0]);
   };
 
   return (
@@ -189,6 +193,40 @@ const ShopCreate = () => {
               </div>
             </div>
 
+            {/* Confirm Password */}
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Confirm Password
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  type={visibleConfirmPassword ? "text" : "password"}
+                  name="password"
+                  autoComplete="current-password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+                {visibleConfirmPassword ? (
+                  <AiOutlineEye
+                    className="absolute right-2 top-2 cursor-pointer"
+                    size={25}
+                    onClick={() => setConfirmVisible(false)}
+                  />
+                ) : (
+                  <AiOutlineEyeInvisible
+                    className="absolute right-2 top-2 cursor-pointer"
+                    size={25}
+                    onClick={() => setConfirmVisible(true)}
+                  />
+                )}
+              </div>
+            </div>
+
             <div>
               <label
                 htmlFor="avatar"
@@ -198,7 +236,7 @@ const ShopCreate = () => {
                 <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
                   {avatar ? (
                     <img
-                      src={avatar}
+                      src={avatar ? URL.createObjectURL(avatar) : ""}
                       alt="avatar"
                       className="h-full w-full object-cover rounded-full"
                     />
@@ -215,7 +253,7 @@ const ShopCreate = () => {
                     type="file"
                     name="avatar"
                     id="file-input"
-                    onChange={handleFileInputChange}
+                    onChange={(e) => setAvatar(e.target.files[0])}
                     className="sr-only"
                   />
                 </label>

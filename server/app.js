@@ -87,12 +87,12 @@ app.use((req, res, next) => {
 });
 
 // import routes
-const feedRoutes = require('./routes/feed');
 const authRoutes = require('./routes/auth');
+const shopRoutes = require('./routes/shop');
 
 // middleware for handling feed routes
-app.use('/feed', feedRoutes);
 app.use('/auth', authRoutes);
+app.use('/shop', shopRoutes);
 
 // error handling middleware
 app.use((error, req, res, next) => {
