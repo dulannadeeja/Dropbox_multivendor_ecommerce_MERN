@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { navItems } from "../../static/navigationData";
 import styles from "../../styles/styles";
 
-const Navbar = ({ active }) => {
+const Navbar = ({ active, mobile }) => {
   return (
-    <div className={`flex gap-8 800px:${styles.noramlFlex}`}>
+    <div className={mobile ? "flex flex-col gap-8 my-10" : "flex gap-8"}>
       {navItems &&
         navItems.map((i, index) => (
           <div className="flex" key={index}>

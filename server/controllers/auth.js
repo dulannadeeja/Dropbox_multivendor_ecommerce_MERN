@@ -417,6 +417,22 @@ module.exports.loadUser = (req, res, next) => {
         })
 };
 
+// logout user's session
+module.exports.logout = (req, res, next) => {
+
+    const userId = req.userId;
+
+    if (!userId) {
+        const error = new Error('User id not found.');
+        error.statusCode = 401;
+        throw error;
+    }
+
+    res.status(200).clearCookie("token").json({
+        message: 'Logout successful.'
+    });
+};
+
 const clearImage = filePath => {
     filePath = path.join(__dirname, '..', filePath);
     console.log(filePath);

@@ -65,4 +65,7 @@ router.post('/set-password', [
 // GET /auth/load-user
 router.get('/load-user', isAuth, feedController.loadUser);
 
+// GET /auth/logout
+router.get('/logout', isAuth, feedController.logout);
+
 module.exports = router;

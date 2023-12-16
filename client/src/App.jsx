@@ -13,6 +13,7 @@ import {
   EventsPage,
   FAQPage,
   ProductDetailsPage,
+  ProfilePage,
 } from "./Routes.js";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
@@ -20,8 +21,13 @@ import StartVerificationPage from "./pages/StartVerificationPage.jsx";
 import { useEffect } from "react";
 import Store from "./redux/store.js";
 import { loadUser } from "./redux/actions/user.js";
+import OrdersPage from "./components/Profile/OrdersTable";
+import ProtectedRoutes from "./ProtectedRoutes.jsx";
+import { useSelector } from "react-redux";
 
 const App = () => {
+  const { isAuthenticated } = useSelector((state) => state.user);
+
   useEffect(() => {
     Store.dispatch(loadUser());
   }, []); // The empty dependency array means this effect runs once when the component mounts
@@ -46,6 +52,15 @@ const App = () => {
           <Route path="/best-selling" element={<BestSellingPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/Faq" element={<FAQPage />} />
+          <Route path="/orders" element={<OrdersPage />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoutes isAuthenticated={isAuthenticated}>
+                <ProfilePage />
+              </ProtectedRoutes>
+            }
+          />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

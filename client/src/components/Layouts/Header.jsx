@@ -23,6 +23,7 @@ import Cart from "../cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
 
 const Header = () => {
+  const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
   const { isAuthenticated } = useSelector((state) => state.user);
   const { user } = useSelector((state) => state.user);
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -83,8 +84,18 @@ const Header = () => {
   }, [location.pathname]); // Run the effect whenever the route path changes
 
   React.useEffect(() => {
+    handleResize();
+
     window.addEventListener("resize", handleResize);
     window.addEventListener("scroll", handleScroll);
+    window.addEventListener("click", (event) => {
+      if (
+        event.target.id === "searchBar" ||
+        event.target.id === "searchDropdown"
+      )
+        return;
+      setSearchTerm("");
+    });
     return () => {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("scroll", handleScroll);
@@ -122,7 +133,7 @@ const Header = () => {
             </Link>
           </div>
           {/* search box */}
-          <div className="w-[50%] relative">
+          <div className="w-[50%] relative" id="searchBar">
             <input
               type="text"
               placeholder="Search Product..."
@@ -135,7 +146,10 @@ const Header = () => {
               className="absolute top-1.5 right-2 text-gray-400 cursor-pointer hover:text-gray-600 transition-all duration-300 ease-in-out"
             />
             {searchTerm && searchTerm.length !== 0 ? (
-              <div className="absolute top-[40px] left-0 w-full bg-white rounded-md shadow-md border border-gray-300 p-4">
+              <div
+                id="searchDropdown"
+                className="absolute top-[40px] left-0 w-full bg-white rounded-md shadow-md border border-gray-300 p-4 z-50"
+              >
                 {searchResults.map((product, index) => {
                   return (
                     <Link
@@ -283,12 +297,16 @@ const Header = () => {
             <BiMenuAltLeft
               size={40}
               className="ml-4"
-              onClick={() => setOpen(true)}
+              onClick={() => setMobileSidebarOpen(true)}
             />
           </div>
           <div>
             <Link to="/">
-              <img src={brandLogo} alt="" className="mt-3 cursor-pointer" />
+              <img
+                src={brandLogo}
+                alt=""
+                className="mt-3 cursor-pointer w-10"
+              />
             </Link>
           </div>
           <div>
@@ -310,18 +328,18 @@ const Header = () => {
         </div>
 
         {/* header sidebar */}
-        {open && (
+        {mobileSidebarOpen && (
           <div
             className={`fixed w-full bg-[#0000005f] z-20 h-full top-0 left-0`}
           >
-            <div className="fixed w-[70%] bg-[#fff] h-screen top-0 left-0 z-10 overflow-y-scroll">
-              <div className="w-full justify-between flex pr-3">
+            <div className="fixed w-[70%] bg-[#fff] h-screen top-0 left-0 z-10 overflow-y-scroll px-8 py-10">
+              <div className="w-full justify-between flex">
                 <div>
                   <div
-                    className="relative mr-[15px]"
+                    className="relative"
                     onClick={() => setOpenWishlist(true) || setOpen(false)}
                   >
-                    <AiOutlineHeart size={30} className="mt-5 ml-3" />
+                    <AiOutlineHeart size={30} />
                     <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 top right p-0 m-0 text-white font-mono text-[12px]  leading-tight text-center">
                       {wishlist && wishlist.length}
                     </span>
@@ -329,12 +347,11 @@ const Header = () => {
                 </div>
                 <RxCross1
                   size={30}
-                  className="ml-4 mt-5"
-                  onClick={() => setOpen(false)}
+                  onClick={() => setMobileSidebarOpen(false)}
                 />
               </div>
 
-              <div className="my-8 w-[92%] m-auto h-[40px relative]">
+              <div className="my-8 w-full h-[40px relative]" id="searchBar">
                 <input
                   type="search"
                   placeholder="Search Product..."
@@ -342,8 +359,11 @@ const Header = () => {
                   value={searchTerm}
                   onChange={handleSearchChange}
                 />
-                {searchResults && (
-                  <div className="absolute bg-[#fff] z-10 shadow w-full left-0 p-3">
+                {searchTerm && (
+                  <div
+                    className="absolute bg-[#fff] z-10 shadow w-full left-0 p-3"
+                    id="searchDropdown"
+                  >
                     {searchResults.map((i) => {
                       const d = i.name;
 
@@ -365,18 +385,19 @@ const Header = () => {
                 )}
               </div>
 
-              <Navbar active={activeHeading} />
-              <div className={`${StyleSheet.button} ml-4 !rounded-[4px]`}>
+              {/* navabr */}
+              <Navbar active={activeHeading} mobile={mobile} />
+
+              {/* Become seller button */}
+              <div className={`${StyleSheet.button} rounded-md mb-5`}>
                 <Link to="/shop-create">
                   <h1 className="text-[#fff] flex items-center">
                     Become Seller <IoIosArrowForward className="ml-1" />
                   </h1>
                 </Link>
               </div>
-              <br />
-              <br />
-              <br />
 
+              {/* profile */}
               <div className="flex w-full justify-center">
                 {isAuthenticated && user.avatar ? (
                   <div>
