@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const User = require('../models/user');
+const Shop = require('../models/shop');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
@@ -78,154 +79,182 @@ module.exports.signup = async (req, res, next) => {
     }
 };
 
-module.exports.login = (req, res, next) => {
+module.exports.login = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    let loadedUser;
+    let role = 'user';
 
-    User.findOne({ email: email })
-        .then(user => {
+    try {
+        let user = await User.findOne({ email: email });
 
-            if (!user) {
-                const error = new Error("There was a problem logging in. Check your email and password or create an account.");
-                error.statusCode = 401;
-                throw error;
-            }
+        if (!user) {
+            user = await Shop.findOne({ email: email });
+            role = 'shop';
+        }
 
-            loadedUser = user;
+        if (!user) {
+            const error = new Error("There was a problem logging in. Check your email and password or create an account.");
+            error.statusCode = 401;
+            throw error;
+        }
 
-            if (!user.isActivated) {
-                const error = new Error('This account is not activated. Please check your email and activate your account.');
-                error.statusCode = 401;
-                error.data = { userId: user._id.toString() };
-                throw error;
-            }
+        if (!user.isActivated) {
+            const error = new Error('This account is not activated. Please check your email and activate your account.');
+            error.statusCode = 401;
+            error.data = { userId: user._id.toString() };
+            throw error;
+        }
+        const isMatchPasswords = await bcrypt.compare(password, user.password);
 
-            return bcrypt.compare(password, user.password);
-        })
-        .then(isEqual => {
+        if (!isMatchPasswords) {
+            const error = new Error('There was a problem logging in. Check your email and password or create an account.');
+            error.statusCode = 401;
+            throw error;
+        }
 
-            if (!isEqual) {
-                const error = new Error('There was a problem logging in. Check your email and password or create an account.');
-                error.statusCode = 401;
-                throw error;
-            }
+        const token = jwt.sign({
+            role: role,
+            email: user.email,
+            userId: user._id.toString()
+        }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 
-            const token = jwt.sign({
-                email: loadedUser.email,
-                userId: loadedUser._id.toString()
-            }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+        // Options for cookies
+        const options = {
+            expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+            httpOnly: true,
+            sameSite: "none",
+            secure: true,
+        };
 
-            // Options for cookies
-            const options = {
-                expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
-                httpOnly: true,
-                sameSite: "none",
-                secure: true,
-            };
-
-            res.status(200).cookie("token", token, options).json({
-                message: 'Login successful.',
-                token: token,
-                userId: loadedUser._id.toString()
-            });
-        })
-        .catch(err => {
-            if (!err.statusCode) {
-                err.statusCode = 500;
-            }
-            next(err);
-        })
+        res.status(200).cookie("token", token, options).json({
+            message: 'Login successful.',
+            token: token,
+            role: role,
+            userId: user._id.toString()
+        });
+    }
+    catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
 };
 
 
-module.exports.accountActivation = (req, res, next) => {
+module.exports.accountActivation = async (req, res, next) => {
     const token = req.body.token;
-
-    if (!token) {
-        const error = new Error('activation Token not found. Please try again.');
-        error.statusCode = 401;
-        throw error;
-    }
-
-    let decodedToken;
+    const role = req.body.role;
+    let userOrShop;
 
     try {
-        decodedToken = jwt.verify(token, process.env.ACTIVATION_SECRET);
-    } catch (err) {
-        const error = new Error('Token verification failed. Please try again.');
-        err.statusCode = 500;
-        throw err;
-    }
+        if (!token) {
+            const error = new Error('activation Token not found. Please try again.');
+            error.statusCode = 401;
+            throw error;
+        }
 
-    if (!decodedToken) {
-        const error = new Error('Token is invalid. Please try again.');
-        error.statusCode = 401;
-        throw error;
-    }
+        if (!role) {
+            const error = new Error('role not found. Please try again.');
+            error.statusCode = 401;
+            throw error;
+        }
 
-    const userId = decodedToken.userId;
+        const decodedToken = await jwt.verify(token, process.env.ACTIVATION_SECRET);
 
-    User.findById(userId)
-        .then(user => {
+        if (!decodedToken) {
+            const error = new Error('Token is invalid. Please try again.');
+            error.statusCode = 401;
+            throw error;
+        }
 
-            if (!user) {
-                const error = new Error('A user with this id could not be found.');
-                error.statusCode = 401;
-                throw error;
-            }
+        const id = decodedToken.userId;
 
-            if (user.isActivated) {
-                const error = new Error('This account is already activated.');
-                error.statusCode = 401;
-                throw error;
-            }
+        if (role === 'shop') {
+            const shop = await Shop.findById(id);
+            userOrShop = shop;
+        } else if (role === 'user') {
+            const user = await User.findById(id);
+            userOrShop = user;
+        }
 
-            user.isActivated = true;
+        if (!userOrShop) {
+            const error = new Error('Could not activate, data not found.');
+            error.statusCode = 500;
+            throw error;
+        }
 
-            return user.save();
-        })
-        .then(result => {
+        if (userOrShop.isActivated) {
+            const error = new Error('This account is already activated.');
+            error.statusCode = 401;
+            throw error;
+        }
 
-            if (!result) {
-                const error = new Error('Could not activate user.');
-                error.statusCode = 500;
-                throw error;
-            }
+        userOrShop.isActivated = true;
 
-            res.status(200).json({
-                message: 'User activated.',
-                userId: userId
-            });
-        })
-        .catch(err => {
-            if (!err.statusCode) {
-                err.statusCode = 500;
-            }
-            next(err);
+        const result = await userOrShop.save();
+
+        if (!result) {
+            const error = new Error('Could not activate account.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        res.status(200).json({
+            message: 'User activated.',
+            userId: id
         });
+
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+
 }
 
 module.exports.verificationEmailSender = async (req, res, next) => {
-    const userId = req.body.userId;
+    const id = req.body.id;
+    const role = req.body.role;
 
     try {
-        if (!userId) {
-            const error = new Error('User id not found. Please try again.');
+        if (!id) {
+            const error = new Error('id not found in request. Please try again.');
             error.statusCode = 401;
             throw error;
         }
 
-        const user = await User.findById(userId);
-
-        if (!user) {
-            const error = new Error('A user with this id could not be found.');
+        if (!role) {
+            const error = new Error('role not found in request. Please try again.');
             error.statusCode = 401;
             throw error;
         }
 
-        if (user.isActivated) {
+        let userOrShop;
+
+        if (role === 'shop') {
+            const shop = await Shop.findById(id);
+            userOrShop = shop;
+        } else if (role === 'user') {
+            const user = await User.findById(id);
+            userOrShop = user;
+        } else {
+            const error = new Error('Invalid role. Please try again.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+
+
+        if (!userOrShop) {
+            const error = new Error('Invalid id. System could not find data.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        if (userOrShop.isActivated) {
             const error = new Error('This account is already activated.');
             error.statusCode = 401;
             throw error;
@@ -233,14 +262,14 @@ module.exports.verificationEmailSender = async (req, res, next) => {
 
         // Generate verification token
         const verificationToken = jwt.sign({
-            email: user.email,
-            userId: user._id.toString()
+            email: userOrShop.email,
+            userId: userOrShop._id.toString()
         }, process.env.ACTIVATION_SECRET, { expiresIn: process.env.ACTIVATION_EXPIRES_IN });
 
-        const activationUrl = `${process.env.CLIENT_URL}/activate/${verificationToken}`;
+        const activationUrl = `${process.env.CLIENT_URL}/activate/${role}/${verificationToken}`;
 
         // Send verification email
-        const error = await sendVerificationEmail(user.name, user.email, activationUrl);
+        const error = await sendVerificationEmail(userOrShop.name, userOrShop.email, activationUrl);
 
         if (error) {
             const error = new Error('Could not send verification email.');
@@ -251,7 +280,7 @@ module.exports.verificationEmailSender = async (req, res, next) => {
         // Send the response here, after successful email sending
         res.status(200).json({
             message: 'Verification email sent.',
-            userId: userId
+            userId: id
         });
     } catch (err) {
         if (!err.statusCode) {
@@ -382,32 +411,53 @@ module.exports.setPassword = async (req, res, next) => {
 }
 
 // load user profile
-module.exports.loadUser = (req, res, next) => {
+module.exports.loadUser = async (req, res, next) => {
     const userId = req.userId;
+    const role = req.role;
 
-    console.log(userId);
+    try {
+        if (!userId) {
+            const error = new Error('User id not found.');
+            error.statusCode = 401;
+            throw error;
+        }
+        if (!role) {
+            const error = new Error('User role not found.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        const userOrShop = role === 'user' ? User : Shop;
+
+        const userData = await userOrShop.findById(userId);
+
+        if (!userData) {
+            const error = new Error('Could not find user.');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        const userObj = {
+            email: userData.email,
+            name: userData.name,
+            avatar: role === 'user' ? userData.avatar : userData.shopAvatar,
+            isActivated: userData.isActivated,
+            createdAt: userData.createdAt,
+            updatedAt: userData.updatedAt,
+            role: role
+        };
+
+        res.status(200).json({
+            message: 'User loaded.',
+            user: userObj,
+        });
+    } catch (err) {
+
+    }
 
     User.findById(userId)
         .then(user => {
-            if (!user) {
-                const error = new Error('Could not find user.');
-                error.statusCode = 404;
-                throw error;
-            }
 
-            const userObj = {
-                email: user.email,
-                name: user.name,
-                avatar: user.avatar,
-                isActivated: user.isActivated,
-                createdAt: user.createdAt,
-                updatedAt: user.updatedAt
-            };
-
-            res.status(200).json({
-                message: 'User loaded.',
-                user: userObj,
-            });
         })
         .catch(err => {
             if (!err.statusCode) {

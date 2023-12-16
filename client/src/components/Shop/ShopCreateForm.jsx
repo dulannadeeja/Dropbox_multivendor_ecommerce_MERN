@@ -18,6 +18,7 @@ const ShopCreate = () => {
   const [visible, setVisible] = useState(false);
   const [visibleConfirmPassword, setConfirmVisible] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,6 +48,8 @@ const ShopCreate = () => {
         setZipCode();
         setAddress("");
         setPhoneNumber();
+
+        navigate(`/shop/verification/${res.data.shopId}`);
       })
       .catch((error) => {
         console.log(error.response.data.message);

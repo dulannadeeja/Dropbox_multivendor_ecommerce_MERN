@@ -4,7 +4,7 @@ const initialState = {
     isAuthenticated: false,
     loading: false,
     user: null,
-    error: null,
+    error: null
 };
 
 export const userReducer = createReducer(initialState, (builder) => {
@@ -16,6 +16,8 @@ export const userReducer = createReducer(initialState, (builder) => {
             state.isAuthenticated = true;
             state.loading = false;
             state.user = action.payload;
+            console.log("load user success from user reducer");
+            console.log(action.payload);
         })
         .addCase('LoadUserFailure', (state) => {
             state.loading = false;

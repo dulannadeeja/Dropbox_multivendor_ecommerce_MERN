@@ -28,10 +28,15 @@ import ShopCreatePage from "./pages/ShopCreatePage.jsx";
 
 const App = () => {
   const { isAuthenticated } = useSelector((state) => state.user);
+  const { loading } = useSelector((state) => state.user);
 
   useEffect(() => {
     Store.dispatch(loadUser());
   }, []); // The empty dependency array means this effect runs once when the component mounts
+
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
 
   return (
     <>
@@ -41,11 +46,11 @@ const App = () => {
           <Route path="/about" element={<h1>About</h1>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/activate/:role/:token" element={<ActivationPage />} />
           <Route
             path="/verification/:userId"
             element={<StartVerificationPage />}
           />
-          <Route path="/activate/:token" element={<ActivationPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<SetPasswordPage />} />
           <Route path="/products" element={<ProductsPage />} />
@@ -70,6 +75,10 @@ const App = () => {
             }
           />
           <Route path="/shop-create" element={<ShopCreatePage />} />
+          <Route
+            path="/shop/verification/:shopId"
+            element={<StartVerificationPage />}
+          />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

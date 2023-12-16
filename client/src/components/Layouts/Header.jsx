@@ -25,6 +25,7 @@ import Wishlist from "../Wishlist/Wishlist";
 const Header = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
   const { isAuthenticated } = useSelector((state) => state.user);
+  const { role } = useSelector((state) => state.user);
   const { user } = useSelector((state) => state.user);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [searchResults, setSearchResults] = React.useState([]);
@@ -171,13 +172,19 @@ const Header = () => {
           </div>
           {/* become a seller button */}
           <div className={StyleSheet.button}>
-            <button className="text-white font-semibold flex items-center flex-shrink-0">
-              Become Seller
-              <span className="ml-2">
-                {" "}
-                <IoIosArrowForward />
-              </span>
-            </button>
+            {role !== "shop" ? (
+              <Link to="/dashboard">
+                <h1 className="text-[#fff] flex items-center">
+                  Shop Dashboard <IoIosArrowForward className="ml-1" />
+                </h1>
+              </Link>
+            ) : (
+              <Link to="/shop-create">
+                <h1 className="text-[#fff] flex items-center">
+                  Become Seller <IoIosArrowForward className="ml-1" />
+                </h1>
+              </Link>
+            )}
           </div>
         </div>
       </div>
