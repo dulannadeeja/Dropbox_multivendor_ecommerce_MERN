@@ -43,3 +43,18 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+/* react-phone-input-2 */
+
+#phoneInput .react-tel-input .form-control {
+  border: 1px solid #6b7280;
+}
+
+.react-tel-input .form-control:focus {
+  border-color: #ccc;
+  box-shadow: none;
+}
+
+#phoneInput .react-tel-input .flag-dropdown {
+  border: 1px solid #6b7280;
+}
