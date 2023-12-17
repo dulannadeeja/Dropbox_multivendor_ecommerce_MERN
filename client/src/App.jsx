@@ -14,6 +14,7 @@ import {
   FAQPage,
   ProductDetailsPage,
   ProfilePage,
+  SellerSignupPage,
 } from "./Routes.js";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
@@ -24,10 +25,8 @@ import { loadUser } from "./redux/actions/user.js";
 import OrdersPage from "./components/Profile/OrdersTable";
 import ProtectedRoutes from "./ProtectedRoutes.jsx";
 import { useSelector } from "react-redux";
-import ShopCreatePage from "./pages/ShopCreatePage.jsx";
 
 const App = () => {
-  const { isAuthenticated } = useSelector((state) => state.user);
   const { loading } = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -61,7 +60,7 @@ const App = () => {
           <Route
             path="/orders"
             element={
-              <ProtectedRoutes isAuthenticated={isAuthenticated}>
+              <ProtectedRoutes>
                 <OrdersPage />
               </ProtectedRoutes>
             }
@@ -69,12 +68,12 @@ const App = () => {
           <Route
             path="/profile"
             element={
-              <ProtectedRoutes isAuthenticated={isAuthenticated}>
+              <ProtectedRoutes>
                 <ProfilePage />
               </ProtectedRoutes>
             }
           />
-          <Route path="/shop-create" element={<ShopCreatePage />} />
+          <Route path="/seller/signup" element={<SellerSignupPage />} />
           <Route
             path="/shop/verification/:shopId"
             element={<StartVerificationPage />}

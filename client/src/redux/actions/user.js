@@ -10,8 +10,6 @@ export const loadUser = () => async (dispatch) => {
             withCredentials: true,
         });
 
-        console.log(res);
-
         dispatch({
             type: 'LoadUserSuccess',
             payload: res.data.user,

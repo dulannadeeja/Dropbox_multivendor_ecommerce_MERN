@@ -9,11 +9,10 @@ const { sendVerificationEmail, sendPasswordResetEmail } = require('../utils/auth
 
 module.exports.signup = async (req, res, next) => {
 
-    console.log(req.file);
-
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
     const email = req.body.email;
     const password = req.body.password;
-    const name = req.body.name;
 
     let updatedImagePath;
 
@@ -48,10 +47,16 @@ module.exports.signup = async (req, res, next) => {
         }
 
         const user = await User.create({
+            firstName: firstName,
+            lastName: lastName,
             email: email,
             password: hashedPassword,
-            name: name,
-            avatar: updatedImagePath
+            avatar: updatedImagePath,
+            isActivated: false,
+            isSeller: false,
+            isAdmin: false,
+            shop: null,
+            addresses: []
         });
 
         if (!user) {
@@ -83,15 +88,8 @@ module.exports.login = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    let role = 'user';
-
     try {
         let user = await User.findOne({ email: email });
-
-        if (!user) {
-            user = await Shop.findOne({ email: email });
-            role = 'shop';
-        }
 
         if (!user) {
             const error = new Error("There was a problem logging in. Check your email and password or create an account.");
@@ -105,6 +103,7 @@ module.exports.login = async (req, res, next) => {
             error.data = { userId: user._id.toString() };
             throw error;
         }
+
         const isMatchPasswords = await bcrypt.compare(password, user.password);
 
         if (!isMatchPasswords) {
@@ -114,8 +113,9 @@ module.exports.login = async (req, res, next) => {
         }
 
         const token = jwt.sign({
-            role: role,
             email: user.email,
+            isAdmin: user.isAdmin,
+            isSeller: user.isSeller,
             userId: user._id.toString()
         }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 
@@ -130,7 +130,9 @@ module.exports.login = async (req, res, next) => {
         res.status(200).cookie("token", token, options).json({
             message: 'Login successful.',
             token: token,
-            role: role,
+            email: user.email,
+            isAdmin: user.isAdmin,
+            isSeller: user.isSeller,
             userId: user._id.toString()
         });
     }
@@ -413,7 +415,6 @@ module.exports.setPassword = async (req, res, next) => {
 // load user profile
 module.exports.loadUser = async (req, res, next) => {
     const userId = req.userId;
-    const role = req.role;
 
     try {
         if (!userId) {
@@ -421,30 +422,28 @@ module.exports.loadUser = async (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
-        if (!role) {
-            const error = new Error('User role not found.');
-            error.statusCode = 401;
-            throw error;
-        }
 
-        const userOrShop = role === 'user' ? User : Shop;
+        const user = await User.findById(userId);
 
-        const userData = await userOrShop.findById(userId);
-
-        if (!userData) {
+        if (!user) {
             const error = new Error('Could not find user.');
             error.statusCode = 404;
             throw error;
         }
 
         const userObj = {
-            email: userData.email,
-            name: userData.name,
-            avatar: role === 'user' ? userData.avatar : userData.shopAvatar,
-            isActivated: userData.isActivated,
-            createdAt: userData.createdAt,
-            updatedAt: userData.updatedAt,
-            role: role
+            _id: user._id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            avatar: user.avatar,
+            isActivated: user.isActivated,
+            isSeller: user.isSeller,
+            isAdmin: user.isAdmin,
+            shop: user.shop,
+            addresses: user.addresses,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
         };
 
         res.status(200).json({
@@ -452,19 +451,11 @@ module.exports.loadUser = async (req, res, next) => {
             user: userObj,
         });
     } catch (err) {
-
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
-
-    User.findById(userId)
-        .then(user => {
-
-        })
-        .catch(err => {
-            if (!err.statusCode) {
-                err.statusCode = 500;
-            }
-            next(err);
-        })
 };
 
 // logout user's session
