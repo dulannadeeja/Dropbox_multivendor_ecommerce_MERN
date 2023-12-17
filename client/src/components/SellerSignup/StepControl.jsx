@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect } from "react";
 import styles from "../../styles/styles";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,15 @@ const StepControl = () => {
     // if (currentStep === 2 && !secondStepCompleted) return;
     if (currentStep < steps.length) setCurrentStep(currentStep + 1);
     console.log(currentStep);
+=======
+import React from "react";
+import styles from "../../styles/styles";
+
+const StepControl = ({ allSteps, setCurrentStep, currentStep }) => {
+  const handleNext = () => {
+    console.log(currentStep);
+    if (currentStep < allSteps.length) setCurrentStep(currentStep + 1);
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
   };
 
   const handleBack = () => {
@@ -30,6 +40,7 @@ const StepControl = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
+<<<<<<< HEAD
   const handleCreateAccount = () => {
     console.log("Create Account");
   };
@@ -44,6 +55,8 @@ const StepControl = () => {
     // }
   }, [firstStepCompleted, secondStepCompleted, currentStep]);
 
+=======
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
   return (
     <div className="flex justify-between items-center">
       <div>
@@ -55,6 +68,7 @@ const StepControl = () => {
         </button>
       </div>
       <div>
+<<<<<<< HEAD
         {currentStep < steps.length ? (
           <button
             disabled={!allowNext ? true : false}
@@ -76,6 +90,11 @@ const StepControl = () => {
             Create Account
           </button>
         )}
+=======
+        <button className={styles.button} onClick={() => handleNext()}>
+          Next
+        </button>
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
       </div>
     </div>
   );

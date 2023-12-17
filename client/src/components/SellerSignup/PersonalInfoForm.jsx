@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { React, useEffect, useState } from "react";
+=======
+import { React, useState } from "react";
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
 import axios from "axios";
 import { server } from "../../server";
 import { Country, State, City } from "country-state-city";
@@ -7,6 +11,7 @@ import styles from "../../styles/styles";
 import PhoneInput from "./PhoneInput";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
+<<<<<<< HEAD
 import { useSellerSignupContext } from "../../contexts/SellerSignupContext";
 import validateInput from "../../validations/sellerSignupValidation";
 
@@ -71,6 +76,69 @@ const PersonalInfo = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+=======
+import SellerSignupContext from "../../contexts/SellerSignupContext.js";
+
+const PersonalInfo = () => {
+  const [phoneObj, setPhoneObj] = useState({});
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [houseNumber, setHouseNumber] = useState("");
+  const [street, setStreet] = useState("");
+  const [country, setCountry] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
+  const [errors, setErrors] = useState({
+    firstName: "please enter your first name",
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // const formData = new FormData();
+    // formData.append("firstName", firstName);
+    // formData.append("lastName", lastName);
+    // formData.append("email", email);
+    // formData.append("houseNumber", houseNumber);
+    // formData.append("street", street);
+    // formData.append("country", country);
+    // formData.append("state", state);
+    // formData.append("city", city);
+    // formData.append("zip", zip);
+    // formData.append("phone", phone);
+    // formData.append("password", password);
+    // formData.append("confirmPassword", confirmPassword);
+    // formData.append("avatar", avatar);
+
+    // axios
+    //   .put(`${server}/shop/shop-create`, formData, {
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //     },
+    //   })
+    //   .then((res) => {
+    //     toast.success(res.data.message);
+    //     setFirstName("");
+    //     setLastName("");
+    //     setEmail("");
+    //     setHouseNumber("");
+    //     setStreet("");
+    //     setCountry("");
+    //     setState("");
+    //     setCity("");
+    //     setZip("");
+    //     setPhone("");
+    //     setPassword("");
+    //     setConfirmPassword("");
+    //     setAvatar("");
+    //     navigate(`/shop/verification/${res.data.shopId}`);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error.response.data.message);
+    //     toast.error(error.response.data.message);
+    //   });
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
   };
   return (
     <div className="min-h-scree flex flex-col justify-center py-12 sm:px-6 lg:px-10 800px:w-full">
@@ -96,11 +164,16 @@ const PersonalInfo = () => {
                 type="text"
                 name="firstName"
                 required
+<<<<<<< HEAD
                 value={sellerSignupContext.firstName}
                 onChange={(e) => {
                   setFirstName(e.target.value);
                   handleInputChange(e);
                 }}
+=======
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
                 className={styles.formInput}
               />
               {/* form control error */}
@@ -118,11 +191,16 @@ const PersonalInfo = () => {
                 type="text"
                 name="lastName"
                 required
+<<<<<<< HEAD
                 value={sellerSignupContext.lastName}
                 onChange={(e) => {
                   setLastName(e.target.value);
                   handleInputChange(e);
                 }}
+=======
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
                 className={styles.formInput}
               />
               {/* form control error */}
@@ -140,11 +218,16 @@ const PersonalInfo = () => {
                 type="email"
                 name="email"
                 required
+<<<<<<< HEAD
                 value={sellerSignupContext.email}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   handleInputChange(e);
                 }}
+=======
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
                 className={styles.formInput}
               />
               {/* form control error */}
@@ -162,11 +245,16 @@ const PersonalInfo = () => {
                 type="text"
                 name="houseNumber"
                 required
+<<<<<<< HEAD
                 value={sellerSignupContext.houseNumber}
                 onChange={(e) => {
                   setHouseNumber(e.target.value);
                   handleInputChange(e);
                 }}
+=======
+                value={houseNumber}
+                onChange={(e) => setHouseNumber(e.target.value)}
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
                 className={styles.formInput}
               />
               {/* form control error */}
@@ -184,11 +272,16 @@ const PersonalInfo = () => {
                 type="text"
                 name="street"
                 required
+<<<<<<< HEAD
                 value={sellerSignupContext.street}
                 onChange={(e) => {
                   setStreet(e.target.value);
                   handleInputChange(e);
                 }}
+=======
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
                 className={styles.formInput}
               />
               {/* form control error */}
@@ -207,11 +300,16 @@ const PersonalInfo = () => {
                 <select
                   name="country"
                   required
+<<<<<<< HEAD
                   value={sellerSignupContext.country}
                   onChange={(e) => {
                     setCountry(e.target.value);
                     handleInputChange(e);
                   }}
+=======
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
                   className={styles.formInput}
                 >
                   <option value="">Select Country</option>
@@ -235,11 +333,16 @@ const PersonalInfo = () => {
                 <select
                   name="state"
                   required
+<<<<<<< HEAD
                   value={sellerSignupContext.state}
                   onChange={(e) => {
                     setState(e.target.value);
                     handleInputChange(e);
                   }}
+=======
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
                   className={styles.formInput}
                 >
                   <option value="">Select State</option>
@@ -263,11 +366,16 @@ const PersonalInfo = () => {
                 <select
                   name="city"
                   required
+<<<<<<< HEAD
                   value={sellerSignupContext.city}
                   onChange={(e) => {
                     setCity(e.target.value);
                     handleInputChange(e);
                   }}
+=======
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
                   className={styles.formInput}
                 >
                   <option value="">Select City</option>
@@ -282,6 +390,7 @@ const PersonalInfo = () => {
                   <p className={styles.formInputError}>{errors.city}</p>
                 )}
               </div>
+<<<<<<< HEAD
 
               {/* Zip */}
               <div>
@@ -308,6 +417,12 @@ const PersonalInfo = () => {
 
             {/* Phone */}
             <PhoneInput setPhoneObj={setPhone} />
+=======
+            </div>
+
+            {/* Phone */}
+            <PhoneInput setPhoneObj={setPhoneObj} />
+>>>>>>> 576e884e8479516853b1675d158c83bb1d6956fa
           </form>
         </div>
       </div>
