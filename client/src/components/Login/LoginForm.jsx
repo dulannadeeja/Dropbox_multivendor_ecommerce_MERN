@@ -33,6 +33,7 @@ const LoginForm = () => {
         if (res.status === 200) {
           toast.success(res.data.message);
           navigate("/");
+          window.location.reload(true);
         }
       })
       .catch((err) => {

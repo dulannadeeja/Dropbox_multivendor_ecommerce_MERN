@@ -8,6 +8,9 @@ import { server } from "../server";
 const StartVerificationPage = () => {
   // Destructuring values from the React Router useParams hook
   const { userId } = useParams();
+  const { shopId } = useParams();
+
+  const role = userId ? "user" : "shop";
 
   // State hooks for managing loading state, error messages, success messages, countdown, and resend button state
   const [loading, setLoading] = useState(false);
@@ -22,8 +25,10 @@ const StartVerificationPage = () => {
     setResendDisabled(true); // Disabling the resend button
     setLoading(true);
     try {
+      const id = userId || shopId;
+
       // Making an asynchronous request to the server to send a verification email
-      const res = await axios.post(`${server}/auth/verification`, { userId });
+      const res = await axios.post(`${server}/auth/verification`, { id, role });
       // Updating the success message and starting the countdown
       setSuccessMessage(res.data.message);
     } catch (err) {

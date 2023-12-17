@@ -7,6 +7,14 @@ import {
   ActivationPage,
   ForgotPasswordPage,
   SetPasswordPage,
+  HomePage,
+  BestSellingPage,
+  ProductsPage,
+  EventsPage,
+  FAQPage,
+  ProductDetailsPage,
+  ProfilePage,
+  SellerSignupPage,
 } from "./Routes.js";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
@@ -14,27 +22,62 @@ import StartVerificationPage from "./pages/StartVerificationPage.jsx";
 import { useEffect } from "react";
 import Store from "./redux/store.js";
 import { loadUser } from "./redux/actions/user.js";
+import OrdersPage from "./components/Profile/OrdersTable";
+import ProtectedRoutes from "./ProtectedRoutes.jsx";
+import { useSelector } from "react-redux";
 
 const App = () => {
+  const { loading } = useSelector((state) => state.user);
+
   useEffect(() => {
     Store.dispatch(loadUser());
   }, []); // The empty dependency array means this effect runs once when the component mounts
+
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
 
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<h1>Home</h1>} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<h1>About</h1>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/activate/:role/:token" element={<ActivationPage />} />
           <Route
             path="/verification/:userId"
             element={<StartVerificationPage />}
           />
-          <Route path="/activate/:token" element={<ActivationPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<SetPasswordPage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:productId" element={<ProductDetailsPage />} />
+          <Route path="/best-selling" element={<BestSellingPage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/Faq" element={<FAQPage />} />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoutes>
+                <OrdersPage />
+              </ProtectedRoutes>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoutes>
+                <ProfilePage />
+              </ProtectedRoutes>
+            }
+          />
+          <Route path="/seller/signup" element={<SellerSignupPage />} />
+          <Route
+            path="/shop/verification/:shopId"
+            element={<StartVerificationPage />}
+          />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

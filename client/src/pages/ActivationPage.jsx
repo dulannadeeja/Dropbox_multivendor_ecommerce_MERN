@@ -8,6 +8,7 @@ import Failed from "../components/Activation/Failed.jsx";
 
 const ActivationPage = () => {
   const { token } = useParams();
+  const { role } = useParams();
   const [activationStatus, setActivationStatus] = useState("pending");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -16,6 +17,7 @@ const ActivationPage = () => {
       try {
         if (token) {
           const res = await axios.post(`${server}/auth/account-activation`, {
+            role,
             token,
           });
           setActivationStatus("success");
@@ -27,7 +29,7 @@ const ActivationPage = () => {
     };
 
     activateAccount();
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     if (activationStatus === "error" && errorMessage) {

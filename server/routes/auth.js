@@ -9,6 +9,8 @@ const router = express.Router();
 
 // PUT /auth/signup
 router.put('/signup', [
+    body('firstName').trim().not().isEmpty().withMessage('First name is required.'),
+    body('lastName').trim().not().isEmpty().withMessage('Last name is required.'),
     body('email').isEmail().withMessage('Please enter a valid email.')
         .normalizeEmail()
         .custom((value, { req }) => {
@@ -25,8 +27,7 @@ router.put('/signup', [
             throw new Error('Passwords must match!');
         }
         return true;
-    }),
-    body('name').trim().not().isEmpty()
+    })
 ], feedController.signup);
 
 // POST /auth/login
@@ -64,5 +65,8 @@ router.post('/set-password', [
 
 // GET /auth/load-user
 router.get('/load-user', isAuth, feedController.loadUser);
+
+// GET /auth/logout
+router.get('/logout', isAuth, feedController.logout);
 
 module.exports = router;
