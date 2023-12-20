@@ -1,7 +1,16 @@
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
-    const token = req.cookies.token;
+
+    console.log('isAuth middleware');
+    console.log(req.headers);
+
+    let token = req.cookies.token;
+
+    if (req.headers.authorization) {
+        token = req.headers.authorization.split(' ')[1];
+        console.log(token);
+    }
 
     let decodedToken;
 
@@ -19,14 +28,21 @@ module.exports = (req, res, next) => {
             throw error;
         }
         req.userId = decodedToken.userId;
-        next();
+        req.token = token;
+
+        // hold some time to test loading spinner
+        setTimeout(() => {
+            next();
+        }, 5000);
 
     }
     catch (err) {
+        console.log(err);
         if (!err.statusCode) {
             err.statusCode = 500;
         }
         next(err);
+
     }
 
 };

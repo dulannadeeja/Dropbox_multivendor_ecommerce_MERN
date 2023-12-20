@@ -8,14 +8,18 @@ import axios from "axios";
 import { server } from "../../server";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
@@ -23,37 +27,41 @@ const LoginForm = () => {
     formData.append("password", password);
 
     const config = {
-      headers: {},
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
       withCredentials: true,
     };
 
-    axios
-      .post(`${server}/auth/login`, formData, config)
-      .then((res) => {
-        if (res.status === 200) {
-          console.log(res);
-          toast.success(res.data.message);
-          if (!document.cookie.includes("token")) {
-            document.cookie = `token=${res.data.token}; path=/;`;
-          }
-          window.location.reload();
-          navigate("/");
-          // Consider updating your state to manage login status instead of reloading the page
-          // Update your state here or use a state management solution like Redux
+    try {
+      const res = await axios.post(`${server}/auth/login`, formData, config);
+
+      if (res.status === 200) {
+        console.log(res);
+        toast.success(res.data.message);
+
+        // Dispatch the "LoadUserSuccess" action here
+        await dispatch({ type: "LoadUserSuccess", payload: res.data.user });
+
+        if (!document.cookie.includes("token")) {
+          document.cookie = `token=${res.data.user.token}; path=/;`;
         }
-      })
-      .catch((err) => {
-        if (
-          err.response?.status === 401 &&
-          err.response?.data?.message ===
-            "This account is not activated. Please check your email and activate your account." &&
-          err.response?.data?.userId !== null
-        ) {
-          navigate(`/verification/${err.response?.data?.data?.userId}`);
-        }
-        console.error(err);
-        toast.error(err.response?.data?.message || "Something went wrong");
-      });
+
+        // Navigate to the previous route or "/" if not available
+        navigate(location.state?.from || "/");
+      }
+    } catch (err) {
+      if (
+        err.response?.status === 401 &&
+        err.response?.data?.message ===
+          "This account is not activated. Please check your email and activate your account." &&
+        err.response?.data?.userId !== null
+      ) {
+        navigate(`/verification/${err.response?.data?.data?.userId}`);
+      }
+      console.error(err);
+      toast.error(err.response?.data?.message || "Something went wrong");
+    }
   };
 
   return (

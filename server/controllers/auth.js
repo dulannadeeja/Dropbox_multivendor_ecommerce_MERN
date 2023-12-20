@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
 const { sendVerificationEmail, sendPasswordResetEmail } = require('../utils/authMailSender.js');
+const { type } = require('os');
 
 module.exports.signup = async (req, res, next) => {
 
@@ -129,13 +130,25 @@ module.exports.login = async (req, res, next) => {
             secure: process.env.NODE_ENV === 'production',
         };
 
+        const userObj = {
+            _id: user._id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            avatar: user.avatar,
+            isActivated: user.isActivated,
+            isSeller: user.isSeller,
+            isAdmin: user.isAdmin,
+            shop: user.shop,
+            addresses: user.addresses,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+            token: token
+        };
+
         res.status(200).cookie("token", token, options).json({
             message: 'Login successful.',
-            token: token,
-            email: user.email,
-            isAdmin: user.isAdmin,
-            isSeller: user.isSeller,
-            userId: user._id.toString()
+            user: userObj,
         });
     }
     catch (err) {
@@ -447,7 +460,8 @@ module.exports.loadUser = async (req, res, next) => {
             shop: user.shop,
             addresses: user.addresses,
             createdAt: user.createdAt,
-            updatedAt: user.updatedAt
+            updatedAt: user.updatedAt,
+            token: req.token
         };
 
         res.status(200).json({

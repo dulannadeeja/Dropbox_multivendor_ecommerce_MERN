@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
+const Product = require('../models/product');
 const { sendVerificationEmail, sendPasswordResetEmail } = require('../utils/authMailSender.js');
 
 module.exports.createShop = async (req, res, next) => {
@@ -85,6 +86,68 @@ module.exports.createShop = async (req, res, next) => {
     }
 };
 
+module.exports.getShop = async (req, res, next) => {
+
+    let shopId = req.params.shopId;
+
+    shopId = '6580a56664d5d26310b752d2';
+    console.log(shopId);
+
+    try {
+
+        const shop = await Shop.findById(shopId);
+
+        if (!shop) {
+            const error = new Error('Could not find shop.');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        res.status(200).json({
+            message: 'Shop fetched.',
+            shop: shop
+        });
+
+    } catch (err) {
+
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+
+module.exports.getProducts = async (req, res, next) => {
+
+    const shopId = '6580a56664d5d26310b752d2';
+    console.log('');
+
+    try {
+
+        const shop = await Shop.findById(shopId);
+
+        if (!shop) {
+            const error = new Error('Could not find shop.');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        const products = await Product.find({ shop: shopId });
+
+        res.status(200).json({
+            message: 'Products fetched.',
+            products: products
+        });
+
+    } catch (err) {
+
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
 
 const clearImage = filePath => {
     filePath = path.join(__dirname, '..', filePath);

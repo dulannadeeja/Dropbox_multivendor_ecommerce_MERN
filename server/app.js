@@ -4,6 +4,7 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const upload = require('./multer');
 
 // configure dotenv
 if (process.env.NODE_ENV !== 'production') {
@@ -30,15 +31,15 @@ process.on('unhandledRejection', err => {
 
 
 // import multer and configure it
-const multer = require('multer');
-const fileStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/images'); // null for no error
-    },
-    filename: (req, file, cb) => {
-        cb(null, uuidv4() + '-' + file.originalname); // null for no error
-    }
-});
+// const multer = require('multer');
+// const fileStorage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, 'uploads/images'); // null for no error
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, uuidv4() + '-' + file.originalname); // null for no error
+//     }
+// });
 
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === 'image/png' ||
@@ -67,7 +68,7 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*'); // allow all origins
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE'); // allow these methods
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // allow these headers
-    res.setHeader('Access-Control-Allow-Credentials', 'true'); // allow credentials
+    res.setHeader('Access-Control-Allow-Credentials', true); // allow credentials
     // allow credentials
     next();
 });
@@ -76,7 +77,7 @@ app.use((req, res, next) => {
 app.use('/uploads/images', express.static(path.join(__dirname, 'uploads/images')));
 
 // multer middleware for parsing multipart/form-data
-app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
+// app.use(upload.array('images', 5));
 
 // parse requests of content-type: application/json
 app.use(bodyParser.json());
@@ -92,11 +93,13 @@ app.use(cookieParser());
 const authRoutes = require('./routes/auth');
 const shopRoutes = require('./routes/shop');
 const sellerRoutes = require('./routes/seller');
+const productRoutes = require('./routes/product');
 
 // middleware for handling feed routes
 app.use('/auth', authRoutes);
 app.use('/shop', shopRoutes);
 app.use('/seller', sellerRoutes);
+app.use('/product', productRoutes);
 
 // error handling middleware
 app.use((error, req, res, next) => {

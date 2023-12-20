@@ -22,4 +22,10 @@ router.put('/shop-create', [
     })
 ], shopController.createShop);
 
+// GET /shop/products/:shopId
+router.get('/products/:shopId', isAuth, shopController.getProducts);
+
+// GET /shop/:shopId
+router.get('/:shopId', isAuth, shopController.getShop);
+
 module.exports = router;

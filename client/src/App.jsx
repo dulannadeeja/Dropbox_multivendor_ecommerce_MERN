@@ -25,17 +25,76 @@ import { loadUser } from "./redux/actions/user.js";
 import OrdersPage from "./components/Profile/OrdersTable";
 import ProtectedRoutes from "./ProtectedRoutes.jsx";
 import { useSelector } from "react-redux";
+import Loader from "./components/Loader.jsx";
+import { ShopDashboardPage } from "./ShopRoutes.js";
+import { loadShop } from "./redux/actions/shop.js";
+import { toast } from "react-toastify";
+import STATUS from "./constants/status.js";
 
 const App = () => {
-  const { loading } = useSelector((state) => state.user);
-  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const {
+    user,
+    isAuthenticated,
+    isSeller,
+    currentStatus: userCurrentStatus,
+  } = useSelector((state) => state.user);
+  const {
+    shop,
+    error,
+    currentStatus: shopCurrentStatus,
+  } = useSelector((state) => state.shop);
 
   useEffect(() => {
-    Store.dispatch(loadUser());
-  }, []); // The empty dependency array means this effect runs once when the component mounts
+    const fetchAuthInfo = async () => {
+      try {
+        console.log("Fetching auth info");
+        await Store.dispatch(loadUser());
+      } catch (err) {
+        toast.error(err?.message || "Something went wrong");
+      }
+    };
+
+    fetchAuthInfo();
+  }, []);
+
+  const [loading, setLoading] = React.useState(true);
+
+  useEffect(() => {
+    console.log(userCurrentStatus);
+    const fetchShopInfo = async () => {
+      try {
+        await Store.dispatch(loadShop(user?._id));
+      } catch (err) {
+        toast.error(err?.message || "Something went wrong");
+      }
+    };
+    if (isAuthenticated && isSeller) {
+      console.log("Fetching shop info");
+      fetchShopInfo();
+    }
+  }, [isAuthenticated, isSeller]);
+
+  useEffect(() => {
+    if (
+      userCurrentStatus === STATUS.IDLE ||
+      userCurrentStatus === STATUS.LOADING ||
+      shopCurrentStatus === STATUS.IDLE ||
+      shopCurrentStatus === STATUS.LOADING
+    ) {
+      setLoading(true);
+    }
+    if (
+      userCurrentStatus === STATUS.SUCCESS ||
+      userCurrentStatus === STATUS.FAILURE ||
+      shopCurrentStatus === STATUS.SUCCESS ||
+      shopCurrentStatus === STATUS.FAILURE
+    ) {
+      setLoading(false);
+    }
+  }, [userCurrentStatus, shopCurrentStatus]);
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <Loader />;
   }
 
   return (
@@ -58,20 +117,14 @@ const App = () => {
           <Route path="/best-selling" element={<BestSellingPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/Faq" element={<FAQPage />} />
-          <Route
-            path="/orders"
-            element={
-              <ProtectedRoutes>
-                <OrdersPage />
-              </ProtectedRoutes>
-            }
-          />
+          <Route path="/orders" element={<OrdersPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/seller/signup" element={<SellerSignupPage />} />
           <Route
             path="/shop/verification/:shopId"
             element={<StartVerificationPage />}
           />
+          <Route path="/shop/dashboard" element={<ShopDashboardPage />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />
