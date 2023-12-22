@@ -4,6 +4,7 @@ const Product = require('../models/product');
 const Shop = require('../models/shop');
 const fs = require('fs');
 const path = require('path');
+const { getRatingByReviews, getRatingsAddedProducts } = require('../utils/ratingCalculator');
 
 
 
@@ -168,6 +169,77 @@ module.exports.delete = async (req, res, next) => {
         });
 
         console.log('Product deleted successfully.');
+
+    } catch (err) {
+        if (!err.message) {
+            err.message = 'Internal server error.';
+        }
+
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
+module.exports.getBestSellingProducts = async (req, res, next) => {
+    try {
+        let products = await Product.find().sort({ 'sold': -1 }).limit(10);
+
+        if (!products) {
+            const error = new Error('Could not find products.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        // calculate ratings by reviews
+        products = getRatingsAddedProducts(products);
+
+        res.status(200).json({
+            message: 'Best selling products fetched successfully.',
+            products: products
+        });
+
+    } catch (err) {
+        if (!err.message) {
+            err.message = 'Internal server error.';
+        }
+
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
+module.exports.getFeaturedProducts = async (req, res, next) => {
+    try {
+        const products = await Product.find();
+
+        if (!products) {
+            const error = new Error('Could not find products.');
+            error.statusCode = 500;
+            throw error;
+        }
+        const calculateFeaturedScore = (product) => {
+            return product.rating * 0.5 + (new Date() - product.createdAt) * 0.1;
+        };
+
+        products.forEach(product => {
+            product.featuredScore = calculateFeaturedScore(product);
+        });
+
+        let featuredProducts = products
+            .sort((a, b) => b.featuredScore - a.featuredScore)
+            .slice(0, 10);
+
+        // calculate ratings by reviews
+        featuredProducts = getRatingsAddedProducts(featuredProducts);
+
+        res.status(200).json({
+            message: 'Featured products fetched successfully.',
+            products: featuredProducts
+        });
 
     } catch (err) {
         if (!err.message) {

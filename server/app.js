@@ -16,14 +16,14 @@ if (process.env.NODE_ENV !== 'production') {
 // handling uncaught exceptions
 process.on('uncaughtException', err => {
     console.log('Uncaught Exception! Shutting down...');
-    console.log(err.name, err.message);
+    console.log(err);
     process.exit(1);
 });
 
 // handling unhandled rejections
 process.on('unhandledRejection', err => {
     console.log('Unhandled Rejection! Shutting down...');
-    console.log(err.name, err.message);
+    console.log(err);
     server.close(() => {
         process.exit(1);
     });

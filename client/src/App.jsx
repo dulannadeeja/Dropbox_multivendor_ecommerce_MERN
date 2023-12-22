@@ -33,6 +33,7 @@ import STATUS from "./constants/status.js";
 import ShopPreviewPage from "./pages/shop/ShopPreviewPage.jsx";
 
 const App = () => {
+  const dispatch = Store.dispatch;
   const {
     user,
     isAuthenticated,
@@ -57,8 +58,9 @@ const App = () => {
   useEffect(() => {
     const fetchAuthInfo = async () => {
       try {
+        await dispatch({ type: "LoadCart" });
         console.log("Fetching auth info");
-        await Store.dispatch(loadUser());
+        await dispatch(loadUser());
       } catch (err) {
         console.error(err);
       }
@@ -73,7 +75,7 @@ const App = () => {
     console.log(userCurrentStatus);
     const fetchShopInfo = async () => {
       try {
-        await Store.dispatch(loadShop(user?.shop));
+        await dispatch(loadShop(user?.shop));
       } catch (err) {
         console.error(err);
       }

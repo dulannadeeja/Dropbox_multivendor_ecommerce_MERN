@@ -22,4 +22,10 @@ router.put('/create', upload.array('images', 5), [
 // DELETE /product/delete/:productId
 router.delete('/delete/:productId', isAuth, productController.delete);
 
+// GET /product/best-Deals
+router.get('/best-selling', productController.getBestSellingProducts);
+
+// GET /product/featured
+router.get('/featured', productController.getFeaturedProducts);
+
 module.exports = router;

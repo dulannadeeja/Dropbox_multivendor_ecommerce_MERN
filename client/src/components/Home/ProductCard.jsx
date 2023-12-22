@@ -10,10 +10,22 @@ import styles from "../../styles/styles";
 import Ratings from "../Product/Ratings";
 import ProductDetailsCard from "./ProductDetailsCard";
 import { server } from "../../server";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../redux/actions/addToCart";
 
 const ProductCard = ({ product }) => {
+  const dispatch = useDispatch();
   const [click, setClick] = useState(false);
   const [view, setView] = useState(false);
+
+  const handleAddToCart = async (product) => {
+    console.log(product);
+    try {
+      await dispatch(addToCart({ product, quantity: 1 }));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
@@ -90,6 +102,9 @@ const ProductCard = ({ product }) => {
             className="cursor-pointer absolute right-2 top-24"
             color="#444"
             title="Add to cart"
+            onClick={() => {
+              handleAddToCart(product);
+            }}
           />
         </div>
 
