@@ -58,3 +58,8 @@ input[type="number"] {
 #phoneInput .react-tel-input .flag-dropdown {
   border: 1px solid #6b7280;
 }
+
+.button-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

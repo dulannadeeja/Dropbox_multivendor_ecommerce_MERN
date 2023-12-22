@@ -34,13 +34,19 @@ export const userReducer = createReducer(initialState, (builder) => {
         .addCase('clearErrors', (state) => {
             state.error = null;
         })
-        .addCase('LOGOUT', (state) => {
+        .addCase('LogoutUserRequest', (state) => {
+            state.currentStatus = STATUS.LOADING;
+        })
+        .addCase('LogoutUserRequestSuccess', (state) => {
+            state.currentStatus = STATUS.SUCCESS;
             state.isAuthenticated = false;
-            state.currentStatus = STATUS.IDLE;
             state.user = null;
             state.isSeller = false;
             state.isAdmin = false;
             state.shop = null;
             state.token = null;
+        })
+        .addCase('LogoutUserRequestFailure', (state) => {
+            state.currentStatus = STATUS.FAILURE;
         })
 });

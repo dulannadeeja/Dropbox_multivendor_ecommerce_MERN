@@ -94,12 +94,14 @@ const authRoutes = require('./routes/auth');
 const shopRoutes = require('./routes/shop');
 const sellerRoutes = require('./routes/seller');
 const productRoutes = require('./routes/product');
+const eventRoutes = require('./routes/event');
 
 // middleware for handling feed routes
 app.use('/auth', authRoutes);
 app.use('/shop', shopRoutes);
 app.use('/seller', sellerRoutes);
 app.use('/product', productRoutes);
+app.use('/event', eventRoutes);
 
 // error handling middleware
 app.use((error, req, res, next) => {

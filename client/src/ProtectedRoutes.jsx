@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
 
 const ProtectedRoutes = () => {
   const location = useLocation();
@@ -12,7 +11,7 @@ const ProtectedRoutes = () => {
   }, [isAuthenticated]);
 
   if (!isAuthenticated) {
-    // return <Navigate to="/login" state={{ from: location }} />;
+    return <Navigate to="/login" state={{ from: location }} />;
   }
 
   return <Outlet />;

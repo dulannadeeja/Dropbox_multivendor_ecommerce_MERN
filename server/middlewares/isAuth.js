@@ -29,11 +29,10 @@ module.exports = (req, res, next) => {
         }
         req.userId = decodedToken.userId;
         req.token = token;
+        req.shopId = req.params.shopId;
 
-        // hold some time to test loading spinner
-        setTimeout(() => {
-            next();
-        }, 5000);
+        next();
+
 
     }
     catch (err) {

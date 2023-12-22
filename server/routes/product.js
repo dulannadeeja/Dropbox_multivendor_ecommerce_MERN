@@ -19,4 +19,7 @@ router.put('/create', upload.array('images', 5), [
     body('tags').trim().not().isEmpty().withMessage('Product tags is required.')
 ], isAuth, productController.create);
 
+// DELETE /product/delete/:productId
+router.delete('/delete/:productId', isAuth, productController.delete);
+
 module.exports = router;

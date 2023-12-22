@@ -18,11 +18,12 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import Loader from "../Loader";
+import { logoutUser } from "../../redux/actions/logoutUser";
 
 const ProfileSidebar = ({ setActive, active }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, isAuthenticated } = useSelector((state) => state);
+  const { user, isAuthenticated, token } = useSelector((state) => state.user);
 
   const [loading, setLoading] = React.useState(false);
 
@@ -30,16 +31,9 @@ const ProfileSidebar = ({ setActive, active }) => {
     setLoading(true);
 
     try {
-      const res = await axios.get(`${server}/auth/logout`, {
-        withCredentials: true,
-      });
-
-      if (res.status !== 200) {
-        const error = new Error(res.error);
-        throw error;
-      }
-      await dispatch({ type: "LOGOUT" });
-      navigate("/");
+      console.log("Logging out");
+      console.log(token);
+      await dispatch(logoutUser({ token }));
     } catch (err) {
       console.error(err);
       toast.error(err.response?.data?.message || "Something went wrong");

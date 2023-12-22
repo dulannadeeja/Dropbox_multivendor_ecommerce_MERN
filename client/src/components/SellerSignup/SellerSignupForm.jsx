@@ -13,7 +13,12 @@ import ContactInfo from "./ContactInfoForm.jsx";
 import ShopSetup from "./ShopSetupForm.jsx";
 
 const SellerSignupForm = () => {
-  const { user } = useSelector((state) => state.user);
+  const {
+    user,
+    token,
+    isAuthenticated,
+    currentStatus: userCurrentStatus,
+  } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
   const {
@@ -41,7 +46,7 @@ const SellerSignupForm = () => {
       firstStepInfo.zip = user.zip;
       firstStepInfo.phone = user.phone;
     }
-  }, []);
+  }, [userCurrentStatus]);
 
   const handleSubmit = async () => {
     try {
@@ -76,12 +81,14 @@ const SellerSignupForm = () => {
       formData.append("contactName", thirdStepInfo.contactName);
 
       const config = {
-        "Content-Type": "multipart/form-data",
-        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       };
 
       await axios
-        .post(`${server}/seller/signup`, formData, config)
+        .put(`${server}/seller/signup`, formData, config)
         .then((res) => {
           if (res.status === 201) {
             toast.success(res.data.message);

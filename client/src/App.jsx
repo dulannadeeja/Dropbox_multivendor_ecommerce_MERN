@@ -30,6 +30,7 @@ import { ShopDashboardPage } from "./ShopRoutes.js";
 import { loadShop } from "./redux/actions/shop.js";
 import { toast } from "react-toastify";
 import STATUS from "./constants/status.js";
+import ShopPreviewPage from "./pages/shop/ShopPreviewPage.jsx";
 
 const App = () => {
   const {
@@ -45,12 +46,21 @@ const App = () => {
   } = useSelector((state) => state.shop);
 
   useEffect(() => {
+    if (
+      shopCurrentStatus === STATUS.FAILURE ||
+      userCurrentStatus === STATUS.FAILURE
+    ) {
+      console.log("Error", error);
+    }
+  }, [shopCurrentStatus, userCurrentStatus]);
+
+  useEffect(() => {
     const fetchAuthInfo = async () => {
       try {
         console.log("Fetching auth info");
         await Store.dispatch(loadUser());
       } catch (err) {
-        toast.error(err?.message || "Something went wrong");
+        console.error(err);
       }
     };
 
@@ -63,13 +73,13 @@ const App = () => {
     console.log(userCurrentStatus);
     const fetchShopInfo = async () => {
       try {
-        await Store.dispatch(loadShop(user?._id));
+        await Store.dispatch(loadShop(user?.shop));
       } catch (err) {
-        toast.error(err?.message || "Something went wrong");
+        console.error(err);
       }
     };
-    if (isAuthenticated && isSeller) {
-      console.log("Fetching shop info");
+    if (userCurrentStatus === STATUS.SUCCESS && isSeller) {
+      console.log("Fetching shop info" + userCurrentStatus);
       fetchShopInfo();
     }
   }, [isAuthenticated, isSeller]);
@@ -78,10 +88,10 @@ const App = () => {
     if (
       userCurrentStatus === STATUS.IDLE ||
       userCurrentStatus === STATUS.LOADING ||
-      shopCurrentStatus === STATUS.IDLE ||
       shopCurrentStatus === STATUS.LOADING
     ) {
       setLoading(true);
+      return;
     }
     if (
       userCurrentStatus === STATUS.SUCCESS ||
@@ -118,13 +128,21 @@ const App = () => {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/Faq" element={<FAQPage />} />
           <Route path="/orders" element={<OrdersPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/seller/signup" element={<SellerSignupPage />} />
+
+          <Route path="/profile" element={<ProtectedRoutes />}>
+            <Route index element={<ProfilePage />} />
+          </Route>
+          <Route path="/seller/signup" element={<ProtectedRoutes />}>
+            <Route index element={<SellerSignupPage />} />
+          </Route>
           <Route
             path="/shop/verification/:shopId"
             element={<StartVerificationPage />}
           />
-          <Route path="/shop/dashboard" element={<ShopDashboardPage />} />
+          <Route path="/shop/dashboard" element={<ProtectedRoutes />}>
+            <Route index element={<ShopDashboardPage />} />
+          </Route>
+          <Route path="/shop/:shopId" element={<ShopPreviewPage />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

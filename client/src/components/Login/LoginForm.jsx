@@ -28,10 +28,11 @@ const LoginForm = () => {
 
     const config = {
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
       },
-      withCredentials: true,
     };
+
+    console.log("Logging in");
 
     try {
       const res = await axios.post(`${server}/auth/login`, formData, config);
@@ -51,6 +52,7 @@ const LoginForm = () => {
         navigate(location.state?.from || "/");
       }
     } catch (err) {
+      console.error(err);
       if (
         err.response?.status === 401 &&
         err.response?.data?.message ===

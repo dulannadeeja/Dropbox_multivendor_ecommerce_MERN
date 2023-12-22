@@ -1,6 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const User = require('../models/user');
+const upload = require('../multer');
 
 const feedController = require('../controllers/auth');
 const isAuth = require('../middlewares/isAuth');
@@ -8,7 +9,7 @@ const isAuth = require('../middlewares/isAuth');
 const router = express.Router();
 
 // PUT /auth/signup
-router.put('/signup', [
+router.put('/signup', upload.single('image'), [
     body('firstName').trim().not().isEmpty().withMessage('First name is required.'),
     body('lastName').trim().not().isEmpty().withMessage('Last name is required.'),
     body('email').isEmail().withMessage('Please enter a valid email.')

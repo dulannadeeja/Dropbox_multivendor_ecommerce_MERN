@@ -59,9 +59,9 @@ const DashboardHeader = () => {
               className="mx-5 cursor-pointer"
             />
           </Link>
-          <Link to={`/shop/${user?._id}`}>
+          <Link to={`/shop/${shop?._id}`}>
             <img
-              src={`${server}/${user?.avatar}`}
+              src={`${server}/${shop?.avatar}`}
               alt=""
               className="w-[50px] h-[50px] rounded-full object-cover"
             />

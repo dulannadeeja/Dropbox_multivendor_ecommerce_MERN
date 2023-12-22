@@ -5,6 +5,8 @@ const initialShopState = {
     shop: null,
     currentStatus: STATUS.IDLE,
     error: null,
+    products: null,
+    productsStatus: STATUS.IDLE,
 };
 
 export const shopReducer = createReducer(initialShopState, (builder) => {
@@ -20,5 +22,16 @@ export const shopReducer = createReducer(initialShopState, (builder) => {
         .addCase('LoadShopFailure', (state, action) => {
             state.currentStatus = STATUS.FAILURE;
             state.error = action.payload;
-        });
+        })
+        .addCase('LoadShopProductsRequest', (state) => {
+            state.productsStatus = STATUS.LOADING;
+        })
+        .addCase('LoadShopProductsSuccess', (state, action) => {
+            state.productsStatus = STATUS.SUCCESS;
+            state.products = action.payload;
+        })
+        .addCase('LoadShopProductsFailure', (state, action) => {
+            state.productsStatus = STATUS.FAILURE;
+            state.error = action.payload;
+        })
 });

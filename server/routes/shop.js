@@ -23,9 +23,15 @@ router.put('/shop-create', [
 ], shopController.createShop);
 
 // GET /shop/products/:shopId
-router.get('/products/:shopId', isAuth, shopController.getProducts);
+router.get('/products/:shopId', shopController.getProducts);
 
 // GET /shop/:shopId
 router.get('/:shopId', isAuth, shopController.getShop);
+
+// GET /shop/get-shop-info/:shopId
+router.get('/get-shop-info/:shopId', shopController.getShopInfo);
+
+// GET /shop/reviews/:shopId
+router.get('/reviews/:shopId', shopController.getReviews);
 
 module.exports = router;

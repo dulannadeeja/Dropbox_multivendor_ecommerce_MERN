@@ -19,9 +19,12 @@ const ShopDashboardPage = () => {
 
   React.useEffect(() => {
     setLoading(true);
-    if (!isAuthenticated || !isSeller) {
+    if (!isAuthenticated) {
       const nextState = { from: location };
       navigate("/login", { state: nextState });
+    }
+    if (isAuthenticated && isSeller) {
+      navigate("/shop/dashboard");
     }
   }, [user, shop]);
 

@@ -8,7 +8,7 @@ const isAuth = require('../middlewares/isAuth');
 const router = express.Router();
 
 // PUT /seller/signup
-router.post('/signup', [
+router.put('/signup', [
     body('firstName').trim().not().isEmpty().withMessage('First name is required.'),
     body('lastName').trim().not().isEmpty().withMessage('Last name is required.'),
     body('email').isEmail().withMessage('Please enter a valid email.')

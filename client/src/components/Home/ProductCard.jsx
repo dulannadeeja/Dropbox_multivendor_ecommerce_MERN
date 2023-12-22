@@ -9,8 +9,9 @@ import { Link } from "react-router-dom";
 import styles from "../../styles/styles";
 import Ratings from "../Product/Ratings";
 import ProductDetailsCard from "./ProductDetailsCard";
+import { server } from "../../server";
 
-const ProductCard = ({ data, isEvent }) => {
+const ProductCard = ({ product }) => {
   const [click, setClick] = useState(false);
   const [view, setView] = useState(false);
 
@@ -18,48 +19,42 @@ const ProductCard = ({ data, isEvent }) => {
     <>
       <div className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
         <div className="flex justify-end"></div>
-        <Link
-          to={`${
-            isEvent === true
-              ? `/products/${data.id}?isEvent=true`
-              : `/products/${data.id}`
-          }`}
-        >
+        <Link to={`${server}/products/${product._id}`}>
           <img
-            src={`${data.image_Url && data.image_Url[0]?.url}`}
+            src={`${product?.defaultImage?.url}`}
             alt=""
             className="w-full h-[170px] object-contain"
           />
         </Link>
-        <Link to={`/shop/preview/${data?.shop._id}`}>
-          <h5 className={`${styles.shop_name}`}>{data.shop.name}</h5>
+        <Link to={`/shop/preview/${product._id}`}>
+          <h5 className={`${styles.shop_name}`}>{product.name}</h5>
         </Link>
         <Link
           to={`${
-            isEvent === true
-              ? `/product/${data._id}?isEvent=true`
-              : `/product/${data._id}`
+            true
+              ? `/product/${product._id}?isEvent=true`
+              : `/product/${product._id}`
           }`}
         >
           <h4 className="pb-3 font-[500]">
-            {data.name.length > 40 ? data.name.slice(0, 40) + "..." : data.name}
+            {product.name.length > 40
+              ? product.name.slice(0, 40) + "..."
+              : product.name}
           </h4>
 
           <div className="flex">
-            <Ratings rating={data?.rating} />
+            <Ratings rating={product.ratings} />
           </div>
 
           <div className="py-2 flex items-center justify-between">
             <div className="flex">
               <h5 className={`${styles.productDiscountPrice}`}>
-                {data.discount_price ? data.discount_price + " $" : null}$
+                {product.discountPrice ? product.discountPrice + " $" : null}$
               </h5>
-              <h4 className={`${styles.price}`}>
-                {data.price ? data.price + " $" : null}
-              </h4>
+              <h4 className={`${styles.price}`}>{product.originalPrice}</h4>
             </div>
             <span className="font-[400] text-[17px] text-[#68d284]">
-              {data?.total_sell} sold
+              {product.sold_out} sold
             </span>
           </div>
         </Link>
@@ -99,7 +94,7 @@ const ProductCard = ({ data, isEvent }) => {
         </div>
 
         {/* product-Details popup */}
-        {view ? <ProductDetailsCard data={data} setView={setView} /> : null}
+        {view ? <ProductDetailsCard data={product} setView={setView} /> : null}
       </div>
     </>
   );

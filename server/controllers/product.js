@@ -120,6 +120,67 @@ module.exports.create = async (req, res, next) => {
     }
 };
 
+module.exports.delete = async (req, res, next) => {
+    const productId = req.params.productId;
+    const userId = req.userId;
+
+    console.log(productId);
+    console.log(userId);
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            const error = new Error('Could not find user.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            const error = new Error('Could not find product.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        if (product.seller.toString() !== userId.toString()) {
+            const error = new Error('Not authorized to delete this product.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        // delete images from server
+        // product.images.forEach(image => {
+        //     clearImage(image.url);
+        // });
+
+        await Product.findByIdAndDelete(productId);
+
+        if (!product) {
+            const error = new Error('Could not delete product.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        res.status(200).json({
+            message: 'Product deleted successfully.'
+        });
+
+        console.log('Product deleted successfully.');
+
+    } catch (err) {
+        if (!err.message) {
+            err.message = 'Internal server error.';
+        }
+
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
 const clearImage = filePath => {
     filePath = path.join(__dirname, '..', filePath);
     console.log(filePath);

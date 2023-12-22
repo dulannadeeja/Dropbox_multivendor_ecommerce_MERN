@@ -15,10 +15,10 @@ const ProfilePage = () => {
   const [active, setActive] = useState(1);
 
   React.useEffect(() => {
-    if (!isAuthenticated) {
-      const nextState = { from: location };
-      navigate("/login", { state: nextState });
-    }
+    // if (!isAuthenticated) {
+    //   const nextState = { from: location };
+    //   navigate("/login", { state: nextState });
+    // }
   }, [user]);
 
   return (

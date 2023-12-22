@@ -13,6 +13,9 @@ const shopSchema = new Schema({
     contactPhone: { type: String, required: true },
     contactEmail: { type: String, required: true },
     isActivated: { type: Boolean, default: false },
+    shopAvatar: { type: String, required: false },
+    shopBanner: { type: String, required: false },
+    description: { type: String, required: false },
 }, { timestamps: true });
 
 module.exports = mongoose.model('shop', shopSchema);

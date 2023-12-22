@@ -3,25 +3,43 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import SellerSignupForm from "../components/SellerSignup/SellerSignupForm";
 import { SellerSignupProvider } from "../contexts/SellerSignupContext";
+import Loader from "../components/Loader";
+import { toast } from "react-toastify";
+import { useLocation } from "react-router-dom";
 
 const SellerSignupPage = () => {
+  const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.user);
-  const isSeller = user?.isSeller;
-  const shop = user?.shop;
+  const { user, isAuthenticated, isSeller } = useSelector(
+    (state) => state.user
+  );
+  const [loading, setLoading] = React.useState(true);
+  const { shop } = useSelector((state) => state.shop);
 
-  useEffect(() => {
-    if (isSeller === true) {
-      navigate(`/shop/${shop}`);
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      const nextState = { from: location };
+      navigate("/login", { state: nextState });
     }
-  }, [isSeller, shop]);
+
+    if (isAuthenticated && isSeller) {
+      navigate("/shop/dashboard");
+    }
+    setLoading(false);
+  }, [user, shop, isAuthenticated, isSeller]);
 
   return (
-    <div className="800px:flex w-full">
-      <SellerSignupProvider>
-        <SellerSignupForm />
-      </SellerSignupProvider>
-    </div>
+    <>
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className="800px:flex w-full">
+          <SellerSignupProvider>
+            <SellerSignupForm />
+          </SellerSignupProvider>
+        </div>
+      )}
+    </>
   );
 };
 
