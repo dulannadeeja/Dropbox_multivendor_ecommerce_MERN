@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AiFillHeart,
   AiOutlineEye,
@@ -12,11 +12,37 @@ import ProductDetailsCard from "./ProductDetailsCard";
 import { server } from "../../server";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../redux/actions/addToCart";
+import { useSelector } from "react-redux";
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
+  const { items } = useSelector((state) => state.wishlist);
   const [click, setClick] = useState(false);
   const [view, setView] = useState(false);
+
+  useEffect(() => {
+    if (items.find((i) => i._id === product._id)) {
+      setClick(true);
+    } else {
+      setClick(false);
+    }
+  }, [items]);
+
+  const handleAddToWishlist = async (product) => {
+    try {
+      await dispatch({ type: "AddToWishlist", payload: { ...product } });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDeleteFromWishlist = async (product) => {
+    try {
+      await dispatch({ type: "DeleteFromWishlist", payload: { ...product } });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleAddToCart = async (product) => {
     console.log(product);
@@ -79,7 +105,7 @@ const ProductCard = ({ product }) => {
               className="cursor-pointer absolute right-2 top-5"
               color={click ? "red" : "#333"}
               title="Remove from wishlist"
-              onClick={() => setClick(false)}
+              onClick={() => handleDeleteFromWishlist(product)}
             />
           ) : (
             <AiOutlineHeart
@@ -87,7 +113,7 @@ const ProductCard = ({ product }) => {
               className="cursor-pointer absolute right-2 top-5"
               color={click ? "red" : "#333"}
               title="Add to wishlist"
-              onClick={() => setClick(true)}
+              onClick={() => handleAddToWishlist(product)}
             />
           )}
           <AiOutlineEye

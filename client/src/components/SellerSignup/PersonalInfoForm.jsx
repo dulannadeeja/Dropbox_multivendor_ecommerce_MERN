@@ -1,12 +1,7 @@
 import { React, useEffect, useState } from "react";
-import axios from "axios";
-import { server } from "../../server";
 import { Country, State, City } from "country-state-city";
-import { toast } from "react-toastify";
 import styles from "../../styles/styles";
 import PhoneInput from "./PhoneInput";
-import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
 import validatePersonalInfo from "../../validations/personalInfoValidation";
 import { useSellerSignupContext } from "../../contexts/SellerSignupContext";
 import { hasValues } from "../../utils/objectHelper";

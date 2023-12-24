@@ -13,6 +13,8 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@reduxjs/toolkit": "^2.0.1",
+    "@stripe/react-stripe-js": "^2.4.0",
+    "@stripe/stripe-js": "^2.2.2",
     "@tailwindcss/forms": "^0.5.7",
     "axios": "^1.6.2",
     "country-state-city": "^3.2.1",

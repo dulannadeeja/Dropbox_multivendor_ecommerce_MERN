@@ -1,8 +1,8 @@
 import React from "react";
 import Lottie from "lottie-react";
-import animationData from "../assets/animations/Animation - 1703057192210.json";
+import animationData from "../../assets/animations/Animation - 1703406572704.json";
 
-const Loader = () => {
+const OrderCompleted = () => {
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -13,7 +13,7 @@ const Loader = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 bg-transparent w-full h-full flex flex-col items-center justify-center">
+    <div className="w-full h-full flex justify-center items-center">
       <Lottie
         animationData={animationData}
         options={defaultOptions}
@@ -24,4 +24,4 @@ const Loader = () => {
   );
 };
 
-export default Loader;
+export default OrderCompleted;

@@ -26,9 +26,11 @@ const addressSchema = new mongoose.Schema({
         required: true
     },
     phone: {
-        type: String,
-        required: true
-    }
+        type: String
+    },
+    addressNickname: {
+        type: String
+    },
 });
 
 const Address = mongoose.model('Address', addressSchema);

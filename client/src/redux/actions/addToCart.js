@@ -1,3 +1,5 @@
+import { toast } from 'react-toastify';
+
 export const addToCart = ({ product, quantity }) => async (dispatch, getState) => {
     try {
 
@@ -10,14 +12,19 @@ export const addToCart = ({ product, quantity }) => async (dispatch, getState) =
                 type: 'UpdateCart',
                 payload: { ...product, quantity: newQuantity },
             });
+
+            toast.success('Cart updated successfully');
         } else {
             dispatch({
                 type: 'AddToCart',
                 payload: { ...product, quantity },
             });
+
+            toast.success('Added to cart successfully');
         }
 
     } catch (err) {
+        toast.error('Error adding to cart');
         console.log(err);
     }
 };

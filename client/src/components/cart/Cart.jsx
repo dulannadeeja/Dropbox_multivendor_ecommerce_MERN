@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { RxCross1 } from "react-icons/rx";
 import { IoBagHandleOutline } from "react-icons/io5";
-import { HiOutlineMinus, HiPlus } from "react-icons/hi";
 import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
 import CartItem from "./CartItem";
 import { useSelector } from "react-redux";
 

@@ -18,7 +18,7 @@ import OrdersTable from "./OrdersTable";
 import RefundOrdersTable from "./RefundOrdersTable";
 import TrackOrdersTable from "./TrackOrdersTable";
 import PaymentMethods from "./PaymentMethods";
-import Addresses from "./Addresses";
+import Addresses from "./Addresses/Addresses";
 import ChangePassword from "./ChangePassword";
 
 const ProfileContent = ({ active }) => {

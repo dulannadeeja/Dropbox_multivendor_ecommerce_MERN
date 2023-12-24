@@ -13,8 +13,6 @@ const PhoneInputComponent = ({ handleOnPhoneChange }) => {
   const { currentStep, firstStepInfo, thirdStepinfo } =
     useSellerSignupContext();
 
-  useEffect(() => {});
-
   const handleOnChange = (value, country, e, formattedValue) => {
     // 'value' will be the phone number in international format
     // 'country' will be the selected country

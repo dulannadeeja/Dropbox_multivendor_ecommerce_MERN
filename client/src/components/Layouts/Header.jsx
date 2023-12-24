@@ -23,6 +23,9 @@ import Cart from "../cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
 
 const Header = () => {
+  const { items: cart } = useSelector((state) => state.cart);
+  const { items: wishlist } = useSelector((state) => state.wishlist);
+
   const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
   const { isAuthenticated } = useSelector((state) => state.user);
   const { user } = useSelector((state) => state.user);
@@ -36,9 +39,6 @@ const Header = () => {
   const [openWishlist, setOpenWishlist] = React.useState(false);
   const [mobile, setMobile] = React.useState(false);
   const location = useLocation();
-
-  const wishlist = [1, 2];
-  const cart = [1, 2];
 
   const handleScroll = () => {
     if (window.scrollY > 100) {

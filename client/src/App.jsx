@@ -15,6 +15,8 @@ import {
   ProductDetailsPage,
   ProfilePage,
   SellerSignupPage,
+  PaymentPage,
+  OrderCompletedPage,
 } from "./Routes.js";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
@@ -31,6 +33,11 @@ import { loadShop } from "./redux/actions/shop.js";
 import { toast } from "react-toastify";
 import STATUS from "./constants/status.js";
 import ShopPreviewPage from "./pages/shop/ShopPreviewPage.jsx";
+import CheckoutPage from "./pages/CheckoutPage.jsx";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { server } from "./server.js";
+import axios from "axios";
 
 const App = () => {
   const dispatch = Store.dispatch;
@@ -45,6 +52,7 @@ const App = () => {
     error,
     currentStatus: shopCurrentStatus,
   } = useSelector((state) => state.shop);
+  const [stripeKey, setStripeKey] = React.useState(null);
 
   useEffect(() => {
     if (
@@ -68,6 +76,32 @@ const App = () => {
 
     fetchAuthInfo();
   }, []);
+
+  useEffect(() => {
+    const getStripeKey = async () => {
+      console.log("Fetching stripe key");
+      try {
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${user?.token}`,
+          },
+        };
+        const { data } = await axios.get(
+          `${server}/payment/stripe-key`,
+          config,
+          { withCredentials: true }
+        );
+        setStripeKey(data.stripe_key);
+        console.log(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    if (userCurrentStatus === STATUS.SUCCESS) {
+      getStripeKey();
+    }
+  }, [isAuthenticated]);
 
   const [loading, setLoading] = React.useState(true);
 
@@ -112,6 +146,14 @@ const App = () => {
   return (
     <>
       <BrowserRouter>
+        {stripeKey && (
+          <Elements stripe={loadStripe(stripeKey)}>
+            <Routes>
+              <Route path="/payment" element={<PaymentPage />} />
+              <Route path="/order-completed" element={<OrderCompletedPage />} />
+            </Routes>
+          </Elements>
+        )}
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<h1>About</h1>} />
@@ -145,6 +187,7 @@ const App = () => {
             <Route index element={<ShopDashboardPage />} />
           </Route>
           <Route path="/shop/:shopId" element={<ShopPreviewPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

@@ -2,15 +2,13 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
 
-    console.log('isAuth middleware');
-    console.log(req.headers);
-
     let token = req.cookies.token;
 
     if (req.headers.authorization) {
         token = req.headers.authorization.split(' ')[1];
-        console.log(token);
     }
+
+    console.log(token);
 
     let decodedToken;
 
