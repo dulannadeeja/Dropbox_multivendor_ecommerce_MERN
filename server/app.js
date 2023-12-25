@@ -97,6 +97,7 @@ const productRoutes = require('./routes/product');
 const eventRoutes = require('./routes/event');
 const userRoutes = require('./routes/user');
 const paymentRoutes = require('./routes/payment');
+const Coupon = require('./routes/coupon');
 
 // middleware for handling feed routes
 app.use('/auth', authRoutes);
@@ -106,6 +107,7 @@ app.use('/product', productRoutes);
 app.use('/event', eventRoutes);
 app.use('/user', userRoutes);
 app.use('/payment', paymentRoutes);
+app.use('/coupon', Coupon);
 
 // error handling middleware
 app.use((error, req, res, next) => {

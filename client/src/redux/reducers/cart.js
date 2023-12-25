@@ -4,6 +4,11 @@ import STATUS from '../../constants/status';
 const initialCartState = {
     items: [],
     cartTotal: 0,
+    isCouponApplied: false,
+    coupon: null,
+    couponDiscount: 0,
+    couponError: null,
+    isCouponLoading: false
 };
 
 export const cartReducer = createReducer(initialCartState, (builder) => {
@@ -102,6 +107,32 @@ export const cartReducer = createReducer(initialCartState, (builder) => {
             state.cartTotal = cartTotal;
 
             localStorage.setItem('cart', JSON.stringify(updatedCart));
+        })
+        .addCase('ApplyCoupounRequest', (state) => {
+            state.isCouponLoading = true;
+            state.isCouponApplied = false;
+            state.coupon = null;
+            state.couponDiscount = 0;
+            state.couponError = null;
+        })
+        .addCase('ApplyCouponSuccess', (state, action) => {
+            state.isCouponLoading = false;
+            state.isCouponApplied = true;
+            state.coupon = action.payload.coupon;
+            state.couponDiscount = action.payload.discount;
+        })
+        .addCase('ApplyCoupounFail', (state, action) => {
+            state.isCouponLoading = false;
+            state.couponError = action.payload;
+            state.isCouponApplied = false;
+            state.coupon = null;
+            state.couponDiscount = 0;
+        })
+        .addCase('RemoveCoupon', (state) => {
+            state.isCouponApplied = false;
+            state.coupon = null;
+            state.couponDiscount = 0;
+            state.couponError = null;
         })
 
 });

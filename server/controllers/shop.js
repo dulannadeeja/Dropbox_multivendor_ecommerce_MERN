@@ -1,12 +1,10 @@
 const { validationResult } = require('express-validator');
 const Shop = require('../models/shop');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
 const Product = require('../models/product');
-const { sendVerificationEmail, sendPasswordResetEmail } = require('../utils/authMailSender.js');
-const { create } = require('../models/event.js');
+
 
 module.exports.createShop = async (req, res, next) => {
 

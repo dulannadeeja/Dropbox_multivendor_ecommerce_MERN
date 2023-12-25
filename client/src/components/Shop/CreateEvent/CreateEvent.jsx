@@ -49,10 +49,8 @@ const CreateEvent = () => {
     console.log("name: ", name);
 
     if (name === "discountAmount" || name === "minPurchaseAmount") {
-      console.log("if eka athule: ", value);
       // Check if the value is a valid number
       if (value === "" || isNaN(value)) {
-        console.log("if eka athule: ", value);
         setEventData({ ...eventData, [name]: value });
         setErrors({ ...errors, [name]: "Please enter a valid number" });
         return;

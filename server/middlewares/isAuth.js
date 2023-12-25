@@ -4,11 +4,13 @@ module.exports = (req, res, next) => {
 
     let token = req.cookies.token;
 
+    console.log(res);
+
     if (req.headers.authorization) {
         token = req.headers.authorization.split(' ')[1];
     }
 
-    console.log(token);
+    console.log("is auth midlleware token", token);
 
     let decodedToken;
 
