@@ -12,4 +12,10 @@ router.post("/process", isAuth, paymentController.processPayment);
 // GET /payment/stripe-key
 router.get("/stripe-key", isAuth, paymentController.getStripeKey);
 
+// POST /payment/create-paypal-order
+router.post("/create-paypal-order", isAuth, paymentController.createPaypalOrder);
+
+// POST /payment/capture-paypal-payment
+router.post("/capture-paypal-payment", isAuth, paymentController.capturePaypalPayment);
+
 module.exports = router;
