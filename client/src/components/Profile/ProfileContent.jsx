@@ -14,7 +14,7 @@ import { Country, State } from "country-state-city";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import OrdersTable from "./OrdersTable";
+import OrdersTable from "./AllOrders/OrdersTable";
 import RefundOrdersTable from "./RefundOrdersTable";
 import TrackOrdersTable from "./TrackOrdersTable";
 import PaymentMethods from "./PaymentMethods";

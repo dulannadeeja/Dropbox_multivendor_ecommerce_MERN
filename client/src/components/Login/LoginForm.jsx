@@ -35,7 +35,9 @@ const LoginForm = () => {
     console.log("Logging in");
 
     try {
-      const res = await axios.post(`${server}/auth/login`, formData, config);
+      const res = await axios.post(`${server}/auth/login`, formData, config, {
+        withCredentials: true,
+      });
 
       if (res.status === 200) {
         console.log(res);
@@ -44,9 +46,12 @@ const LoginForm = () => {
         // Dispatch the "LoadUserSuccess" action here
         await dispatch({ type: "LoadUserSuccess", payload: res.data.user });
 
-        if (!document.cookie.includes("token")) {
-          document.cookie = `token=${res.data.user.token}; path=/;`;
-        }
+        // clear the token from the cookies
+        document.cookie =
+          "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+        // set the new token
+        document.cookie = `token=${res.data.user.token}; path=/;`;
 
         // Navigate to the previous route or "/" if not available
         navigate(location.state?.from || "/");

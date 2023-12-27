@@ -5,63 +5,88 @@ import { useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css"; // Import the styles
 import Loader from "../Loader";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useCheckoutContext } from "../../contexts/CheckoutContext";
+import isAddressError from "../../validations/addressValidation";
 
-const ShippingInfo = ({
-  addresses,
-  houseNumber,
-  street,
-  city,
-  state,
-  country,
-  zip,
-  contactName,
-  phone,
-  setHouseNumber,
-  setStreet,
-  setCity,
-  setState,
-  setCountry,
-  setZip,
-  setContactName,
-  setPhone,
-  loading,
-}) => {
-  const [errors, setErrors] = useState([]);
+const ShippingInfo = ({}) => {
+  const navigate = useNavigate();
   const [checkedId, setCheckedId] = useState(null);
+  const { addresses, loading } = useSelector((state) => state.user);
+  const { items } = useSelector((state) => state.cart);
 
-  const handleOnChange = (e) => {
+  const {
+    houseNumber,
+    setHouseNumber,
+    street,
+    setStreet,
+    city,
+    setCity,
+    state,
+    setState,
+    country,
+    setCountry,
+    zip,
+    setZip,
+    contactName,
+    setContactName,
+    phone,
+    setPhone,
+    shippingInfoError,
+    setShippingInfoError,
+  } = useCheckoutContext();
+
+  useEffect(() => {
+    // if local storage has the shipping info, then set the shipping info
+    const shippingInfo = JSON.parse(localStorage.getItem("shippingInfo"));
+    if (shippingInfo) {
+      setHouseNumber(shippingInfo.houseNumber);
+      setStreet(shippingInfo.street);
+      setCity(shippingInfo.city);
+      setState(shippingInfo.state);
+      setCountry(shippingInfo.country);
+      setZip(shippingInfo.zip);
+      setContactName(shippingInfo.contactName);
+      setPhone(shippingInfo.phone);
+    }
+
+    // if cart not any items, then redirect to home page
+    if (items.length === 0) {
+      navigate("/");
+    }
+
+    window.scrollTo(0, 0);
+  }, []);
+
+  const handleOnChange = async (e) => {
     const { name, value } = e.target;
-    if (!value) {
-      setErrors({ [name]: `Please enter your ${name}` });
+
+    // check for field errors
+    const error = await isAddressError(name, value);
+
+    console.log(error);
+
+    if (error) {
+      setShippingInfoError({ ...shippingInfoError, [name]: error });
     } else {
-      setErrors({});
+      setShippingInfoError({ ...shippingInfoError, [name]: "" });
     }
 
-    switch (name) {
-      case "houseNumber":
-        setHouseNumber(value);
-        break;
-      case "street":
-        setStreet(value);
-        break;
-      case "city":
-        setCity(value);
-        break;
-      case "state":
-        setState(value);
-        break;
-      case "country":
-        setCountry(value);
-        break;
-      case "zip":
-        setZip(value);
-        break;
-      case "contactName":
-        setContactName(value);
-        break;
-      default:
-        break;
-    }
+    const nameAndFunction = {
+      houseNumber: setHouseNumber,
+      street: setStreet,
+      city: setCity,
+      state: setState,
+      country: setCountry,
+      zip: setZip,
+      contactName: setContactName,
+      phone: setPhone,
+    };
+
+    nameAndFunction[name](value);
+
+    console.log(shippingInfoError);
   };
 
   // handle phone input change event and set phone number state
@@ -73,15 +98,15 @@ const ShippingInfo = ({
 
     //check if phone number is valid
     if (!value) {
-      setErrors({ phone: "Please enter your phone number" });
+      setShippingInfoError({ phone: "Please enter your phone number" });
     }
 
     if (value.length < 10) {
-      setErrors({ phone: "Please enter a valid phone number" });
+      setShippingInfoError({ phone: "Please enter a valid phone number" });
     }
 
     if (value.length >= 10) {
-      setErrors({});
+      setShippingInfoError({ ...shippingInfoError, phone: "" });
     }
 
     setPhone(value);
@@ -106,8 +131,10 @@ const ShippingInfo = ({
             className={styles.formInput}
           />
           {/* form control error */}
-          {errors && errors.contactName && (
-            <p className={styles.formInputError}>{errors.contactName}</p>
+          {shippingInfoError && shippingInfoError.contactName && (
+            <p className={styles.formInputError}>
+              {shippingInfoError.contactName}
+            </p>
           )}
         </div>
 
@@ -125,8 +152,8 @@ const ShippingInfo = ({
               onChange={handleOnPhoneChange}
             />
             {/* form control error */}
-            {errors.phone && (
-              <p className={styles.formInputError}>{errors.phone}</p>
+            {shippingInfoError.phone && (
+              <p className={styles.formInputError}>{shippingInfoError.phone}</p>
             )}
           </div>
         </div>
@@ -145,8 +172,10 @@ const ShippingInfo = ({
             className={styles.formInput}
           />
           {/* form control error */}
-          {errors && errors.houseNumber && (
-            <p className={styles.formInputError}>{errors.houseNumber}</p>
+          {shippingInfoError && shippingInfoError.houseNumber && (
+            <p className={styles.formInputError}>
+              {shippingInfoError.houseNumber}
+            </p>
           )}
         </div>
 
@@ -164,8 +193,8 @@ const ShippingInfo = ({
             className={styles.formInput}
           />
           {/* form control error */}
-          {errors && errors.street && (
-            <p className={styles.formInputError}>{errors.street}</p>
+          {shippingInfoError && shippingInfoError.street && (
+            <p className={styles.formInputError}>{shippingInfoError.street}</p>
           )}
         </div>
 
@@ -191,8 +220,10 @@ const ShippingInfo = ({
               ))}
             </select>
             {/* form control error */}
-            {errors && errors.country && (
-              <p className={styles.formInputError}>{errors.country}</p>
+            {shippingInfoError && shippingInfoError.country && (
+              <p className={styles.formInputError}>
+                {shippingInfoError.country}
+              </p>
             )}
           </div>
 
@@ -216,8 +247,8 @@ const ShippingInfo = ({
               ))}
             </select>
             {/* form control error */}
-            {errors && errors.state && (
-              <p className={styles.formInputError}>{errors.state}</p>
+            {shippingInfoError && shippingInfoError.state && (
+              <p className={styles.formInputError}>{shippingInfoError.state}</p>
             )}
           </div>
 
@@ -241,8 +272,8 @@ const ShippingInfo = ({
               ))}
             </select>
             {/* form control error */}
-            {errors && errors.city && (
-              <p className={styles.formInputError}>{errors.city}</p>
+            {shippingInfoError && shippingInfoError.city && (
+              <p className={styles.formInputError}>{shippingInfoError.city}</p>
             )}
           </div>
 
@@ -260,8 +291,8 @@ const ShippingInfo = ({
               className={styles.formInput}
             />
             {/* form control error */}
-            {errors && errors.zip && (
-              <p className={styles.formInputError}>{errors.zip}</p>
+            {shippingInfoError && shippingInfoError.zip && (
+              <p className={styles.formInputError}>{shippingInfoError.zip}</p>
             )}
           </div>
         </div>

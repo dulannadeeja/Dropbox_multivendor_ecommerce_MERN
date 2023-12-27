@@ -6,8 +6,6 @@ import { server } from '../../server';
 export const applyCoupon = ({ couponCode }) => async (dispatch, getState) => {
     try {
 
-        console.log('couponCode', couponCode);
-
         dispatch({
             type: 'ApplyCouponRequest',
         });

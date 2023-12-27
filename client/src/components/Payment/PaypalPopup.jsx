@@ -4,8 +4,7 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import PaypalPayment from "./PaypalPayment";
 import { useSelector } from "react-redux";
 
-const PaypalPopup = ({ setOpen }) => {
-  const { token } = useSelector((state) => state.user);
+const PaypalPopup = ({ setOpen, orderData }) => {
   const { items, cartTotal, couponDiscount } = useSelector(
     (state) => state.cart
   );
@@ -45,7 +44,7 @@ const PaypalPopup = ({ setOpen }) => {
           />
         </div>
         <PayPalScriptProvider options={initialOptions}>
-          <PaypalPayment token={token} cart={cart} />
+          <PaypalPayment orderData={orderData} />
         </PayPalScriptProvider>
       </div>
     </div>

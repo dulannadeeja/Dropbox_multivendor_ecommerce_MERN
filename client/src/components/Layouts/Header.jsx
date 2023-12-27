@@ -173,14 +173,14 @@ const Header = () => {
           {/* become a seller button */}
           <div className={StyleSheet.button}>
             {isSeller && (
-              <Link to="/dashboard">
+              <Link to="/seller/signup">
                 <h1 className="text-[#fff] flex items-center">
                   Shop Dashboard <IoIosArrowForward className="ml-1" />
                 </h1>
               </Link>
             )}
             {isAuthenticated && !isSeller && (
-              <Link to="/shop-create">
+              <Link to="/seller/signup">
                 <h1 className="text-[#fff] flex items-center">
                   Become Seller <IoIosArrowForward className="ml-1" />
                 </h1>

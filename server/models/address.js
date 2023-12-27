@@ -31,6 +31,9 @@ const addressSchema = new mongoose.Schema({
     addressNickname: {
         type: String
     },
+    contactName: {
+        type: String,
+    }
 });
 
 const Address = mongoose.model('Address', addressSchema);

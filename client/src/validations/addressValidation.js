@@ -8,6 +8,8 @@ const validationSchema = yup.object().shape({
     city: yup.string().trim().required("City is required"),
     zip: yup.string().trim().required("Zip code is required"),
     addressNickname: yup.string().trim(),
+    contactName: yup.string().trim().required("Contact name is required"),
+    phone: yup.string().trim().required("Phone number is required"),
 });
 
 const validateAddress = async (name, value) => {

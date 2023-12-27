@@ -10,6 +10,7 @@ import axios from "axios";
 import { server } from "../server";
 import { useState } from "react";
 import Loader from "../components/Loader";
+import { CheckoutProvider } from "../contexts/CheckoutContext";
 
 const CheckoutPage = () => {
   const { user } = useSelector((state) => state.user);
@@ -44,8 +45,10 @@ const CheckoutPage = () => {
   return (
     <div>
       <Header />
-      <CheckoutSteps active={1} />
-      <Checkout addresses={addresses} loading={loading} />
+      <CheckoutProvider>
+        <CheckoutSteps active={1} />
+        <Checkout addresses={addresses} loading={loading} />
+      </CheckoutProvider>
       <Footer />
     </div>
   );

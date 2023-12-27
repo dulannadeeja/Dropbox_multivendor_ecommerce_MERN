@@ -38,6 +38,16 @@ export const cartReducer = createReducer(initialCartState, (builder) => {
                 localStorage.setItem('cart', JSON.stringify(filteredCart2));
             }
 
+            // Load coupon from local storage
+            const coupon = localStorage.getItem('coupon');
+
+            // update coupon in redux store
+            if (coupon) {
+                state.isCouponApplied = true;
+                state.coupon = JSON.parse(coupon).coupon;
+                state.couponDiscount = JSON.parse(coupon).discount;
+            }
+
         })
         .addCase('AddToCart', (state, action) => {
             const updatedCart = [...state.items, action.payload];
@@ -114,12 +124,16 @@ export const cartReducer = createReducer(initialCartState, (builder) => {
             state.coupon = null;
             state.couponDiscount = 0;
             state.couponError = null;
+
+            localStorage.removeItem('coupon');
         })
         .addCase('ApplyCouponSuccess', (state, action) => {
             state.isCouponLoading = false;
             state.isCouponApplied = true;
             state.coupon = action.payload.coupon;
             state.couponDiscount = action.payload.discount;
+
+            localStorage.setItem('coupon', JSON.stringify({ ...action.payload, isCouponApplied: true }));
         })
         .addCase('ApplyCoupounFail', (state, action) => {
             state.isCouponLoading = false;
@@ -127,12 +141,28 @@ export const cartReducer = createReducer(initialCartState, (builder) => {
             state.isCouponApplied = false;
             state.coupon = null;
             state.couponDiscount = 0;
+
+            localStorage.removeItem('coupon');
         })
         .addCase('RemoveCoupon', (state) => {
             state.isCouponApplied = false;
             state.coupon = null;
             state.couponDiscount = 0;
             state.couponError = null;
+
+            localStorage.removeItem('coupon');
+        })
+        .addCase('ClearCart', (state) => {
+            state.items = [];
+            state.cartTotal = 0;
+            state.isCouponApplied = false;
+            state.coupon = null;
+            state.couponDiscount = 0;
+            state.couponError = null;
+            state.isCouponLoading = false;
+
+            localStorage.removeItem('cart');
+            localStorage.removeItem('coupon');
         })
 
 });

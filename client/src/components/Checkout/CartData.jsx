@@ -1,22 +1,18 @@
 import React, { useEffect } from "react";
 import styles from "../../styles/styles";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import { toast } from "react-toastify";
-import { server } from "../../server";
 import { RxCross1 } from "react-icons/rx";
 import { useDispatch } from "react-redux";
 import { applyCoupon } from "../../redux/actions/applyCoupon";
 
 const CartData = () => {
   const dispatch = useDispatch();
-  const { token } = useSelector((state) => state.user);
   const {
     cartTotal,
     isCouponApplied,
     coupon,
     couponDiscount,
-    couponError,
     isCouponLoading,
   } = useSelector((state) => state.cart);
 

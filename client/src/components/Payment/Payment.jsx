@@ -17,153 +17,80 @@ import { RxCross1 } from "react-icons/rx";
 import CartData from "../Checkout/CartData";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import PaypalPopup from "./PaypalPopup";
-
+import { useDispatch } from "react-redux";
+import { createOrder } from "../../redux/actions/createOrder";
+import { makeStripePayment } from "../../redux/actions/makePayment";
+import { makeCashPayment } from "../../redux/actions/makeCashPayment";
 const Payment = () => {
+  const dispatch = useDispatch();
   const [orderData, setOrderData] = useState([]);
   const [open, setOpen] = useState(false);
   const { user } = useSelector((state) => state.user);
+  const { cartTotal, items, coupon, isCouponApplied, couponDiscount } =
+    useSelector((state) => state.cart);
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
 
   useEffect(() => {
-    const orderData = JSON.parse(localStorage.getItem("latestOrder"));
-    setOrderData(orderData);
-  }, []);
+    // get shipping info from local storage
+    const shippingInfo = JSON.parse(localStorage.getItem("shippingInfo"));
+    if (!shippingInfo) {
+      navigate("/checkout");
+    }
 
-  const order = {
-    items: orderData?.cart,
-    cart: orderData?.cart,
-    shippingAddress: orderData?.shippingAddress,
-    user: user && user,
-    totalPrice: orderData?.totalPrice,
-  };
+    if (!items.length) {
+      navigate("/");
+    }
+
+    setOrderData({
+      cartTotal,
+      items,
+      coupon,
+      isCouponApplied,
+      couponDiscount,
+      ...shippingInfo,
+    });
+  }, [isCouponApplied, items, coupon, couponDiscount, cartTotal]);
 
   const stripePaymentHandler = async (e) => {
     e.preventDefault();
-    const paymentData = {
-      amount: (orderData.cartTotal - orderData.couponDiscount) * 100,
-    };
     try {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user?.token}`,
-        },
-      };
-
-      const { data } = await axios.post(
-        `${server}/payment/process`,
-        paymentData,
-        config
+      const res = await dispatch(
+        makeStripePayment({ orderData, stripe, elements })
       );
 
-      const client_secret = data.client_secret;
-
-      console.log(client_secret);
-
-      if (!stripe || !elements) return;
-      const result = await stripe.confirmCardPayment(client_secret, {
-        payment_method: {
-          card: elements.getElement(CardNumberElement),
-        },
-      });
-
-      navigate("/order-completed");
-
-      // if (result.error) {
-      //   toast.error(result.error.message);
-      // } else {
-      //   if (result.paymentIntent.status === "succeeded") {
-      //     order.paymnentInfo = {
-      //       id: result.paymentIntent.id,
-      //       status: result.paymentIntent.status,
-      //       type: "Credit Card",
-      //     };
-
-      //     // await axios
-      //     //   .post(`${server}/order/create-order`, order, config)
-      //     //   .then((res) => {
-      //     //     setOpen(false);
-      //     //     navigate("/order/success");
-      //     //     toast.success("Order successful!");
-      //     //     localStorage.setItem("cartItems", JSON.stringify([]));
-      //     //     localStorage.setItem("latestOrder", JSON.stringify([]));
-      //     //     window.location.reload();
-      //     //   });
-      //   }
-      // }
+      if (res.data?.success) {
+        toast.success(res.data.message);
+        // clear cart and latest order
+        localStorage.removeItem("latestOrder");
+        localStorage.removeItem("cart");
+        dispatch({ type: "ClearCart" });
+        navigate("/order-completed");
+      }
     } catch (error) {
-      toast.error(error);
+      toast.error(error.message || "Something went wrong");
+      console.log(error);
     }
   };
 
-  const paymentHandler = async (e) => {
-    // e.preventDefault();
-    // try {
-    //   const config = {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   };
-    //   const { data } = await axios.post(
-    //     `${server}/payment/process`,
-    //     paymentData,
-    //     config
-    //   );
-    //   const client_secret = data.client_secret;
-    //   if (!stripe || !elements) return;
-    //   const result = await stripe.confirmCardPayment(client_secret, {
-    //     payment_method: {
-    //       card: elements.getElement(CardNumberElement),
-    //     },
-    //   });
-    //   if (result.error) {
-    //     toast.error(result.error.message);
-    //   } else {
-    //     if (result.paymentIntent.status === "succeeded") {
-    //       order.paymnentInfo = {
-    //         id: result.paymentIntent.id,
-    //         status: result.paymentIntent.status,
-    //         type: "Credit Card",
-    //       };
-    //       await axios
-    //         .post(`${server}/order/create-order`, order, config)
-    //         .then((res) => {
-    //           setOpen(false);
-    //           navigate("/order/success");
-    //           toast.success("Order successful!");
-    //           localStorage.setItem("cartItems", JSON.stringify([]));
-    //           localStorage.setItem("latestOrder", JSON.stringify([]));
-    //           window.location.reload();
-    //         });
-    //     }
-    //   }
-    // } catch (error) {
-    //   toast.error(error);
-    // }
-  };
-
   const cashOnDeliveryHandler = async (e) => {
-    // e.preventDefault();
-    // const config = {
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // };
-    // order.paymentInfo = {
-    //   type: "Cash On Delivery",
-    // };
-    // await axios
-    //   .post(`${server}/order/create-order`, order, config)
-    //   .then((res) => {
-    //     setOpen(false);
-    //     navigate("/order/success");
-    //     toast.success("Order successful!");
-    //     localStorage.setItem("cartItems", JSON.stringify([]));
-    //     localStorage.setItem("latestOrder", JSON.stringify([]));
-    //     window.location.reload();
-    //   });
+    e.preventDefault();
+    try {
+      const res = await dispatch(makeCashPayment({ orderData }));
+
+      if (res.data?.success) {
+        toast.success(res.data.message);
+        // clear cart and latest order
+        localStorage.removeItem("latestOrder");
+        localStorage.removeItem("cart");
+        dispatch({ type: "ClearCart" });
+        navigate("/order-completed");
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong");
+      console.log(error);
+    }
   };
 
   return (
@@ -176,6 +103,7 @@ const Payment = () => {
             setOpen={setOpen}
             stripePaymentHandler={stripePaymentHandler}
             cashOnDeliveryHandler={cashOnDeliveryHandler}
+            orderData={orderData}
           />
         </div>
         <div className="w-full 800px:w-[35%] 800px:mt-0 mt-8">
@@ -192,6 +120,7 @@ const PaymentInfo = ({
   setOpen,
   stripePaymentHandler,
   cashOnDeliveryHandler,
+  orderData,
 }) => {
   const [select, setSelect] = useState(1);
 
@@ -333,7 +262,7 @@ const PaymentInfo = ({
             >
               Pay Now
             </div>
-            {open && <PaypalPopup setOpen={setOpen} />}
+            {open && <PaypalPopup setOpen={setOpen} orderData={orderData} />}
           </div>
         ) : null}
       </div>

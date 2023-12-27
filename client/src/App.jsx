@@ -24,11 +24,10 @@ import StartVerificationPage from "./pages/StartVerificationPage.jsx";
 import { useEffect } from "react";
 import Store from "./redux/store.js";
 import { loadUser } from "./redux/actions/user.js";
-import OrdersPage from "./components/Profile/OrdersTable";
 import ProtectedRoutes from "./ProtectedRoutes.jsx";
 import { useSelector } from "react-redux";
 import Loader from "./components/Loader.jsx";
-import { ShopDashboardPage } from "./ShopRoutes.js";
+import { ShopDashboardPage, ShopOrderDetailsPage } from "./ShopRoutes.js";
 import { loadShop } from "./redux/actions/shop.js";
 import { toast } from "react-toastify";
 import STATUS from "./constants/status.js";
@@ -171,7 +170,6 @@ const App = () => {
           <Route path="/best-selling" element={<BestSellingPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/Faq" element={<FAQPage />} />
-          <Route path="/orders" element={<OrdersPage />} />
 
           <Route path="/profile" element={<ProtectedRoutes />}>
             <Route index element={<ProfilePage />} />
@@ -186,6 +184,10 @@ const App = () => {
           <Route path="/shop/dashboard" element={<ProtectedRoutes />}>
             <Route index element={<ShopDashboardPage />} />
           </Route>
+          <Route
+            path="/shop/order/:orderId"
+            element={<ShopOrderDetailsPage />}
+          />
           <Route path="/shop/:shopId" element={<ShopPreviewPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
         </Routes>

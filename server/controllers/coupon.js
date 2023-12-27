@@ -1,12 +1,8 @@
-
-
-const { categoriesData } = require('../static/categoriesData');
 const Shop = require('../models/shop');
 const Product = require('../models/product');
 const Coupon = require('../models/coupon');
 const User = require('../models/user');
 const { validationResult } = require('express-validator');
-const e = require('express');
 
 
 module.exports.createCoupon = async (req, res, next) => {
@@ -207,6 +203,12 @@ module.exports.applyCoupon = async (req, res, next) => {
             throw error;
         }
 
+        // get quantity of each product in the cart and add it to the product object
+        products.forEach(product => {
+            const cartItem = cartItems.find(item => item._id === product._id.toString());
+            product.quantity = cartItem.quantity;
+        });
+
         // get the coupon
         const coupon = await Coupon.findOne({ code: couponCode });
 
@@ -237,6 +239,8 @@ module.exports.applyCoupon = async (req, res, next) => {
         // get all the products that are applicable for the coupon
         const applicableProducts = products.filter(product => coupon.products.includes(product._id.toString()));
 
+        console.log('applicableProducts', applicableProducts);
+
         if (!applicableProducts.length) {
             const error = new Error('No applicable products found');
             error.statusCode = 404;
@@ -244,14 +248,17 @@ module.exports.applyCoupon = async (req, res, next) => {
         }
 
         // calculate total price of applicable products
-        const totalPrice = applicableProducts.reduce((total, product) => total + product.price, 0);
+        const totalPrice = applicableProducts.reduce((total, product) => total + (product.discountPrice * product.quantity), 0);
 
         // check if the coupon is applicable
         if (totalPrice < coupon.minOrderAmount) {
-            const error = new Error('Coupon is not applicable');
+            const error = new Error('Coupon is not applicable for this order amount, minimum order amount is ' + coupon.minOrderAmount + " and your order amount is " + totalPrice);
             error.statusCode = 403;
             throw error;
         }
+
+        console.log('totalPrice', totalPrice);
+        console.log('coupon', coupon.minOrderAmount);
 
         // calculate discount
         let discount;

@@ -35,8 +35,22 @@ module.exports.createPaypalOrder = async (req, res, next) => {
 
     try {
         // use the cart information passed from the front-end to calculate the order amount detals
-        const { cart } = req.body;
-        const { jsonResponse, httpStatusCode } = await createOrder(cart);
+        const {
+            cartTotal,
+            items,
+            coupon,
+            isCouponApplied,
+            couponDiscount,
+            houseNumber,
+            street,
+            city,
+            state,
+            country,
+            zip,
+            phone,
+            contactName,
+        } = req.body;
+        const { jsonResponse, httpStatusCode } = await createOrder({ cartTotal, items, coupon, isCouponApplied, couponDiscount, houseNumber, street, city, state, country, zip, phone, contactName });
         res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
         console.error("Failed to create order:", error);
@@ -90,11 +104,28 @@ const generateAccessToken = async () => {
     }
 };
 
-const createOrder = async (cart) => {
+const createOrder = async ({
+    cartTotal,
+    items,
+    coupon,
+    isCouponApplied,
+    couponDiscount,
+    houseNumber,
+    street,
+    city,
+    state,
+    country,
+    zip,
+    phone,
+    contactName,
+
+}) => {
     console.log(
         "shopping cart information passed from the frontend createOrder() callback:",
-        cart,
+        items,
     );
+
+    const value = cartTotal - couponDiscount;
 
     const accessToken = await generateAccessToken();
     const url = `${base}/v2/checkout/orders`;
@@ -104,7 +135,7 @@ const createOrder = async (cart) => {
             {
                 amount: {
                     currency_code: "USD",
-                    value: "100.00",
+                    value: value,
                 },
             },
         ],

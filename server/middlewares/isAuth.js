@@ -1,16 +1,16 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
 module.exports = (req, res, next) => {
 
     let token = req.cookies.token;
 
-    console.log(res);
-
     if (req.headers.authorization) {
         token = req.headers.authorization.split(' ')[1];
     }
 
-    console.log("is auth midlleware token", token);
+    console.log("is auth midlleware token : START", token);
+    console.log("is auth midlleware token : END");
 
     let decodedToken;
 
@@ -27,6 +27,23 @@ module.exports = (req, res, next) => {
             error.statusCode = 401;
             throw error;
         }
+
+        // check if user exists
+        if (!decodedToken.userId) {
+            const error = new Error('User not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        // check if user exists in db
+        const user = User.findById(decodedToken.userId);
+
+        if (!user) {
+            const error = new Error('User not found in the system.');
+            error.statusCode = 404;
+            throw error;
+        }
+
         req.userId = decodedToken.userId;
         req.token = token;
         req.shopId = req.params.shopId;

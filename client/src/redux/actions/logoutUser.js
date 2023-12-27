@@ -11,7 +11,7 @@ export const logoutUser = ({ token }) => async (dispatch) => {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
             }
-        });
+        }, { withCredentials: true });
 
         // expire cookie on client side by setting it to a date in the past
         document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
