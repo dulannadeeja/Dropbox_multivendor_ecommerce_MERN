@@ -7,6 +7,7 @@ import { cartReducer } from "./reducers/cart.js";
 import { wishlistReducer } from './reducers/Wishlist.js';
 import { orderReducer } from './reducers/order.js';
 import { paymentReducer } from './reducers/payment.js';
+import notificationReducer from './reducers/notification.js';
 
 const store = configureStore({
     reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
         wishlist: wishlistReducer,
         order: orderReducer,
         payment: paymentReducer,
+        notification: notificationReducer,
     }
 });
 

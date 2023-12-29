@@ -13,6 +13,7 @@ import ProfilePage from './pages/ProfilePage.jsx';
 import SellerSignupPage from './pages/SellerSignupPage.jsx';
 import PaymentPage from './pages/PaymentPage.jsx';
 import OrderCompletedPage from './pages/OrderCompletedPage.jsx';
+import OrderDetailsPage from './pages/OrderDetailsPage.jsx';
 
 export {
     LoginPage,
@@ -29,5 +30,6 @@ export {
     ProfilePage,
     SellerSignupPage,
     PaymentPage,
-    OrderCompletedPage
+    OrderCompletedPage,
+    OrderDetailsPage
 }

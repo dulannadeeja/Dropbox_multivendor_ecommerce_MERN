@@ -28,4 +28,11 @@ router.get('/best-selling', productController.getBestSellingProducts);
 // GET /product/featured
 router.get('/featured', productController.getFeaturedProducts);
 
+// POST /product/review
+router.post('/review', isAuth, [
+    body('productId').trim().not().isEmpty().withMessage('Product id is required.'),
+    body('rating').trim().not().isEmpty().withMessage('Rating is required.'),
+    body('comment').trim()
+], productController.createReview);
+
 module.exports = router;

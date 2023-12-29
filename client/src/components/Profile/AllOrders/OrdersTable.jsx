@@ -5,8 +5,10 @@ import { server } from "../../../server";
 import { useEffect } from "react";
 import { AiOutlineEye, AiOutlineDelete } from "react-icons/ai";
 import { AiOutlineStar } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 
 const OrdersTable = ({ order }) => {
+  const navigate = useNavigate();
   const [orders, setOrders] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
@@ -26,6 +28,10 @@ const OrdersTable = ({ order }) => {
     }
   };
 
+  const navigateToOrder = (id) => {
+    navigate(`/order/${id}`);
+  };
+
   // Table columns
   const columns = [
     { name: "Order ID", selector: "_id", sortable: true },
@@ -36,7 +42,7 @@ const OrdersTable = ({ order }) => {
     {
       name: "Preview",
       cell: (row) => (
-        <button>
+        <button onClick={() => navigateToOrder(row._id)}>
           <AiOutlineEye size={20} />
         </button>
       ),

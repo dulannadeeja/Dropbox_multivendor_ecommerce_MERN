@@ -5,7 +5,6 @@ const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const upload = require('./multer');
-
 // configure dotenv
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config({
@@ -65,7 +64,7 @@ const app = express();
 // and setting headers for incoming requests
 app.use(cors());
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // allow all origins
+    res.setHeader('Access-Control-Allow-Origin', process.env.CLIENT_URL); // allow all origins
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE'); // allow these methods
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // allow these headers
     res.setHeader('Access-Control-Allow-Credentials', true); // allow credentials
@@ -128,6 +127,59 @@ mongoose.connect(uri)
         console.log('Connected to MongoDB...');
         server = app.listen(process.env.SERVER_PORT, () => {
             console.log('Server is running on port ' + process.env.SERVER_PORT + '...');
+
         })
+        let onlineUsers = [];
+
+        // if user is already online, remove the previous socketId
+        const removeUser = socketId => {
+            onlineUsers = onlineUsers.filter(user => user.socketId !== socketId);
+        };
+
+        // add new user to onlineUsers array
+        const addNewUser = (userId, socketId) => {
+            !onlineUsers.some(user => user.userId === userId) &&
+                onlineUsers.push({ userId, socketId });
+        };
+
+        const getUser = userId => {
+            return onlineUsers.find(user => user.userId === userId);
+        }
+
+        const io = require('./socket').init(server);
+        io.on('connection', socket => {
+            console.log('Client connected...');
+
+            // take userId and socketId from user
+            socket.on('newUser', userId => {
+                console.log('newUser: ', userId);
+                addNewUser(userId, socket.id);
+            });
+
+            // // Handle the "upcomingOrder" event
+            // socket.on("order", ({ receiverId, messageId, message }) => {
+
+            //     console.log("connected clients are " + onlineUsers);
+
+            //     console.log("order event catched from app.js and sending it to the receiver" + receiverId);
+
+            //     const receiver = getUser(receiverId);
+            //     console.log("socket id of the receiver is " + receiver.socketId);
+            //     if (receiver) {
+            //         io.to(receiver.socketId).emit("orderConfirmed", {
+            //             messageId,
+            //             message,
+            //             receiverId
+            //         });
+            //     }
+            // });
+
+            socket.on('disconnect', () => {
+                console.log('Client disconnected...');
+                removeUser(socket.id);
+            });
+
+
+        });
     })
     .catch(err => console.log(err));

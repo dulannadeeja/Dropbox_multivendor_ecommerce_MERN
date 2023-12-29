@@ -4,6 +4,7 @@ const Address = require('../models/address');
 const User = require('../models/user');
 const { validationResult } = require('express-validator');
 const Coupon = require('../models/coupon');
+const io = require('../socket');
 
 const STATUS = {
     IDLE: 'IDLE',
@@ -192,12 +193,34 @@ module.exports.createOrder = async (req, res, next) => {
                 error.statusCode = 500;
                 throw error;
             }
+
+            // send socket notification to the seller
+            const io = require('../socket').getIO();
+
+            //get receiverId from shop
+            const user = await User.findOne({ shop: shop.toString() });
+
+            const receiverId = user._id.toString();
+            const messageId = savedOrder._id.toString();
+            const message = 'You made a new sale of ' + savedOrder.cartTotal + ' from ' + savedOrder.products.length + ' products';
+
+
+            console.log('receiverId', receiverId);
+            console.log('messageId', messageId);
+            console.log('message', message);
+
+            console.log("order event emitted from server");
+            io.emit('order', { receiverId, messageId, message });
+
+
         }
 
         res.status(201).json({
             success: true,
             message: 'Order created successfully'
         });
+
+
 
         console.log(coupon);
 
@@ -223,7 +246,7 @@ module.exports.getAllOrdersByUserId = async (req, res, next) => {
 
     try {
 
-        const orders = await Order.find({ user: userId });
+        const orders = await Order.find({ user: userId }).populate('user', 'firstName lastName email avatar').populate('products.product').populate('shippingAddress');
 
         if (!orders) {
             const error = new Error('Orders not found');

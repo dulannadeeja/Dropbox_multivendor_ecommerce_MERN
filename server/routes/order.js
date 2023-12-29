@@ -4,6 +4,7 @@ const router = express.Router();
 const { body } = require('express-validator');
 const isAuth = require('../middlewares/isAuth');
 
+
 // POST /order/create
 router.post("/create", isAuth, [
     body('cartTotal').isString(),

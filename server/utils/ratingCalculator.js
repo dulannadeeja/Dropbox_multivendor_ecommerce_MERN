@@ -1,4 +1,4 @@
-module.exports.getRatingsAddedProducts = (products) => {
+const getRatingsAddedProducts = (products) => {
     products.forEach(product => {
         product.ratings = getProductRatingByReviews(product.reviews);
     });
@@ -23,4 +23,9 @@ const getProductRatingByReviews = reviews => {
     });
     const productRatings = totalNumberOfReviews === 0 ? 0 : sumOfAllRatings / totalNumberOfReviews;
     return productRatings || 0;
+}
+
+module.exports = {
+    getRatingsAddedProducts,
+    getProductRatingByReviews
 }

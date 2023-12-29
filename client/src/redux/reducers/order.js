@@ -29,6 +29,8 @@ export const orderReducer = createReducer(initialOrderState, (builder) => {
     builder
         .addCase('ORDER_CREATE_REQUEST', (state) => {
             state.orderStatus = STATUS.LOADING;
+            state.orderError = null;
+            state.orders = [];
         })
         .addCase('ORDER_CREATE_SUCCESS', (state, action) => {
             state.orderStatus = STATUS.SUCCEEDED;

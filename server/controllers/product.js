@@ -4,7 +4,7 @@ const Product = require('../models/product');
 const Shop = require('../models/shop');
 const fs = require('fs');
 const path = require('path');
-const { getRatingByReviews, getRatingsAddedProducts } = require('../utils/ratingCalculator');
+const { getRatingByReviews, getRatingsAddedProducts, getProductRatingByReviews } = require('../utils/ratingCalculator');
 
 
 
@@ -240,6 +240,83 @@ module.exports.getFeaturedProducts = async (req, res, next) => {
             message: 'Featured products fetched successfully.',
             products: featuredProducts
         });
+
+    } catch (err) {
+        if (!err.message) {
+            err.message = 'Internal server error.';
+        }
+
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
+module.exports.createReview = async (req, res, next) => {
+    const productId = req.body.productId;
+    const userId = req.userId;
+    const rating = req.body.rating;
+    const comment = req.body.comment;
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            const error = new Error('Could not find user.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            const error = new Error('Could not find product.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        // check if user already reviewed this product
+        const alreadyReviewed = product.reviews.find(review => review.user.toString() === userId.toString());
+
+        if (!alreadyReviewed) {
+            const review = {
+                user: userId,
+                rating: rating,
+                comment: comment,
+                createdAt: new Date()
+            }
+
+            product.reviews.push(review);
+
+            // calculate rating by reviews
+            product.rating = getProductRatingByReviews(product.reviews);
+
+            await product.save();
+
+            res.status(201).json({
+                message: 'Review added successfully.',
+                product: product
+            });
+        }
+        else {
+            // update review
+            alreadyReviewed.rating = rating;
+            alreadyReviewed.comment = comment;
+            alreadyReviewed.createdAt = new Date();
+
+            // calculate rating by reviews
+            product.rating = getProductRatingByReviews(product.reviews);
+
+            await product.save();
+
+            res.status(201).json({
+                message: 'Review updated successfully.',
+                product: product
+            });
+        }
+
+
 
     } catch (err) {
         if (!err.message) {

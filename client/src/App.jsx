@@ -17,6 +17,7 @@ import {
   SellerSignupPage,
   PaymentPage,
   OrderCompletedPage,
+  OrderDetailsPage,
 } from "./Routes.js";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
@@ -37,6 +38,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { server } from "./server.js";
 import axios from "axios";
+import { updateNotifications } from "./redux/actions/updateNotifications.js";
 
 const App = () => {
   const dispatch = Store.dispatch;
@@ -75,6 +77,11 @@ const App = () => {
 
     fetchAuthInfo();
   }, []);
+
+  useEffect(() => {
+    // Dispatch the action to start listening for events and connect to the socket
+    dispatch(updateNotifications());
+  }, [dispatch]);
 
   useEffect(() => {
     const getStripeKey = async () => {
@@ -188,6 +195,7 @@ const App = () => {
             path="/shop/order/:orderId"
             element={<ShopOrderDetailsPage />}
           />
+          <Route path="/order/:orderId" element={<OrderDetailsPage />} />
           <Route path="/shop/:shopId" element={<ShopPreviewPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
         </Routes>

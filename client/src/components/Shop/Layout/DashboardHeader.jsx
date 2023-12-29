@@ -8,13 +8,21 @@ import { BiMessageSquareDetail } from "react-icons/bi";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { server } from "../../../server";
+import NotificationDropdown from "./Notification";
+import { IoMdNotificationsOutline } from "react-icons/io";
+import { IoMdNotifications } from "react-icons/io";
+import { useDispatch } from "react-redux";
+import { updateNotifications } from "../../../redux/actions/updateNotifications";
 
 const DashboardHeader = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, isAuthenticated, isSeller } = useSelector(
     (state) => state.user
   );
   const { shop } = useSelector((state) => state.shop);
+
+  const [notificationOpen, setNotificationOpen] = React.useState(false);
 
   return (
     <div className="w-full h-[80px] bg-white shadow sticky top-0 left-0 z-30 flex items-center justify-between px-4">
@@ -66,6 +74,18 @@ const DashboardHeader = () => {
               className="w-[50px] h-[50px] rounded-full object-cover"
             />
           </Link>
+
+          {/* notification icon */}
+          <div className="800px:block hidden">
+            <IoMdNotificationsOutline
+              size={30}
+              color="#555"
+              className="mx-5 cursor-pointer"
+              onClick={() => setNotificationOpen(!notificationOpen)}
+            />
+
+            {notificationOpen && <NotificationDropdown />}
+          </div>
         </div>
       </div>
     </div>
