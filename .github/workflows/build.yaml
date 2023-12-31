@@ -35,4 +35,4 @@ jobs:
       - name: Deploy to Vercel
         run: |
           cd client
-          vercel deploy --prebuild --prod --token=${{ secrets.VERCEL_TOKEN }}
+          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
