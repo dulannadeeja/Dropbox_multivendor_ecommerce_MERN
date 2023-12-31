@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useCreateEventContext } from "../../../contexts/createEventContext";
+import { useCreateEventContext } from "../../../contexts/CreateEventContext";
 
 const CategoryPopup = ({ onClose }) => {
   const { setSelectedCategories, selectedCategories, allCategories } =
