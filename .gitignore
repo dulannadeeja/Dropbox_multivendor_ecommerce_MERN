@@ -399,7 +399,7 @@ FodyWeavers.xsd
 
 
 # ignore server/.env file,node_modules,package-lock.json
-server/.env
+server/config/.env
 server/node_modules
 server/package-lock.json
 
