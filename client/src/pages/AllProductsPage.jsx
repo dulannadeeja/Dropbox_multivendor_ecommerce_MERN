@@ -7,7 +7,7 @@ import { useState } from "react";
 import FilterHeader from "../components/ProductFilter/FilterHeader";
 import Header from "../components/AllProducts/Header";
 import Footer from "../components/Layouts/Footer";
-import Sidebar from "../components/ProductFilter/sidebar";
+import Sidebar from "../components/ProductFilter/Sidebar";
 import ProductCard from "../components/Home/ProductCard";
 import styles from "../styles/styles";
 import MobileFilter from "../components/ProductFilter/mobileFilter";
