@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/styles";
-import ProductCard from "../components/home/ProductCard";
+import ProductCard from "../components/Home/ProductCard";
 import axios from "axios";
 import { server } from "../server";
 import Loader from "../components/Loader";
