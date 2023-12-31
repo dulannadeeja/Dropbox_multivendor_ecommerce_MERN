@@ -4,7 +4,7 @@ import AllProducts from "../AllProducts.jsx";
 import CreateEvent from "../CreateEvent/CreateEvent.jsx";
 import AllEvents from "../AllEvents.jsx";
 import DiscountCodes from "../DiscountCodes/DiscountCodes.jsx";
-import { CreateEventProvider } from "../../../contexts/createEventContext.jsx";
+import { CreateEventProvider } from "../../../contexts/CreateEventContext.jsx";
 import { CreateCouponProvider } from "../../../contexts/CreateCouponContext.jsx";
 import AllOrdersTable from "../AllOrders.jsx";
 
