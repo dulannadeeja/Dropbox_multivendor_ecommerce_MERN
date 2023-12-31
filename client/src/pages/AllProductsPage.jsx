@@ -10,7 +10,7 @@ import Footer from "../components/Layouts/Footer";
 import Sidebar from "../components/ProductFilter/Sidebar";
 import ProductCard from "../components/Home/ProductCard";
 import styles from "../styles/styles";
-import MobileFilter from "../components/ProductFilter/mobileFilter";
+import MobileFilter from "../components/ProductFilter/MobileFilter";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 
 export default function AllProductsPage() {
