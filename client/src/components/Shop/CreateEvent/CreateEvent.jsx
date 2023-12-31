@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import Styles from "../../../styles/styles";
 import CategoryPopup from "./CategoryPopup";
 import bannerPlaceholder from "../../../assets/placeholders/icons8-placeholder-48.png";
-import { useCreateEventContext } from "../../../contexts/createEventContext";
+import { useCreateEventContext } from "../../../contexts/CreateEventContext";
 import validateEventData from "../../../validations/eventDataValidation";
 import styles from "../../../styles/styles";
 import { hasValues } from "../../../utils/objectHelper";
