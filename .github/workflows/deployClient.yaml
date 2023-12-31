@@ -1,0 +1,22 @@
+name: Deploy Client
+
+on:
+  workflow_run:
+    workflows: ["Build Client"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Vercel CLI
+        run: npm i -g vercel
+
+      - name: Deploy to Vercel
+        run: |
+          cd client
+          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}

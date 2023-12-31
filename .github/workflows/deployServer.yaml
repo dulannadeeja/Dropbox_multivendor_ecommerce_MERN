@@ -1,0 +1,25 @@
+name: Deploy Server
+
+on:
+  workflow_run:
+    workflows: ["Build Server"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+          heroku --version
+
+      - name: Login to Heroku
+        run: heroku login -i
+
+      - name: Deploy to Heroku
+        run: git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git HEAD:main
