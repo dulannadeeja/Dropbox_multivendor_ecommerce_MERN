@@ -4,7 +4,9 @@ const Product = require('../models/product');
 const Shop = require('../models/shop');
 const fs = require('fs');
 const path = require('path');
-const { getRatingByReviews, getRatingsAddedProducts, getProductRatingByReviews } = require('../utils/ratingCalculator');
+const { getRatingsAddedProducts, getProductRatingByReviews } = require('../utils/ratingCalculator');
+const mongoose = require('mongoose');
+const SORT_OPTIONS = require('../constants/sortOptions')
 
 
 
@@ -182,9 +184,125 @@ module.exports.delete = async (req, res, next) => {
     }
 }
 
+module.exports.getAllProducts = async (req, res, next) => {
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const searchTerm = req.query.search || null;
+    const sort = req.query.sort || 'Random';
+    const category = req.query.category || null;
+    const price = req.query.price || '';
+    const rating = req.query.rating || 0;
+
+    try {
+
+        // get total count of products
+        const totalProducts = await Product.find().countDocuments();
+        const startingProductIndex = (page * limit) - limit + 1;
+
+        const lastPage = Math.ceil(totalProducts / limit);
+
+        let products = [];
+
+        console.log(category, searchTerm)
+
+        if (category && !searchTerm) {
+            console.log('it is here');
+            products = await Product.find({ category: category }).populate('shop', 'name shopAvatar').limit(limit).skip((page - 1) * limit);
+        } else if (searchTerm && category) {
+            console.log('it is here again');
+            const regex = new RegExp(searchTerm, 'i');
+            products = await Product.find({ name: { $regex: regex }, category: category }).populate('shop', 'name shopAvatar').limit(limit).skip((page - 1) * limit);
+        } else if (!category && searchTerm) {
+            console.log('it is here again and again');
+            const regex = new RegExp(searchTerm, 'i');
+            products = await Product.find({ name: { $regex: regex } }).populate('shop', 'name shopAvatar').limit(limit).skip((page - 1) * limit);
+        } else if (!category && !searchTerm) {
+            console.log('it is here again and again and again');
+            products = await Product.find().populate('shop', 'name shopAvatar').limit(limit).skip((page - 1) * limit);
+        }
+
+
+
+        // sort products
+        if (sort === 'Random') {
+            products = products.sort(() => Math.random() - 0.5);
+        } else if (sort === SORT_OPTIONS.PRICE_LOW_TO_HIGH) {
+            products = products.sort((a, b) => a.discountPrice - b.discountPrice);
+        } else if (sort === SORT_OPTIONS.PRICE_HIGH_TO_LOW) {
+            products = products.sort((a, b) => b.discountPrice - a.discountPrice);
+        } else if (sort === SORT_OPTIONS.NEW_ARRIVALS) {
+            products = products.sort((a, b) => b.createdAt - a.createdAt);
+        } else if (sort === SORT_OPTIONS.BEST_SELLING) {
+            products = products.sort((a, b) => b.sold_out - a.sold_out);
+        } else if (sort === SORT_OPTIONS.TOP_RATED) {
+            products = products.sort((a, b) => b.rating - a.rating);
+        }
+
+        // filter products by price
+        if (price === '0-25') {
+            products = products.filter(product => product.discountPrice >= 0 && product.discountPrice <= 25);
+        } else if (price === '25-50') {
+            products = products.filter(product => product.discountPrice >= 25 && product.discountPrice <= 50);
+        } else if (price === '50-100') {
+            products = products.filter(product => product.discountPrice >= 50 && product.discountPrice <= 100);
+        } else if (price === '100-200') {
+            products = products.filter(product => product.discountPrice >= 100 && product.discountPrice <= 200);
+        } else if (price === '200-500') {
+            products = products.filter(product => product.discountPrice >= 200 && product.discountPrice <= 500);
+        } else if (price === '500-1000') {
+            products = products.filter(product => product.discountPrice >= 500 && product.discountPrice <= 1000);
+        } else if (price === '1000-2000') {
+            products = products.filter(product => product.discountPrice >= 1000 && product.discountPrice <= 2000);
+        } else if (price === '2000+') {
+            products = products.filter(product => product.discountPrice >= 2000);
+        }
+
+        // filter products by rating
+        if (rating === '4+') {
+            products = products.filter(product => product.rating >= 4);
+        } else if (rating === '3+') {
+            products = products.filter(product => product.rating >= 3);
+        } else if (rating === '2+') {
+            products = products.filter(product => product.rating >= 2);
+        } else if (rating === '1+') {
+            products = products.filter(product => product.rating >= 1);
+        }
+
+        if (!products) {
+            const error = new Error('Could not find products.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        const endProductIndex = products.length + startingProductIndex - 1;
+
+        res.status(200).json({
+            message: 'Products fetched successfully.',
+            products: products,
+            totalProducts: totalProducts,
+            currentPage: page,
+            lastPage: lastPage,
+            startingProductIndex: startingProductIndex,
+            endProductIndex: endProductIndex
+        });
+
+    } catch (err) {
+        if (!err.message) {
+            err.message = 'Internal server error.';
+        }
+
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+
+}
+
 module.exports.getBestSellingProducts = async (req, res, next) => {
     try {
-        let products = await Product.find().sort({ 'sold': -1 }).limit(10);
+        let products = await Product.find().populate('shop', 'name shopAvatar').sort({ 'sold': -1 }).limit(10);
 
         if (!products) {
             const error = new Error('Could not find products.');
@@ -214,7 +332,7 @@ module.exports.getBestSellingProducts = async (req, res, next) => {
 
 module.exports.getFeaturedProducts = async (req, res, next) => {
     try {
-        const products = await Product.find();
+        const products = await Product.find().populate('shop', 'name shopAvatar')
 
         if (!products) {
             const error = new Error('Could not find products.');
@@ -239,6 +357,81 @@ module.exports.getFeaturedProducts = async (req, res, next) => {
         res.status(200).json({
             message: 'Featured products fetched successfully.',
             products: featuredProducts
+        });
+
+    } catch (err) {
+        if (!err.message) {
+            err.message = 'Internal server error.';
+        }
+
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
+module.exports.getProductById = async (req, res, next) => {
+    const productId = req.params.productId;
+
+    try {
+
+        console.log(productId);
+
+        // get object Id from product id
+        const productObjectId = new mongoose.Types.ObjectId(productId);
+        const product = await Product.findById(productObjectId)
+            .populate('shop', 'name shopAvatar').populate('seller', 'name avatar')
+            .populate('reviews.user', 'name avatar createdAt rating noOfProducts');
+
+        if (!product) {
+            const error = new Error('Could not find product.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        res.status(200).json({
+            message: 'Product fetched successfully.',
+            product: product
+        });
+
+    } catch (err) {
+        if (!err.message) {
+            err.message = 'Internal server error.';
+        }
+
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+
+}
+
+module.exports.getSuggestedProducts = async (req, res, next) => {
+    const productId = req.params.productId;
+
+    try {
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            const error = new Error('Could not find product.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        const products = await Product.find({ category: product.category }).populate('shop', 'name shopAvatar').limit(10);
+
+        if (!products) {
+            const error = new Error('Could not find products.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+
+        res.status(200).json({
+            message: 'Suggested products fetched successfully.',
+            products: products
         });
 
     } catch (err) {

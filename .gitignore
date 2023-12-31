@@ -396,3 +396,16 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+
+# ignore server/.env file,node_modules,package-lock.json
+server/.env
+server/node_modules
+server/package-lock.json
+
+# ignore client/node_modules,package-lock.json
+client/node_modules
+client/package-lock.json
+
+# ignore .env file
+.env

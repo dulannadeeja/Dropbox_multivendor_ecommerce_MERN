@@ -16,6 +16,9 @@ const shopSchema = new Schema({
     shopAvatar: { type: String, required: false },
     shopBanner: { type: String, required: false },
     description: { type: String, required: false },
+    rating: { type: Number, default: 0 },
+    noOfProducts: { type: Number, default: 0 },
+    noOfReviews: { type: Number, default: 0 },
 }, { timestamps: true });
 
-module.exports = mongoose.model('shop', shopSchema);
+module.exports = mongoose.model('Shop', shopSchema);

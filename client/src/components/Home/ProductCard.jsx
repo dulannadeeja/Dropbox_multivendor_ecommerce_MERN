@@ -55,17 +55,19 @@ const ProductCard = ({ product }) => {
 
   return (
     <>
-      <div className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
-        <div className="flex justify-end"></div>
-        <Link to={`${server}/products/${product._id}`}>
+      <div className="border-2 w-full bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
+        <Link
+          to={`/products/${product?._id}`}
+          className="block w-full aspect-square overflow-hidden"
+        >
           <img
-            src={`${product?.defaultImage?.url}`}
+            src={`${server}/${product?.images[0].url}`}
             alt=""
-            className="w-full h-[170px] object-contain"
+            className="w-full h-full object-cover"
           />
         </Link>
-        <Link to={`/shop/preview/${product._id}`}>
-          <h5 className={`${styles.shop_name}`}>{product.name}</h5>
+        <Link to={`/shop/preview/${product?._id}`}>
+          <h5 className={`${styles.shop_name}`}>{product.shop.name}</h5>
         </Link>
         <Link
           to={`${
@@ -81,7 +83,7 @@ const ProductCard = ({ product }) => {
           </h4>
 
           <div className="flex">
-            <Ratings rating={product.ratings} />
+            <Ratings rating={product.rating} />
           </div>
 
           <div className="py-2 flex items-center justify-between">
@@ -135,7 +137,9 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* product-Details popup */}
-        {view ? <ProductDetailsCard data={product} setView={setView} /> : null}
+        {view ? (
+          <ProductDetailsCard product={product} setView={setView} />
+        ) : null}
       </div>
     </>
   );

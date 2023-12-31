@@ -9,7 +9,6 @@ import {
   SetPasswordPage,
   HomePage,
   BestSellingPage,
-  ProductsPage,
   EventsPage,
   FAQPage,
   ProductDetailsPage,
@@ -18,6 +17,7 @@ import {
   PaymentPage,
   OrderCompletedPage,
   OrderDetailsPage,
+  AllProductsPage,
 } from "./Routes.js";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
@@ -30,7 +30,6 @@ import { useSelector } from "react-redux";
 import Loader from "./components/Loader.jsx";
 import { ShopDashboardPage, ShopOrderDetailsPage } from "./ShopRoutes.js";
 import { loadShop } from "./redux/actions/shop.js";
-import { toast } from "react-toastify";
 import STATUS from "./constants/status.js";
 import ShopPreviewPage from "./pages/shop/ShopPreviewPage.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
@@ -39,6 +38,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { server } from "./server.js";
 import axios from "axios";
 import { updateNotifications } from "./redux/actions/updateNotifications.js";
+import Error404Page from "./pages/404.jsx";
 
 const App = () => {
   const dispatch = Store.dispatch;
@@ -172,7 +172,6 @@ const App = () => {
           />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<SetPasswordPage />} />
-          <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:productId" element={<ProductDetailsPage />} />
           <Route path="/best-selling" element={<BestSellingPage />} />
           <Route path="/events" element={<EventsPage />} />
@@ -198,6 +197,8 @@ const App = () => {
           <Route path="/order/:orderId" element={<OrderDetailsPage />} />
           <Route path="/shop/:shopId" element={<ShopPreviewPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/404" element={<Error404Page />} />
+          <Route path="/products" element={<AllProductsPage />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

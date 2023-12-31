@@ -35,4 +35,15 @@ router.post('/review', isAuth, [
     body('comment').trim()
 ], productController.createReview);
 
+// GET /product/all
+router.get('/all', productController.getAllProducts);
+
+// GET /product/:productId
+router.get('/:productId', productController.getProductById);
+
+// GET /product/suggestions/:productId
+router.get('/suggestions/:productId', productController.getSuggestedProducts);
+
+
+
 module.exports = router;

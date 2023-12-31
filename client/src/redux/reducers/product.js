@@ -21,5 +21,17 @@ export const productReducer = createReducer(initialShopState, (builder) => {
             state.productStatus = STATUS.FAILURE;
             state.error = action.payload;
         })
+        .addCase('LoadProductRequest', (state) => {
+            state.productStatus = STATUS.LOADING;
+        })
+        .addCase('LoadProductRequestSuccess', (state, action) => {
+            state.error = null;
+            state.productStatus = STATUS.SUCCESS;
+            state.product = action.payload;
+        })
+        .addCase('LoadProductRequestFailure', (state, action) => {
+            state.productStatus = STATUS.FAILURE;
+            state.error = action.payload;
+        })
 
 });

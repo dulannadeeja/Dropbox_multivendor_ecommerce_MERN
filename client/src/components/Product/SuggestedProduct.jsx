@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { productData as staticProductData } from "../../static/productData";
 import styles from "../../styles/styles";
-import ProductCard from "../../components/home/ProductCard";
+import ProductCard from "../Home/ProductCard";
+import { server } from "../../server";
+import axios from "axios";
 
 const SuggestedProduct = ({ data }) => {
-  const allProducts = staticProductData;
-  const [productData, setProductData] = useState();
+  const [productsData, setProductsData] = useState();
 
   useEffect(() => {
-    const d =
-      allProducts && allProducts.filter((i) => i.category === data.category);
-    setProductData(allProducts);
+    const fetchSuggestions = async () => {
+      try {
+        const res = await axios.get(
+          `${server}/product/suggestions/${data._id}`
+        );
+        setProductsData(res.products);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchSuggestions();
   }, []);
 
   return (
@@ -23,8 +31,8 @@ const SuggestedProduct = ({ data }) => {
             Related Product
           </h2>
           <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-4 lg:gap-[25px] xl:grid-cols-5 xl:gap-[30px] mb-12">
-            {productData &&
-              productData.map((i, index) => (
+            {productsData &&
+              productsData.map((i, index) => (
                 <ProductCard product={i} key={index} />
               ))}
           </div>
