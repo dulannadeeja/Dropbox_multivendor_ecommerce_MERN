@@ -298,7 +298,6 @@ module.exports.verificationEmailSender = async (req, res, next) => {
             userId: id
         });
     } catch (err) {
-        console.log(err);
         if (!err.statusCode) {
             err.statusCode = 500;
         }
@@ -429,8 +428,6 @@ module.exports.setPassword = async (req, res, next) => {
 // load user profile
 module.exports.loadUser = async (req, res, next) => {
     const userId = req.userId;
-
-    console.log("user id from loaduser" + userId);
 
     try {
         if (!userId) {

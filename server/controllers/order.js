@@ -34,8 +34,6 @@ module.exports.createOrder = async (req, res, next) => {
 
     const itemsArray = JSON.parse(items);
 
-    console.log('itemsArray', itemsArray);
-
     try {
 
         //check validation errors
@@ -67,8 +65,6 @@ module.exports.createOrder = async (req, res, next) => {
 
         // check if all products are in stock
         const productsOutOfStock = productsWithQuantity.filter(product => {
-            console.log('product.quantity', product.quantity);
-            console.log('product.stock', product.stock);
             return product.quantity > product.stock
         });
 
@@ -78,8 +74,6 @@ module.exports.createOrder = async (req, res, next) => {
             error.data = productsOutOfStock;
             throw error;
         }
-
-        console.log('out of stock', productsOutOfStock);
 
         // reduce quantity of each product in products array
         products.forEach(product => {
@@ -143,9 +137,6 @@ module.exports.createOrder = async (req, res, next) => {
 
             // check if the coupon is applied for the current shop
 
-            console.log('shop', shop);
-            console.log('couponDoc?.shop', couponDoc?.shop);
-
             if (couponDoc?.shop.toString() === shop.toString()) {
                 thisIsCouponApplied = true;
                 thisCoupon = couponDoc._id;
@@ -204,12 +195,6 @@ module.exports.createOrder = async (req, res, next) => {
             const messageId = savedOrder._id.toString();
             const message = 'You made a new sale of ' + savedOrder.cartTotal + ' from ' + savedOrder.products.length + ' products';
 
-
-            console.log('receiverId', receiverId);
-            console.log('messageId', messageId);
-            console.log('message', message);
-
-            console.log("order event emitted from server");
             io.emit('order', { receiverId, messageId, message });
 
 
@@ -220,13 +205,7 @@ module.exports.createOrder = async (req, res, next) => {
             message: 'Order created successfully'
         });
 
-
-
-        console.log(coupon);
-
     } catch (error) {
-
-        console.log(error);
 
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -260,8 +239,6 @@ module.exports.getAllOrdersByUserId = async (req, res, next) => {
             orders
         });
     } catch (error) {
-
-        console.log(error);
 
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -299,8 +276,6 @@ module.exports.getAllOrdersByShopId = async (req, res, next) => {
             orders
         });
     } catch (error) {
-
-        console.log(error);
 
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -347,7 +322,6 @@ module.exports.updateOrderStatus = async (req, res, next) => {
 
     } catch (error) {
 
-        console.log(error);
 
         if (!error.statusCode) {
             error.statusCode = 500;

@@ -12,8 +12,6 @@ module.exports.createCoupon = async (req, res, next) => {
     const userId = req.userId;
     const shopId = req.body.shopId;
 
-    console.log('userId', userId);
-    console.log('shopId', shopId);
 
     const { code, type, discountAmount, minOrderAmount, expirationDate, startDate, categories } = req.body;
 
@@ -44,12 +42,9 @@ module.exports.createCoupon = async (req, res, next) => {
         // Get list of applicable products
         const productsList = await Product.find({ shop: shopId, category: { $in: categories } });
 
-        console.log('productsList', productsList);
 
         // map products to get only the ids
         const products = productsList.map(product => product._id);
-
-        console.log('products', products);
 
         // create coupon
 
@@ -64,7 +59,6 @@ module.exports.createCoupon = async (req, res, next) => {
             products: productsList
         });
 
-        console.log('coupon', coupon);
 
         // save coupon
         await coupon.save();
@@ -85,8 +79,7 @@ module.exports.getAllCoupons = async (req, res, next) => {
     const userId = req.userId;
     const shopId = req.params.shopId;
 
-    console.log('shopId from the get all coupons handler', shopId);
-    console.log('userId from the get all coupons handler', userId);
+
 
     // check is the user is the owner of the shop
     try {
@@ -130,12 +123,7 @@ module.exports.deleteCoupon = async (req, res, next) => {
     const shopId = req.body.shopId;
     const couponId = req.params.couponId;
 
-    console.log(req.body)
-    console.log(req.data)
 
-    console.log('shopId from the delete coupon handler', shopId);
-    console.log('userId from the delete coupon handler', userId);
-    console.log('couponId from the delete coupon handler', couponId);
 
     // check is the user is the owner of the shop
     try {
@@ -182,7 +170,6 @@ module.exports.applyCoupon = async (req, res, next) => {
     const cartItems = req.body.cartItems;
     const couponCode = req.params.couponCode;
 
-    console.log("coupon code taken" + couponCode);
 
     try {
 
@@ -239,7 +226,7 @@ module.exports.applyCoupon = async (req, res, next) => {
         // get all the products that are applicable for the coupon
         const applicableProducts = products.filter(product => coupon.products.includes(product._id.toString()));
 
-        console.log('applicableProducts', applicableProducts);
+
 
         if (!applicableProducts.length) {
             const error = new Error('No applicable products found');
@@ -257,8 +244,7 @@ module.exports.applyCoupon = async (req, res, next) => {
             throw error;
         }
 
-        console.log('totalPrice', totalPrice);
-        console.log('coupon', coupon.minOrderAmount);
+
 
         // calculate discount
         let discount;

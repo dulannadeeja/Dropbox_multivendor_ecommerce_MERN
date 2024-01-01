@@ -10,17 +10,12 @@ export const loadUser = () => async (dispatch) => {
             withCredentials: true,
         });
 
-        console.log(res);
-        console.log(res.data.user);
-
         dispatch({
             type: 'LoadUserSuccess',
             payload: res.data.user,
         });
 
     } catch (err) {
-
-        console.log("load user error catched from action" + err.message);
 
         dispatch({
             type: 'LoadUserFailure',

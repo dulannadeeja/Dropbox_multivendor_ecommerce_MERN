@@ -9,9 +9,6 @@ module.exports = (req, res, next) => {
         token = req.headers.authorization.split(' ')[1];
     }
 
-    console.log("is auth midlleware token : START", token);
-    console.log("is auth midlleware token : END");
-
     let decodedToken;
 
     try {
@@ -53,7 +50,7 @@ module.exports = (req, res, next) => {
 
     }
     catch (err) {
-        console.log(err);
+
         if (!err.statusCode) {
             err.statusCode = 500;
         }

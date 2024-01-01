@@ -86,8 +86,6 @@ export const makeStripePayment = ({ orderData: order, stripe, elements }) => asy
             type: 'MakePaymentFail',
             payload: error.message,
         });
-
-        console.log(error);
         return error;
 
     }

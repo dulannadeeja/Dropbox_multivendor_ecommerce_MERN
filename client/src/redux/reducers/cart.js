@@ -83,8 +83,6 @@ export const cartReducer = createReducer(initialCartState, (builder) => {
         })
         .addCase('IncreaseCartQuantity', (state, action) => {
 
-            console.log('action.payload', action.payload);
-
             const updatedCart = state.items.map(item => {
                 if (item._id === action.payload._id) {
                     return { ...item, quantity: item.quantity + 1 };

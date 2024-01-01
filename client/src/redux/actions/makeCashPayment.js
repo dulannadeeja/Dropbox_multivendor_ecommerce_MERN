@@ -53,8 +53,6 @@ export const makeCashPayment = ({ orderData: order }) => async (dispatch, getSta
             type: 'MakePaymentFail',
             payload: error.message,
         });
-
-        console.log(error);
         return error;
 
     }

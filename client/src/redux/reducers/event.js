@@ -27,7 +27,6 @@ export const eventReducer = createReducer(initialShopState, (builder) => {
         .addCase('DeleteEventRequestSuccess', (state, action) => {
             state.eventStatus = STATUS.SUCCESS;
             state.error = null;
-            console.log("evnt id comes to the reducer");
             state.events = state.events.filter(event => event._id !== action.payload.event);
         })
         .addCase('DeleteEventRequestFailure', (state, action) => {

@@ -27,7 +27,6 @@ export const userReducer = createReducer(initialState, (builder) => {
             state.token = action.payload.token;
         })
         .addCase('LoadUserFailure', (state) => {
-            console.log("load user failure action dispatched");
             state.isAuthenticated = false;
             state.currentStatus = STATUS.FAILURE;
         })

@@ -156,7 +156,6 @@ mongoose.connect(uri)
 
             // take userId and socketId from user
             socket.on('newUser', userId => {
-                console.log('newUser: ', userId);
                 addNewUser(userId, socket.id);
             });
 

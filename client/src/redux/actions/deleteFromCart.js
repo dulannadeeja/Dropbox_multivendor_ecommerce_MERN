@@ -2,8 +2,6 @@ import { toast } from 'react-toastify';
 
 export const deleteFromCart = ({ product }) => async (dispatch) => {
     try {
-        console.log("deleteFromCart action called");
-        console.log(product);
         dispatch({
             type: 'DeleteFromCart',
             payload: { ...product },
@@ -14,6 +12,5 @@ export const deleteFromCart = ({ product }) => async (dispatch) => {
     } catch (err) {
 
         toast.error('Error deleting from cart');
-        console.log(err);
     }
 };

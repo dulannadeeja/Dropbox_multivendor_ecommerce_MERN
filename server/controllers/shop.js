@@ -8,8 +8,6 @@ const Product = require('../models/product');
 
 module.exports.createShop = async (req, res, next) => {
 
-    console.log(req.file);
-
     const name = req.body.name;
     const mobile = req.body.mobile;
     const email = req.body.email;
@@ -88,8 +86,6 @@ module.exports.createShop = async (req, res, next) => {
 module.exports.getShop = async (req, res, next) => {
 
     let shopId = req.shopId;
-
-    console.log('shop id from get shop: ' + shopId);
 
     try {
 

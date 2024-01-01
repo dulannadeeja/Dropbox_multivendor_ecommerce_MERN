@@ -5,8 +5,6 @@ const Address = require('../models/address');
 module.exports.putAddress = async (req, res, next) => {
     const userId = req.userId;
 
-    console.log(req.body);
-
     try {
         const validationErrors = validationResult(req);
 
@@ -17,8 +15,6 @@ module.exports.putAddress = async (req, res, next) => {
             throw error;
         }
 
-        console.log("looking for user");
-
         const user = await User.findById(userId);
 
         if (!user) {
@@ -26,10 +22,6 @@ module.exports.putAddress = async (req, res, next) => {
             error.statusCode = 500;
             throw error;
         }
-
-        console.log("user found");
-
-        console.log("looking for address");
 
         const address = await Address.create({
             houseNumber: req.body.houseNumber,
@@ -47,13 +39,9 @@ module.exports.putAddress = async (req, res, next) => {
             throw error;
         }
 
-        console.log("address created");
-
         user.addresses.push(address._id);
 
         await user.save();
-
-        console.log("address added to user");
 
         res.status(201).json({
             message: 'Address added successfully!',
@@ -82,8 +70,6 @@ module.exports.getAddresses = async (req, res, next) => {
             throw error;
         }
 
-        console.log(user);
-
         res.status(200).json({
             message: 'Addresses fetched successfully!',
             addresses: user.addresses
@@ -101,8 +87,6 @@ module.exports.getAddresses = async (req, res, next) => {
 module.exports.deleteAddress = async (req, res, next) => {
     const userId = req.userId;
     const addressId = req.body.addressId;
-
-    console.log(res.data);
 
     try {
         const user = await User.findById(userId);

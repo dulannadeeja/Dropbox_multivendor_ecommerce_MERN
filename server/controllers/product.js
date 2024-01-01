@@ -127,8 +127,7 @@ module.exports.delete = async (req, res, next) => {
     const productId = req.params.productId;
     const userId = req.userId;
 
-    console.log(productId);
-    console.log(userId);
+
 
     try {
         const user = await User.findById(userId);
@@ -170,7 +169,7 @@ module.exports.delete = async (req, res, next) => {
             message: 'Product deleted successfully.'
         });
 
-        console.log('Product deleted successfully.');
+
 
     } catch (err) {
         if (!err.message) {
@@ -204,21 +203,17 @@ module.exports.getAllProducts = async (req, res, next) => {
 
         let products = [];
 
-        console.log(category, searchTerm)
+
 
         if (category && !searchTerm) {
-            console.log('it is here');
             products = await Product.find({ category: category }).populate('shop', 'name shopAvatar').limit(limit).skip((page - 1) * limit);
         } else if (searchTerm && category) {
-            console.log('it is here again');
             const regex = new RegExp(searchTerm, 'i');
             products = await Product.find({ name: { $regex: regex }, category: category }).populate('shop', 'name shopAvatar').limit(limit).skip((page - 1) * limit);
         } else if (!category && searchTerm) {
-            console.log('it is here again and again');
             const regex = new RegExp(searchTerm, 'i');
             products = await Product.find({ name: { $regex: regex } }).populate('shop', 'name shopAvatar').limit(limit).skip((page - 1) * limit);
         } else if (!category && !searchTerm) {
-            console.log('it is here again and again and again');
             products = await Product.find().populate('shop', 'name shopAvatar').limit(limit).skip((page - 1) * limit);
         }
 
@@ -376,8 +371,6 @@ module.exports.getProductById = async (req, res, next) => {
 
     try {
 
-        console.log(productId);
-
         // get object Id from product id
         const productObjectId = new mongoose.Types.ObjectId(productId);
         const product = await Product.findById(productObjectId)
@@ -525,6 +518,5 @@ module.exports.createReview = async (req, res, next) => {
 
 const clearImage = filePath => {
     filePath = path.join(__dirname, '..', filePath);
-    console.log(filePath);
     fs.unlink(filePath, err => console.log(err));
 }

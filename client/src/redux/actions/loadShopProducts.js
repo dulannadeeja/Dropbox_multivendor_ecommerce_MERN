@@ -2,8 +2,6 @@ import axios from 'axios';
 import { server } from '../../server';
 export const loadShopProducts = ({ shopId }) => async (dispatch) => {
 
-    console.log("load shop products action- shop id: " + shopId);
-
     try {
         dispatch({ type: 'LoadShopProductsRequest' });
 

@@ -48,7 +48,6 @@ export const applyCoupon = ({ couponCode }) => async (dispatch, getState) => {
             payload: err.response?.data?.message,
         });
         toast.error(err.response?.data?.message || 'Error applying coupon');
-        console.log(err);
 
     }
 };

@@ -149,14 +149,12 @@ module.exports.delete = async (req, res, next) => {
             throw error;
         }
 
-        console.log('Event deleted successfully.deletedEvent = ', deletedEvent);
-
         res.status(200).json({
             message: 'Event deleted successfully.',
             event: deletedEvent._id.toString()
         });
 
-        console.log('Event deleted successfully.');
+
 
     } catch (err) {
         if (!err.message) {
@@ -202,7 +200,7 @@ module.exports.getAllByShop = async (req, res, next) => {
             events: events
         });
 
-        console.log('Events fetched successfully.');
+
 
     } catch (err) {
         if (!err.message) {
@@ -218,6 +216,5 @@ module.exports.getAllByShop = async (req, res, next) => {
 
 const clearImage = filePath => {
     filePath = path.join(__dirname, '..', filePath);
-    console.log(filePath);
     fs.unlink(filePath, err => console.log(err));
 }

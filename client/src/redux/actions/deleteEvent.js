@@ -20,8 +20,6 @@ export const deleteEvent = ({ eventId, token }) => async (dispatch) => {
             type: 'DeleteEventRequestSuccess',
             payload: res.data,
         });
-
-        console.log("Event deleted successfully.");
         return res.data;
 
     } catch (err) {

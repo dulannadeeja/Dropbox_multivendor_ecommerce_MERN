@@ -31,10 +31,6 @@ export const updateNotifications = () => async (dispatch, getState) => {
         socket.on("order", ({ messageId, message, receiverId }) => {
 
             if (user) {
-                console.log("receiver id is " + receiverId);
-                console.log("message id is " + messageId);
-                console.log("message is " + message);
-                console.log("user id is " + user._id);
                 if (user._id.toString() === receiverId) {
                     toast.success(message);
                 }

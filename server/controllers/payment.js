@@ -62,12 +62,8 @@ module.exports.createPaypalOrder = async (req, res, next) => {
 module.exports.capturePaypalPayment = async (req, res, next) => {
     const orderID = req.body.orderID;
 
-    console.log("orderID passed from the frontend:", orderID);
-
     try {
         const { jsonResponse, httpStatusCode } = await captureOrder(orderID);
-        console.log("jsonResponse:", jsonResponse);
-        console.log("httpStatusCode:", httpStatusCode);
         res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
         console.error("Failed to create order:", error);
@@ -120,10 +116,6 @@ const createOrder = async ({
     contactName,
 
 }) => {
-    console.log(
-        "shopping cart information passed from the frontend createOrder() callback:",
-        items,
-    );
 
     const value = cartTotal - couponDiscount;
 

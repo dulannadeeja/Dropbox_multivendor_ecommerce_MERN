@@ -25,6 +25,5 @@ export const addToCart = ({ product, quantity }) => async (dispatch, getState) =
 
     } catch (err) {
         toast.error('Error adding to cart');
-        console.log(err);
     }
 };
