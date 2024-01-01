@@ -25,4 +25,6 @@ jobs:
           CI: true
 
       - name: Run Tests
-        run: npm test
+        run: |
+          cd server
+          npm run test
