@@ -1,7 +1,6 @@
 const { validationResult } = require('express-validator');
 const User = require('../models/user');
 const Shop = require('../models/shop');
-const { use } = require('chai');
 const Address = require('../models/address');
 
 module.exports.signup = async (req, res, next) => {

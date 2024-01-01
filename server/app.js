@@ -156,24 +156,6 @@ mongoose.connect(uri)
                 addNewUser(userId, socket.id);
             });
 
-            // // Handle the "upcomingOrder" event
-            // socket.on("order", ({ receiverId, messageId, message }) => {
-
-            //     console.log("connected clients are " + onlineUsers);
-
-            //     console.log("order event catched from app.js and sending it to the receiver" + receiverId);
-
-            //     const receiver = getUser(receiverId);
-            //     console.log("socket id of the receiver is " + receiver.socketId);
-            //     if (receiver) {
-            //         io.to(receiver.socketId).emit("orderConfirmed", {
-            //             messageId,
-            //             message,
-            //             receiverId
-            //         });
-            //     }
-            // });
-
             socket.on('disconnect', () => {
                 console.log('Client disconnected...');
                 removeUser(socket.id);
@@ -183,3 +165,13 @@ mongoose.connect(uri)
         });
     })
     .catch(err => console.log(err));
+
+// export App for testing
+module.exports = {
+    app,
+    closeServer: () => {
+        if (server) {
+            server.close();
+        }
+    }
+};
