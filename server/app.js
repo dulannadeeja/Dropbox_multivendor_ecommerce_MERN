@@ -1,10 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const upload = require('./multer');
+
 // configure dotenv
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config({
@@ -28,27 +27,6 @@ process.on('unhandledRejection', err => {
     });
 });
 
-
-// import multer and configure it
-// const multer = require('multer');
-// const fileStorage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, 'uploads/images'); // null for no error
-//     },
-//     filename: (req, file, cb) => {
-//         cb(null, uuidv4() + '-' + file.originalname); // null for no error
-//     }
-// });
-
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'image/png' ||
-        file.mimetype === 'image/jpg' ||
-        file.mimetype === 'image/jpeg') {
-        cb(null, true); // accept file
-    } else {
-        cb(null, false); // reject file
-    }
-};
 
 // import mongoose and configure it
 const mongoose = require('mongoose');
@@ -74,9 +52,6 @@ app.use((req, res, next) => {
 
 // serve static files
 app.use('/uploads/images', express.static(path.join(__dirname, 'uploads/images')));
-
-// multer middleware for parsing multipart/form-data
-// app.use(upload.array('images', 5));
 
 // parse requests of content-type: application/json
 app.use(bodyParser.json());
@@ -121,18 +96,16 @@ app.use((error, req, res, next) => {
 
 const PORT = process.env.SERVER_PORT || 8080;
 
-const startServer = async port => {
-
-    // Use the requested port if provided, otherwise find an available port
-    const newPort = port || await getAvailablePort(PORT);
+const startServer = async () => {
 
     return new Promise((resolve, reject) => {
-        const server = app.listen(newPort, err => {
+        const server = app.listen(0, err => {
             if (err) {
                 reject(err);
                 return;
             }
-            console.log(`Server is running on port ${newPort}`);
+            const port = server.address().port;
+            console.log(`Server is running on port ${port}`);
             resolve(server);
         });
     });
@@ -153,20 +126,6 @@ const closeServer = server => {
             resolve();
         });
     });
-};
-
-const getAvailablePort = async (preferredPort) => {
-    // Create a temporary server to find an available port
-    const tempServer = express();
-    const tempListener = tempServer.listen(preferredPort || 0);
-
-    // Get the port assigned by the OS
-    const port = tempListener.address().port;
-
-    // Close the temporary server
-    await new Promise((resolve) => tempListener.close(resolve));
-
-    return port;
 };
 
 // connect to mongodb and start server

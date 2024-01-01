@@ -13,7 +13,7 @@ describe('Auth Controller', () => {
 
     beforeAll(async () => {
         // start the server
-        server = await startServer(PORT);
+        server = await startServer();
     });
 
     it('should successfully create a new user', async () => {
