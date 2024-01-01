@@ -32,8 +32,6 @@ const LoginForm = () => {
       },
     };
 
-    console.log("Logging in");
-
     try {
       const res = await axios.post(`${server}/auth/login`, formData, config, {
         withCredentials: true,

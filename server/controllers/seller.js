@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 const User = require('../models/user');
 const Shop = require('../models/shop');
 const Address = require('../models/address');
+const clearImage = require('../utils/imageCleaner');
 
 module.exports.signup = async (req, res, next) => {
 
@@ -140,9 +141,3 @@ module.exports.signup = async (req, res, next) => {
         next(err);
     }
 };
-
-const clearImage = filePath => {
-    filePath = path.join(__dirname, '..', filePath);
-    console.log(filePath);
-    fs.unlink(filePath, err => console.log(err));
-}

@@ -3,10 +3,8 @@ const User = require('../models/user');
 const Shop = require('../models/shop');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
-const path = require('path');
 const { sendVerificationEmail, sendPasswordResetEmail } = require('../utils/authMailSender.js');
-const { type } = require('os');
+const clearImage = require('../utils/imageCleaner.js');
 
 module.exports.signup = async (req, res, next) => {
 
@@ -300,6 +298,7 @@ module.exports.verificationEmailSender = async (req, res, next) => {
             userId: id
         });
     } catch (err) {
+        console.log(err);
         if (!err.statusCode) {
             err.statusCode = 500;
         }
@@ -498,9 +497,3 @@ module.exports.logout = (req, res, next) => {
         next(err);
     }
 };
-
-const clearImage = filePath => {
-    filePath = path.join(__dirname, '..', filePath);
-    console.log(filePath);
-    fs.unlink(filePath, err => console.log(err));
-}

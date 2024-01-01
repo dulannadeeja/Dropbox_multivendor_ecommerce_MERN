@@ -119,16 +119,61 @@ app.use((error, req, res, next) => {
     res.status(status).json({ message: message, data: data });
 });
 
-let server = null;
+const PORT = process.env.SERVER_PORT || 8080;
+
+const startServer = async port => {
+
+    // Use the requested port if provided, otherwise find an available port
+    const newPort = port || await getAvailablePort(PORT);
+
+    return new Promise((resolve, reject) => {
+        const server = app.listen(newPort, err => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            console.log(`Server is running on port ${newPort}`);
+            resolve(server);
+        });
+    });
+};
+
+const closeServer = server => {
+    return new Promise((resolve, reject) => {
+        if (!server) {
+            reject(new Error('No server to close.'));
+            return;
+        }
+        server.close(err => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            console.log('Server closed.');
+            resolve();
+        });
+    });
+};
+
+const getAvailablePort = async (preferredPort) => {
+    // Create a temporary server to find an available port
+    const tempServer = express();
+    const tempListener = tempServer.listen(preferredPort || 0);
+
+    // Get the port assigned by the OS
+    const port = tempListener.address().port;
+
+    // Close the temporary server
+    await new Promise((resolve) => tempListener.close(resolve));
+
+    return port;
+};
 
 // connect to mongodb and start server
 mongoose.connect(uri)
-    .then(result => {
+    .then(() => startServer(PORT))
+    .then(server => {
         console.log('Connected to MongoDB...');
-        server = app.listen(process.env.SERVER_PORT, () => {
-            console.log('Server is running on port ' + process.env.SERVER_PORT + '...');
-
-        })
         let onlineUsers = [];
 
         // if user is already online, remove the previous socketId
@@ -169,9 +214,6 @@ mongoose.connect(uri)
 // export App for testing
 module.exports = {
     app,
-    closeServer: () => {
-        if (server) {
-            server.close();
-        }
-    }
+    closeServer,
+    startServer
 };
