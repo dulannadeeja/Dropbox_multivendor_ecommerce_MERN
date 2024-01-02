@@ -40,8 +40,7 @@ const productSchema = new mongoose.Schema({
           default: false,
         },
       },
-    ],
-    validate: [arrayMinLengthValidator, "At least one image is required"],
+    ]
   },
   reviews: [
     {

@@ -5,8 +5,6 @@ const Shop = require('../models/shop');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-const PORT = 8082;
-
 describe('Seller Controller - Signup', () => {
     let createdUserId;
     let createdShopId;

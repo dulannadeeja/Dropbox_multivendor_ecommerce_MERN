@@ -103,6 +103,7 @@ const LoginForm = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+              {/* input error */}
             </div>
           </div>
 

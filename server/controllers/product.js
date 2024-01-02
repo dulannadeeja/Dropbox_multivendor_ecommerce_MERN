@@ -7,10 +7,14 @@ const path = require('path');
 const { getRatingsAddedProducts, getProductRatingByReviews } = require('../utils/ratingCalculator');
 const mongoose = require('mongoose');
 const SORT_OPTIONS = require('../constants/sortOptions')
+const clearImage = require('../utils/imageCleaner');
 
 
 
 module.exports.create = async (req, res, next) => {
+
+    console.log(req.body);
+    console.log(req.files);
 
     // authenticated user only can reach this point
     const userId = req.userId;
@@ -28,17 +32,15 @@ module.exports.create = async (req, res, next) => {
     const validationErrors = validationResult(req);
 
     try {
-        if (!images) {
-            const error = new Error('No image provided.');
-            error.statusCode = 422;
-            throw error;
+        if (images) {
+            images.forEach(image => {
+                const imagePath = image.path;
+                const updatedImagePath = imagePath.replace(/\\/g, '/');
+                updatedImagePaths.push(updatedImagePath);
+            });
         }
 
-        images.forEach(image => {
-            const imagePath = image.path;
-            const updatedImagePath = imagePath.replace(/\\/g, '/');
-            updatedImagePaths.push(updatedImagePath);
-        });
+
 
         if (!validationErrors.isEmpty()) {
 
@@ -514,9 +516,4 @@ module.exports.createReview = async (req, res, next) => {
         }
         next(err);
     }
-}
-
-const clearImage = filePath => {
-    filePath = path.join(__dirname, '..', filePath);
-    fs.unlink(filePath, err => console.log(err));
 }
