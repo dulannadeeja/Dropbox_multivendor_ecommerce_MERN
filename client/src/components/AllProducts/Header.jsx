@@ -2,7 +2,6 @@ import React from "react";
 import StyleSheet from "../../styles/styles";
 import brandLogo from "../../assets/logo.svg";
 import { Link } from "react-router-dom";
-import { productData } from "../../static/productData";
 import { categoriesData } from "../../static/categoriesData";
 import { AiOutlineSearch } from "react-icons/ai";
 import {

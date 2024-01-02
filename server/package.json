@@ -19,7 +19,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "jest --watchAll --detectOpenHandles"
+    "test": "jest"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
