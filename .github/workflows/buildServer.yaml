@@ -28,12 +28,3 @@ jobs:
         run: |
           cd server
           npm run test
-
-      - name: Stop the Workflow If Tests Failed
-        run: exit 1
-        if: failure()
-
-      - name: stop the server
-        run: |
-          cd server
-          npm run stop
