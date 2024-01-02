@@ -234,16 +234,18 @@ module.exports.verificationEmailSender = async (req, res, next) => {
     const id = req.body.id;
     const role = req.body.role;
 
+    console.log(id, role);
+
     try {
         if (!id) {
             const error = new Error('id not found in request. Please try again.');
-            error.statusCode = 401;
+            error.statusCode = 422;
             throw error;
         }
 
         if (!role) {
             const error = new Error('role not found in request. Please try again.');
-            error.statusCode = 401;
+            error.statusCode = 422;
             throw error;
         }
 

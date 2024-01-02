@@ -71,7 +71,7 @@ describe('Seller Controller - Signup', () => {
             // Fail the test and log the error
             throw error;
         }
-    }, 30000);
+    });
 
     it('should successfully login a user', async () => {
         try {
@@ -93,8 +93,7 @@ describe('Seller Controller - Signup', () => {
             // Fail the test and log the error
             throw error;
         }
-    }
-    );
+    });
 
     it('should successfully create a new seller', async () => {
         // Define test data

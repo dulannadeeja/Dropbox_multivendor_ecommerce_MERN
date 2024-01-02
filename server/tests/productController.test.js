@@ -73,7 +73,7 @@ describe('Product Controller', () => {
             // Fail the test and log the error
             throw error;
         }
-    }, 30000);
+    });
 
     it('should successfully login a user', async () => {
         try {
@@ -95,8 +95,7 @@ describe('Product Controller', () => {
             // Fail the test and log the error
             throw error;
         }
-    }
-    );
+    });
 
     it('should successfully create a new seller', async () => {
         // Define test data
@@ -204,7 +203,7 @@ describe('Product Controller', () => {
             // Fail the test and log the error
             throw error;
         }
-    }, 30000);
+    });
 
 
 
@@ -293,8 +292,7 @@ describe('Product Controller', () => {
             // Fail the test and log the error
             throw error;
         }
-    }
-    );
+    });
 
     it('should get featured products', async () => {
         try {
@@ -311,8 +309,7 @@ describe('Product Controller', () => {
             // Fail the test and log the error
             throw error;
         }
-    }
-    );
+    });
 
     it('should get suggested products', async () => {
         try {
@@ -346,8 +343,7 @@ describe('Product Controller', () => {
             // Fail the test and log the error
             throw error;
         }
-    }
-    );
+    });
 
     it('should successfully delete a product', async () => {
         try {

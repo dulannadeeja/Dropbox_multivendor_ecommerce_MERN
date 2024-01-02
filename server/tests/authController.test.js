@@ -67,32 +67,7 @@ describe('Auth Controller', () => {
             // Fail the test and log the error
             throw error;
         }
-    }, 30000);
-
-    it('should send a verification email', async () => {
-        try {
-            const userData = {
-                id: createdUserId,
-                role: 'user',
-            };
-
-            const response = await request(app)
-                .post('/auth/verification')
-                .send(userData)
-                .expect(200);
-
-            // Assertions
-            expect(response.body).toHaveProperty('message', 'Verification email sent.');
-
-            // set the user to verified
-            const user = await User.findById(createdUserId);
-            user.isActivated = true;
-            await user.save();
-        } catch (error) {
-            // Fail the test and log the error
-            throw error;
-        }
-    }, 30000);
+    });
 
     it('should handle duplicate email during signup', async () => {
         try {
@@ -121,6 +96,33 @@ describe('Auth Controller', () => {
             throw error;
         }
     });
+
+    it('should send a verification email', async () => {
+        try {
+            const userData = {
+                id: createdUserId,
+                role: 'user',
+            };
+
+            const response = await request(app)
+                .post('/auth/verification')
+                .send(userData)
+                .expect(200);
+
+            // Assertions
+            expect(response.body).toHaveProperty('message', 'Verification email sent.');
+
+            // set the user to verified
+            const user = await User.findById(createdUserId);
+            user.isActivated = true;
+            await user.save();
+        } catch (error) {
+            // Fail the test and log the error
+            throw error;
+        }
+    });
+
+
 
     it('should successfully login a user', async () => {
         try {
@@ -205,7 +207,7 @@ describe('Auth Controller', () => {
             // Fail the test and log the error
             throw error;
         }
-    }, 30000);
+    });
 
     it('should successfully reset a password', async () => {
         try {
