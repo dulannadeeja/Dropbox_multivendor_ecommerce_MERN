@@ -5,21 +5,12 @@ import { FiPackage, FiShoppingBag } from "react-icons/fi";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { BiMessageSquareDetail } from "react-icons/bi";
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
 import { server } from "../../../server";
 import NotificationDropdown from "./Notification";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import { IoMdNotifications } from "react-icons/io";
-import { useDispatch } from "react-redux";
-import { updateNotifications } from "../../../redux/actions/updateNotifications";
+import logo from "../../../assets/logo.svg";
 
 const DashboardHeader = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { user, isAuthenticated, isSeller } = useSelector(
-    (state) => state.user
-  );
   const { shop } = useSelector((state) => state.shop);
 
   const [notificationOpen, setNotificationOpen] = React.useState(false);
@@ -27,11 +18,8 @@ const DashboardHeader = () => {
   return (
     <div className="w-full h-[80px] bg-white shadow sticky top-0 left-0 z-30 flex items-center justify-between px-4">
       <div>
-        <Link to="/shop/dashboard">
-          <img
-            src="https://shopo.quomodothemes.website/assets/images/logo.svg"
-            alt=""
-          />
+        <Link to="/">
+          <img src={logo} alt="" className="w-10" />
         </Link>
       </div>
       <div className="flex items-center">
@@ -69,7 +57,11 @@ const DashboardHeader = () => {
           </Link>
           <Link to={`/shop/${shop?._id}`}>
             <img
-              src={`${server}/${shop?.avatar}`}
+              src={
+                shop.shopAvatar
+                  ? `${server}/${shop.shopAvatar}`
+                  : "../../../assets/placeholders/7309681.jpg"
+              }
               alt=""
               className="w-[50px] h-[50px] rounded-full object-cover"
             />

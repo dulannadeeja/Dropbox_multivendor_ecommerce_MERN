@@ -17,6 +17,8 @@ const PersonalInfo = () => {
   } = useSellerSignupContext();
 
   const [formCompleted, setFormCompleted] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
   const handleOnChange = async (e) => {
     const { name, value } = e.target;
@@ -40,19 +42,24 @@ const PersonalInfo = () => {
     setFirstStepInfo({ ...firstStepInfo, [name]: value });
   };
 
-  const handleOnPhoneChange = (value) => {
-    console.log(value);
-
-    // check if the phone number is valid
-    if (value.error) {
-      setErrors((prevErrors) => ({ ...prevErrors, phone: value.error }));
+  // handle phone number error
+  useEffect(() => {
+    if (phoneError) {
+      setErrors({ ...errors, phone: phoneError });
     } else {
-      setErrors((prevErrors) => ({ ...prevErrors, phone: "" }));
+      setErrors({ ...errors, phone: "" });
     }
+  }, [phoneError]);
 
-    // update the state
-    setFirstStepInfo((prevInfo) => ({ ...prevInfo, phone: value.phone }));
-  };
+  // handle phone number
+  useEffect(() => {
+    setFirstStepInfo({ ...firstStepInfo, phone: phoneNumber });
+  }, [phoneNumber]);
+
+  // when comes back from the next step, set the phone number from the context
+  useEffect(() => {
+    setPhoneNumber(firstStepInfo.phone);
+  }, []);
 
   // handle form completion
   const handleFormCompletion = () => {
@@ -88,8 +95,8 @@ const PersonalInfo = () => {
     e.preventDefault();
   };
   return (
-    <div className="min-h-scree flex flex-col justify-center py-12 sm:px-6 lg:px-10 800px:w-full">
-      <div className="sm:w-full">
+    <div className="min-h-scree flex flex-col justify-center sm:p-2 md:p-5 lg:p-10">
+      <div className="mb-10">
         <h2 className="text-xl font-bold text-gray-700 mt-10">
           Personal Information
         </h2>
@@ -99,9 +106,12 @@ const PersonalInfo = () => {
           form to create your shop.
         </p>
       </div>
-      <div className="mt-8 sm:mx-auto sm:w-full">
+      <div className="">
         <div>
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form
+            className="grid grid-cols-1 lg:grid-cols-2 gap-10"
+            onSubmit={handleSubmit}
+          >
             {/* First Name */}
             <div>
               <label htmlFor="firstName" className={styles.formLabel}>
@@ -143,15 +153,19 @@ const PersonalInfo = () => {
             {/* Email */}
             <div>
               <label htmlFor="email" className={styles.formLabel}>
-                Email <span className="text-gray-400">(cannot be changed)</span>
+                Email{" "}
+                <span className="text-gray-400 text-xs">
+                  (cannot be changed)
+                </span>
               </label>
               <input
                 type="email"
                 name="email"
                 required
+                disabled
                 value={firstStepInfo.email}
                 onChange={(e) => handleOnChange(e)}
-                className={styles.formInput}
+                className={`${styles.formInput} bg-gray-100 pointer-disabled`}
               />
               {/* form control error */}
               {errors && errors.email && (
@@ -299,8 +313,19 @@ const PersonalInfo = () => {
               </div>
             </div>
 
-            {/* Phone */}
-            <PhoneInput handleOnPhoneChange={handleOnPhoneChange} />
+            <div>
+              {/* Phone */}
+              <PhoneInput
+                phoneNumber={phoneNumber}
+                setPhoneNumber={setPhoneNumber}
+                setPhoneError={setPhoneError}
+              />
+
+              {/* form control error */}
+              {errors && errors.phone && (
+                <p className={styles.formInputError}>{errors.phone}</p>
+              )}
+            </div>
           </form>
         </div>
       </div>

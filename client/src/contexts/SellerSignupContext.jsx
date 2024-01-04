@@ -56,6 +56,9 @@ export const SellerSignupProvider = ({ children }) => {
     contactName: "",
     contactEmail: "",
     contactPhone: "",
+    shopDescription: "",
+    shopBanner: "",
+    shopLogo: "",
   });
 
   // Business Info Form Fields
@@ -78,6 +81,14 @@ export const SellerSignupProvider = ({ children }) => {
     contactPhone: "",
   });
 
+  // Shop Setup Form Fields
+  const [fourthStepCompleted, setFourthStepCompleted] = useState(false);
+  const [fourthStepInfo, setFourthStepInfo] = useState({
+    shopDescription: "",
+    shopBanner: "",
+    shopLogo: "",
+  });
+
   const contextValue = {
     currentStep,
     setCurrentStep,
@@ -96,6 +107,10 @@ export const SellerSignupProvider = ({ children }) => {
     setThirdStepInfo,
     thirdStepCompleted,
     setThirdStepCompleted,
+    fourthStepInfo,
+    setFourthStepInfo,
+    fourthStepCompleted,
+    setFourthStepCompleted,
   };
 
   return (

@@ -11,6 +11,7 @@ const StepControl = ({ handleSubmit }) => {
     firstStepCompleted,
     secondStepCompleted,
     thirdStepCompleted,
+    fourthStepCompleted,
   } = useSellerSignupContext();
 
   const [nextOptionEnabled, setNextOptionEnabled] = useState(false);
@@ -32,7 +33,7 @@ const StepControl = ({ handleSubmit }) => {
       return true;
     } else if (currentStep === 3 && thirdStepCompleted) {
       return true;
-    } else if (currentStep === 4) {
+    } else if (currentStep === 4 && fourthStepCompleted) {
       return true;
     }
     return false;
@@ -46,10 +47,11 @@ const StepControl = ({ handleSubmit }) => {
     firstStepCompleted,
     secondStepCompleted,
     thirdStepCompleted,
+    fourthStepCompleted,
   ]);
 
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center mt-10">
       <div>
         <button
           className={`${styles.button} bg-slate-500`}
@@ -62,6 +64,7 @@ const StepControl = ({ handleSubmit }) => {
         {currentStep !== steps.length ? (
           <button
             className={`${styles.button} ${nextOptionEnabled && "bg-red-500"}`}
+            disabled={!nextOptionEnabled}
             onClick={() => handleNext()}
           >
             Next
@@ -69,6 +72,7 @@ const StepControl = ({ handleSubmit }) => {
         ) : (
           <button
             className={`${styles.button} ${nextOptionEnabled && "bg-red-500"}`}
+            disabled={!nextOptionEnabled}
             onClick={() => handleSubmit()}
           >
             Open Shop

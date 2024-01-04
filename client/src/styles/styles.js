@@ -20,6 +20,8 @@ const styles = {
 
     // Button styles
     button: 'bg-black px-4 py-2 flex items-center justify-center rounded-xl cursor-pointer hover:bg-[#333] transition-all duration-300 ease-in-out text-white font-[500] text-[16px]',
+    buttonPrimary: 'flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
+    buttonDisabled: 'opacity-50 cursor-not-allowed',
     buttonSecondary: 'bg-slate-500 px-4 py-2 flex items-center justify-center rounded-xl cursor-pointer hover:bg-[#333] transition-all duration-300 ease-in-out text-white font-[500] text-[16px]',
 };
 

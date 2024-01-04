@@ -11,15 +11,17 @@ import BusinessInfo from "./BusinessInfoForm";
 import { useSellerSignupContext } from "../../contexts/SellerSignupContext.jsx";
 import ContactInfo from "./ContactInfoForm.jsx";
 import ShopSetup from "./ShopSetupForm.jsx";
+import { loadUser } from "../../redux/actions/user.js";
+import { useDispatch } from "react-redux";
 
 const SellerSignupForm = () => {
   const {
     user,
     token,
-    isAuthenticated,
     currentStatus: userCurrentStatus,
   } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const {
     currentStep,
@@ -29,6 +31,7 @@ const SellerSignupForm = () => {
     firstStepInfo,
     secondStepInfo,
     thirdStepInfo,
+    fourthStepInfo,
   } = useSellerSignupContext();
 
   useEffect(() => {
@@ -79,20 +82,30 @@ const SellerSignupForm = () => {
       formData.append("contactPhone", thirdStepInfo.contactPhone);
       formData.append("contactEmail", thirdStepInfo.contactEmail);
       formData.append("contactName", thirdStepInfo.contactName);
+      formData.append("shopDescription", fourthStepInfo.shopDescription);
+      formData.append("bannerName", fourthStepInfo.shopBanner.name);
+      formData.append("logoName", fourthStepInfo.shopLogo.name);
+
+      formData.append("images", fourthStepInfo.shopLogo);
+      formData.append("images", fourthStepInfo.shopBanner);
+
+      console.log(fourthStepInfo.shopLogo.name);
+      console.log(fourthStepInfo.shopBanner.name);
 
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       };
 
       await axios
-        .put(`${server}/seller/signup`, formData, config)
+        .post(`${server}/seller/signup`, formData, config)
         .then((res) => {
           if (res.status === 201) {
             toast.success(res.data.message);
-            navigate("/login");
+            dispatch(loadUser());
+            navigate("/");
           }
         })
         .catch((err) => {
@@ -105,7 +118,7 @@ const SellerSignupForm = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full py-20 px-5 bg-white md:max-w-3xl lg:max-w-7xl mx-auto my-10 md:my-20 shadow-lg rounded-lg md:px-20">
       {/* Stepper */}
       <Stepper />
 

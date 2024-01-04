@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import LoginForm from "../components/Login/LoginForm.jsx";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Header from "../components/Layouts/Header";
+import Footer from "../components/Layouts/Footer";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -15,7 +17,9 @@ const LoginPage = () => {
 
   return (
     <div>
+      <Header />
       <LoginForm />
+      <Footer />
     </div>
   );
 };

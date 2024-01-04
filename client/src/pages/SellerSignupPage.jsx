@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import SellerSignupForm from "../components/SellerSignup/SellerSignupForm";
 import { SellerSignupProvider } from "../contexts/SellerSignupContext";
 import Loader from "../components/Loader";
-import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
+import Header from "../components/Layouts/Header";
+import Footer from "../components/Layouts/Footer";
 
 const SellerSignupPage = () => {
   const location = useLocation();
@@ -30,6 +31,7 @@ const SellerSignupPage = () => {
 
   return (
     <>
+      <Header />
       {loading ? (
         <Loader />
       ) : (
@@ -39,6 +41,7 @@ const SellerSignupPage = () => {
           </SellerSignupProvider>
         </div>
       )}
+      <Footer />
     </>
   );
 };

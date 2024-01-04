@@ -23,7 +23,6 @@ const sendVerificationEmail = async (recipientName, recipientEmail, verification
         subject: 'Account Verification',
         html: `
             <div style="font-family: Arial, sans-serif; text-align: center;">
-                <img src="COMPANY_LOGO_URL" alt="Company Logo" style="width: 100px; height: 100px; margin-bottom: 20px;">
                 <h2 style="color: #3498db; margin-bottom: 10px;">Welcome to ${process.env.APP_NAME}!</h2>
                 <p>Hello ${recipientName},</p>
                 <p>Please verify your account by clicking the link below:</p>
@@ -33,7 +32,6 @@ const sendVerificationEmail = async (recipientName, recipientEmail, verification
             </div>
         `,
     };
-
     await transporter.sendMail(mailOptions);
 };
 

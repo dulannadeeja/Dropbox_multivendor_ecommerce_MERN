@@ -1,18 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css"; // Import the styles
 import styles from "../../styles/styles";
-import { useSellerSignupContext } from "../../contexts/SellerSignupContext";
 
-const PhoneInputComponent = ({ handleOnPhoneChange }) => {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [errors, setErrors] = useState({
-    phone: "",
-  });
-
-  const { currentStep, firstStepInfo, thirdStepinfo } =
-    useSellerSignupContext();
-
+const PhoneInputComponent = ({
+  phoneNumber,
+  setPhoneNumber,
+  setPhoneError,
+}) => {
   const handleOnChange = (value, country, e, formattedValue) => {
     // 'value' will be the phone number in international format
     // 'country' will be the selected country
@@ -21,26 +16,18 @@ const PhoneInputComponent = ({ handleOnPhoneChange }) => {
 
     //check if phone number is valid
     if (!value) {
-      setErrors({ phone: "Please enter your phone number" });
+      setPhoneError("Please enter a valid phone number");
     }
 
     if (value.length < 10) {
-      setErrors({ phone: "Please enter a valid phone number" });
+      setPhoneError("Please enter a valid phone number");
     }
 
     if (value.length >= 10) {
-      setErrors({});
+      setPhoneError(null);
     }
 
     setPhoneNumber(value);
-    handleOnPhoneChange({
-      dialCode: country.dialCode,
-      countryCode: country.countryCode,
-      countryName: country.name,
-      phone: value,
-      formattedValue: formattedValue,
-      error: errors.phone,
-    });
   };
 
   return (
@@ -55,8 +42,6 @@ const PhoneInputComponent = ({ handleOnPhoneChange }) => {
         value={phoneNumber}
         onChange={handleOnChange}
       />
-      {/* form control error */}
-      {errors.phone && <p className={styles.formInputError}>{errors.phone}</p>}
     </div>
   );
 };

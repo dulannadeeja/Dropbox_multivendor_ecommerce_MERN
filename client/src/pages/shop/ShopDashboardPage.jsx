@@ -46,7 +46,7 @@ const ShopDashboardPage = () => {
         <div>
           <DashboardHeader />
           <div className="flex gap-2 w-full">
-            <div className="w-[80px] 800px:w-[330px]">
+            <div className="w-[80px] 800px:w-[330px] min-h-screen">
               <DashboardSideBar active={active} setActive={setActive} />
             </div>
             <div className="w-full">

@@ -1,5 +1,4 @@
 import React from "react";
-import { TiTick } from "react-icons/ti";
 import { useSellerSignupContext } from "../../contexts/SellerSignupContext";
 
 const Stepper = () => {
@@ -24,15 +23,15 @@ const Stepper = () => {
             <div className="text-sm">{step}</div>
           </div>
         ))}
-        <div className="absolute top-5 left-1/2 transform -translate-x-1/2 w-[95%] h-1 bg-slate-500"></div>
+        <div className="absolute top-5 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[90%] h-1 bg-slate-500"></div>
         {currentStep == 2 && (
-          <div className="absolute top-5 left-10 transform w-[32%] h-1 bg-indigo-500"></div>
+          <div className="absolute top-5 left-10 transform w-[30%] h-1 bg-indigo-500"></div>
         )}
         {currentStep == 3 && (
-          <div className="absolute top-5 left-10 transform w-[64%] h-1 bg-indigo-500"></div>
+          <div className="absolute top-5 left-10 transform w-[60%] h-1 bg-indigo-500"></div>
         )}
         {currentStep == 4 && (
-          <div className="absolute top-5 left-10 transform w-[96%] h-1 bg-indigo-500"></div>
+          <div className="absolute top-5 left-10 transform w-[85%] sm:w-[90%]  h-1 bg-indigo-500"></div>
         )}
       </div>
     </div>

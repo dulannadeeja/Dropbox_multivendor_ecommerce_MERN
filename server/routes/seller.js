@@ -1,6 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const User = require('../models/user');
+const upload = require('../multer');
 
 const feedController = require('../controllers/seller.js');
 const isAuth = require('../middlewares/isAuth');
@@ -8,7 +9,7 @@ const isAuth = require('../middlewares/isAuth');
 const router = express.Router();
 
 // PUT /seller/signup
-router.put('/signup', [
+router.post('/signup', upload.array('images', 2), [
     body('firstName').trim().not().isEmpty().withMessage('First name is required.'),
     body('lastName').trim().not().isEmpty().withMessage('Last name is required.'),
     body('email').isEmail().withMessage('Please enter a valid email.')
@@ -40,7 +41,8 @@ router.put('/signup', [
     body('contactEmail').isEmail().withMessage('Please enter a valid email.')
         .normalizeEmail(),
     body('contactPhone').trim().not().isEmpty().withMessage('Phone number is required.')
-        .isLength({ min: 10, max: 13 }).withMessage('Phone number must be between 10 and 13 characters long.')
+        .isLength({ min: 10, max: 13 }).withMessage('Phone number must be between 10 and 13 characters long.'),
+    body('shopDescription').trim().not().isEmpty().withMessage('Shop description is required.'),
 ], isAuth, feedController.signup);
 
 module.exports = router;

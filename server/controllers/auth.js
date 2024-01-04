@@ -18,6 +18,9 @@ module.exports.signup = async (req, res, next) => {
     if (req.file) {
         const imagePath = req.file.path;
         updatedImagePath = imagePath.replace(/\\/g, '/');
+    } else {
+        // set a default image
+        updatedImagePath = 'uploads/images/default-user-avatar.jpg';
     }
 
     const validationErrors = validationResult(req);
@@ -231,47 +234,24 @@ module.exports.accountActivation = async (req, res, next) => {
 }
 
 module.exports.verificationEmailSender = async (req, res, next) => {
-    const id = req.body.id;
-    const role = req.body.role;
-
-    console.log(id, role);
+    const userId = req.body.id;
 
     try {
-        if (!id) {
+        if (!userId) {
             const error = new Error('id not found in request. Please try again.');
             error.statusCode = 422;
             throw error;
         }
 
-        if (!role) {
-            const error = new Error('role not found in request. Please try again.');
-            error.statusCode = 422;
-            throw error;
-        }
+        const user = await User.findById(userId);
 
-        let userOrShop;
-
-        if (role === 'shop') {
-            const shop = await Shop.findById(id);
-            userOrShop = shop;
-        } else if (role === 'user') {
-            const user = await User.findById(id);
-            userOrShop = user;
-        } else {
-            const error = new Error('Invalid role. Please try again.');
+        if (!user) {
+            const error = new Error('A user with this id could not be found.');
             error.statusCode = 401;
             throw error;
         }
 
-
-
-        if (!userOrShop) {
-            const error = new Error('Invalid id. System could not find data.');
-            error.statusCode = 401;
-            throw error;
-        }
-
-        if (userOrShop.isActivated) {
+        if (user.isActivated) {
             const error = new Error('This account is already activated.');
             error.statusCode = 401;
             throw error;
@@ -279,14 +259,14 @@ module.exports.verificationEmailSender = async (req, res, next) => {
 
         // Generate verification token
         const verificationToken = jwt.sign({
-            email: userOrShop.email,
-            userId: userOrShop._id.toString()
+            email: user.email,
+            userId: user._id.toString()
         }, process.env.ACTIVATION_SECRET, { expiresIn: process.env.ACTIVATION_EXPIRES_IN });
 
-        const activationUrl = `${process.env.CLIENT_URL}/activate/${role}/${verificationToken}`;
+        const activationUrl = `${process.env.CLIENT_URL}/activate/${'user'}/${verificationToken}`;
 
         // Send verification email
-        const error = await sendVerificationEmail(userOrShop.name, userOrShop.email, activationUrl);
+        const error = await sendVerificationEmail(user.firstName + " " + user.lastName, user.email, activationUrl);
 
         if (error) {
             const error = new Error('Could not send verification email.');
@@ -297,7 +277,7 @@ module.exports.verificationEmailSender = async (req, res, next) => {
         // Send the response here, after successful email sending
         res.status(200).json({
             message: 'Verification email sent.',
-            userId: id
+            userId: user._id.toString()
         });
     } catch (err) {
         if (!err.statusCode) {

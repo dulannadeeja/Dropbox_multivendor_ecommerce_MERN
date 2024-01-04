@@ -28,12 +28,33 @@ module.exports.signup = async (req, res, next) => {
     const contactName = req.body.contactName;
     const contactEmail = req.body.contactEmail;
     const contactPhone = req.body.contactPhone;
+    const shopDescription = req.body.shopDescription;
+    const shopAvatarName = req.body.logoName;
+    const shopBannerName = req.body.bannerName;
 
-    let updatedImagePath;
+    console.log(req.files);
 
-    if (req.file) {
-        const imagePath = req.file.path;
-        updatedImagePath = imagePath.replace(/\\/g, '/');
+    let shopAvatarPath = null;
+    let shopBannerPath = null;
+
+    if (req.files && req.files.length > 0) {
+        if (shopAvatarName) {
+            req.files.forEach(file => {
+                if (file.originalname === shopAvatarName) {
+                    shopAvatarPath = file.path.replace(/\\/g, "/");
+                }
+            });
+        }
+    }
+
+    if (req.files && req.files.length > 0) {
+        if (shopBannerName) {
+            req.files.forEach(file => {
+                if (file.originalname === shopBannerName) {
+                    shopBannerPath = file.path.replace(/\\/g, "/");
+                }
+            })
+        }
     }
 
     const validationErrors = validationResult(req);
@@ -41,8 +62,13 @@ module.exports.signup = async (req, res, next) => {
     try {
         if (!validationErrors.isEmpty()) {
 
-            if (req.file) {
-                clearImage(updatedImagePath);
+            // unlink uploaded images
+            if (shopAvatarPath) {
+                clearImage(shopAvatarPath);
+            }
+
+            if (shopBannerPath) {
+                clearImage(shopBannerPath);
             }
 
             const error = new Error(validationErrors.array()[0].msg);
@@ -62,7 +88,10 @@ module.exports.signup = async (req, res, next) => {
                 apartment: businessApartment,
                 contactName: contactName,
                 contactEmail: contactEmail,
-                contactPhone: contactPhone
+                contactPhone: contactPhone,
+                shopAvatar: shopAvatarPath ? shopAvatarPath : "",
+                shopBanner: shopBannerPath ? shopBannerPath : "",
+                description: shopDescription
             }
         )
 

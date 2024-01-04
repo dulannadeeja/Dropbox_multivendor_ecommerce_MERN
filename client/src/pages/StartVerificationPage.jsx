@@ -8,9 +8,6 @@ import { server } from "../server";
 const StartVerificationPage = () => {
   // Destructuring values from the React Router useParams hook
   const { userId } = useParams();
-  const { shopId } = useParams();
-
-  const role = userId ? "user" : "shop";
 
   // State hooks for managing loading state, error messages, success messages, countdown, and resend button state
   const [loading, setLoading] = useState(false);
@@ -20,15 +17,14 @@ const StartVerificationPage = () => {
 
   // Function to send a verification email
   const sendVerificationEmail = async () => {
-    setErrorMessage(""); // Resetting the error message
-    setSuccessMessage(""); // Resetting the success message
     setResendDisabled(true); // Disabling the resend button
     setLoading(true);
     try {
-      const id = userId || shopId;
-
       // Making an asynchronous request to the server to send a verification email
-      const res = await axios.post(`${server}/auth/verification`, { id, role });
+      const res = await axios.post(`${server}/auth/verification`, {
+        id: userId,
+        role: "user",
+      });
       // Updating the success message and starting the countdown
       setSuccessMessage(res.data.message);
     } catch (err) {
@@ -44,7 +40,7 @@ const StartVerificationPage = () => {
   // useEffect hook to send the verification email when the component mounts
   useEffect(() => {
     sendVerificationEmail();
-  }, [userId]); // The useEffect will run whenever userId changes
+  }, []);
 
   // useEffect hook to display an error toast message when errorMessage changes
   useEffect(() => {
@@ -62,45 +58,47 @@ const StartVerificationPage = () => {
 
   // The main JSX structure of the component
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      {/* Displaying an image */}
-      <img
-        src={verifyUserImage}
-        alt="Verify User"
-        className="w-40 mx-auto mb-4"
-      />
-      {/* Heading */}
-      <h1 className="text-3xl font-bold mb-4">Verify Email to Continue</h1>
-      {/* Informational text */}
-      <p className="text-gray-600 mb-4">
-        We have sent an email with verification details to the address you
-        provided.
-      </p>
-      <p className="text-gray-600 mb-4">
-        Please check your email and click on the verification link to activate
-        your account.
-      </p>
-      {/* Resend verification email button */}
-      <div className="flex items-center mb-4">
-        <p className="text-gray-600">Didn't receive the email?</p>
-        <button
-          disabled={resendDisabled}
-          onClick={sendVerificationEmail}
-          className={`ml-2 text-blue-500 hover:underline focus:outline-none ${
-            resendDisabled ? "cursor-not-allowed" : ""
-          }`}
-        >
-          {loading ? "Resending..." : "Resend verification email"}
-        </button>
+    <div className="h-screen flex items-center justify-center ">
+      <div className="flex justify-center items-center font-sans bg-white p-10 flex-col">
+        {/* Displaying an image */}
+        <img
+          src={verifyUserImage}
+          alt="Verify User"
+          className="w-20 mx-auto mb-10"
+        />
+        {/* Heading */}
+        <h1 className="text-3xl font-bold mb-10">Verify Email to Continue</h1>
+        {/* Informational text */}
+        <p className="text-gray-500">
+          We have sent an email with verification details to the address you
+          provided.
+        </p>
+        <p className="text-gray-500 mb-10">
+          Please check your email and click on the verification link to activate
+          your account.
+        </p>
+        {/* Resend verification email button */}
+        <div className="flex items-center mb-4">
+          <p className="text-gray-600 font-bold">Didn't receive the email?</p>
+          <button
+            disabled={resendDisabled}
+            onClick={sendVerificationEmail}
+            className={`ml-2 text-blue-500 hover:underline focus:outline-none ${
+              resendDisabled ? "cursor-not-allowed" : ""
+            }`}
+          >
+            {loading ? "Resending..." : "Resend verification email"}
+          </button>
+        </div>
+        {/* Additional information and a link */}
+        <p className="text-gray-500">
+          If you continue to face issues,{" "}
+          <Link to="/contact" className="text-blue-500 hover:underline">
+            contact support
+          </Link>
+          .
+        </p>
       </div>
-      {/* Additional information and a link */}
-      <p className="text-gray-600">
-        If you continue to face issues,{" "}
-        <Link to="/contact" className="text-blue-500 hover:underline">
-          contact support
-        </Link>
-        .
-      </p>
     </div>
   );
 };

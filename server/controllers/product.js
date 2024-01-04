@@ -2,8 +2,6 @@ const { validationResult } = require('express-validator');
 const User = require('../models/user');
 const Product = require('../models/product');
 const Shop = require('../models/shop');
-const fs = require('fs');
-const path = require('path');
 const { getRatingsAddedProducts, getProductRatingByReviews } = require('../utils/ratingCalculator');
 const mongoose = require('mongoose');
 const SORT_OPTIONS = require('../constants/sortOptions')
@@ -12,9 +10,6 @@ const clearImage = require('../utils/imageCleaner');
 
 
 module.exports.create = async (req, res, next) => {
-
-    console.log(req.body);
-    console.log(req.files);
 
     // authenticated user only can reach this point
     const userId = req.userId;
@@ -124,6 +119,115 @@ module.exports.create = async (req, res, next) => {
         next(err);
     }
 };
+
+module.exports.edit = async (req, res, next) => {
+
+    // authenticated user only can reach this point
+    const userId = req.userId;
+    const productId = req.params.productId;
+
+    const name = req.body.name;
+    const description = req.body.description;
+    const category = req.body.category;
+    const originalPrice = req.body.originalPrice;
+    const discountPrice = req.body.discountPrice;
+    const stock = req.body.stock;
+    const tags = req.body.tags;
+    const images = req.files
+
+    let updatedImagePaths = [];
+    const validationErrors = validationResult(req);
+
+    try {
+        if (images) {
+            images.forEach(image => {
+                const imagePath = image.path;
+                const updatedImagePath = imagePath.replace(/\\/g, '/');
+                updatedImagePaths.push(updatedImagePath);
+            });
+        }
+
+        if (!validationErrors.isEmpty()) {
+
+            if (updatedImagePaths) {
+                updatedImagePaths.forEach(imagePath => {
+                    clearImage(imagePath);
+                });
+            }
+
+            const error = new Error(validationErrors.array()[0].msg);
+            error.statusCode = 422;
+            error.data = validationErrors.array();
+            throw error;
+        }
+
+        const imagesObj = [];
+
+        updatedImagePaths.forEach((imagePath, index) => {
+            const imageObj = {
+                url: imagePath,
+                isDefault: index === 0 ? true : false
+            }
+            imagesObj.push(imageObj);
+        });
+
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            const error = new Error('Could not find product.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        if (product.seller.toString() !== userId.toString()) {
+            const error = new Error('Not authorized to edit this product.');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        product.name = name;
+        product.description = description;
+        product.category = category;
+        product.tags = tags;
+        product.originalPrice = originalPrice;
+        product.discountPrice = discountPrice;
+        product.stock = stock;
+        product.images = imagesObj;
+
+        const savedProduct = await product.save();
+
+        if (!savedProduct) {
+            const error = new Error('Could not edit product.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+
+        res.status(201).json({
+            message: 'Product edited successfully.',
+            product: savedProduct
+        });
+
+    }
+    catch (err) {
+        if (updatedImagePaths) {
+            updatedImagePaths.forEach(imagePath => {
+                clearImage(imagePath);
+            });
+        }
+
+        if (!err.message) {
+            err.message = 'Internal server error.';
+        }
+
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+
+
+}
 
 module.exports.delete = async (req, res, next) => {
     const productId = req.params.productId;

@@ -3,20 +3,26 @@ import styles from "../../styles/styles";
 import ShopInfo from "../../components/Shop/ShopPrev/ShopInfo";
 import ShopContent from "../../components/Shop/ShopPrev/ShopContent";
 import { useParams } from "react-router-dom";
+import Header from "../../components/Layouts/Header";
+import Footer from "../../components/Layouts/Footer";
 
 const ShopPreviewPage = () => {
   const { shopId } = useParams();
   return (
-    <div className={`${styles.section} bg-[#f5f5f5]`}>
-      <div className="w-full 800px:flex py-10 justify-between">
-        <div className="800px:w-[25%] bg-[#fff] rounded-[4px] shadow-sm 800px:overflow-y-scroll 800px:h-[90vh] 800px:sticky top-10 left-0 z-10">
-          <ShopInfo />
-        </div>
-        <div className="800px:w-[72%] mt-5 800px:mt-['unset'] rounded-[4px]">
-          <ShopContent shopId={shopId} />
+    <>
+      <Header />
+      <div className={`${styles.section} bg-[#f5f5f5] py-10`}>
+        <div className="grid lg:grid-cols-12 gap-10">
+          <div className="col-span-4 rounded-lg shadow-lg overflow-hidden">
+            <ShopInfo />
+          </div>
+          <div className="col-span-8 rounded-lg shadow-lg overflow-hidden p-5">
+            <ShopContent shopId={shopId} />
+          </div>
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 

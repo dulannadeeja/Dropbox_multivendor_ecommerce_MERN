@@ -54,7 +54,11 @@ const ActivationPage = () => {
     }
   };
 
-  return <div className="p-8">{renderActivationMessage()}</div>;
+  return (
+    <div className="flex items-center justify-center">
+      {renderActivationMessage()}
+    </div>
+  );
 };
 
 export default ActivationPage;

@@ -100,7 +100,7 @@ const businessInfo = () => {
     <div className="min-h-scree flex flex-col justify-center py-12 sm:px-6 lg:px-10 800px:w-full">
       <div className="sm:w-full">
         <h2 className="text-xl font-bold text-gray-700 mt-10">
-          Personal Information
+          Business Information
         </h2>
         <p className="text-gray-500 mt-5">
           Your personal information that you provide will be used to create your

@@ -27,14 +27,14 @@ const ShopContent = ({ shopId }) => {
 
   return (
     <>
-      <div className="w-full flex">
+      <div className="w-full flex mb-5 bg-white px-10 py-4 rounded-md shadow-lg">
         <div className="flex items-center" onClick={() => setActiveTab(1)}>
           <h5
             className={`font-[600] text-[20px] ${
               activeTab === 1 ? "text-red-500" : "text-[#333]"
             } cursor-pointer pr-[20px]`}
           >
-            Shop Products
+            Products
           </h5>
         </div>
         <div className="flex items-center" onClick={() => setActiveTab(2)}>
@@ -43,7 +43,7 @@ const ShopContent = ({ shopId }) => {
               activeTab === 2 ? "text-red-500" : "text-[#333]"
             } cursor-pointer pr-[20px]`}
           >
-            Running Events
+            Events
           </h5>
         </div>
 
@@ -53,7 +53,7 @@ const ShopContent = ({ shopId }) => {
               activeTab === 3 ? "text-red-500" : "text-[#333]"
             } cursor-pointer pr-[20px]`}
           >
-            Shop Reviews
+            Reviews
           </h5>
         </div>
       </div>

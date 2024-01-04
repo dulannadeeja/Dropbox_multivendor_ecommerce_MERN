@@ -18,13 +18,14 @@ const ShopInfo = () => {
       .get(`${server}/shop/get-shop-info/${shopId}`)
       .then((res) => {
         setData(res.data.shop);
-        setIsLoading(false);
+        console.log(data);
       })
       .catch((error) => {
-        console.log(error);
-        setIsLoading(false);
         // redirect to 404 page
         navigate("/404");
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
@@ -33,60 +34,78 @@ const ShopInfo = () => {
       {isLoading ? (
         <Loader />
       ) : (
-        <div>
-          <div className="w-full py-5">
-            <div className="w-full flex item-center justify-center">
+        <div className="bg-white">
+          <div className="w-full">
+            <div className="w-full relative mb-20">
               <img
-                src={`${data.shopAvatar}`}
+                src={
+                  data.shopAvatar
+                    ? `${server}/${data.shopAvatar}`
+                    : "../../../assets/placeholders/7309681.jpg"
+                }
                 alt=""
-                className="w-[150px] h-[150px] object-cover rounded-full"
+                className="w-40 rounded-full mx-auto absolute -bottom-20 left-0 right-0 border-4 border-white"
+              />
+              <img
+                src={
+                  data.shopBanner
+                    ? `${server}/${data.shopBanner}`
+                    : "../../../assets/placeholders/shop-banner-placeholder.jpg"
+                }
+                alt=""
+                className="w-full aspect-video"
               />
             </div>
             <h3 className="text-center py-2 text-[20px]">{data.name}</h3>
-            <p className="text-[16px] text-[#000000a6] p-[10px] flex items-center">
-              {data.description}
+            <p className="text-[16px] text-[#000000a6] p-[10px] flex items-cente">
+              {/* shop description with limited */}
+              {data.description?.length > 100
+                ? `${data.description.slice(0, 300)}...`
+                : data.description}
             </p>
           </div>
-          {/* country */}
-          <div className="p-3">
-            <h5 className="font-[600]">Country</h5>
-            <h4 className="text-[#000000a6]">{data.country}</h4>
-          </div>
-          {/* address */}
-          <div className="p-3">
-            <h5 className="font-[600]">Address</h5>
-            <h4 className="text-[#000000a6]">{`${data.apartment} ${data.street} ${data.city} ${data.state}, ${data.zip}`}</h4>
-          </div>
-          {/* email */}
-          <div className="p-3">
-            <h5 className="font-[600]">Email</h5>
-            <h4 className="text-[#000000a6]">{data.contactEmail}</h4>
-          </div>
-          {/* contact name */}
-          <div className="p-3">
-            <h5 className="font-[600]">Contact Name</h5>
-            <h4 className="text-[#000000a6]">{data.contactName}</h4>
-          </div>
-          {/* contact number */}
-          <div className="p-3">
-            <h5 className="font-[600]">Business Number</h5>
-            <h4 className="text-[#000000a6]">
-              {new Intl.NumberFormat().format(data.contactPhone)}
-            </h4>
-          </div>
-          <div className="p-3">
-            <h5 className="font-[600]">Total Products</h5>
-            <h4 className="text-[#000000a6]">{data.totalProducts}</h4>
-          </div>
-          <div className="p-3">
-            <h5 className="font-[600]">Shop Ratings</h5>
-            <h4 className="text-[#000000b0]">{data.ratings}</h4>
-          </div>
-          <div className="p-3">
-            <h5 className="font-[600]">Joined On</h5>
-            <h4 className="text-[#000000b0]">
-              {data?.createdAt?.slice(0, 10)}
-            </h4>
+          <div className="grid grid-cols-2 p-5 gap-2 bg-slate-100">
+            {/* country */}
+            <div className="p-3">
+              <h5 className="font-[600]">Country</h5>
+              <h4 className="text-[#000000a6]">{data.country}</h4>
+            </div>
+            {/* address */}
+            <div className="p-3">
+              <h5 className="font-[600]">Address</h5>
+              <h4 className="text-[#000000a6]">{`${data.apartment} ${data.street} ${data.city} ${data.state}, ${data.zip}`}</h4>
+            </div>
+            {/* email */}
+            <div className="p-3">
+              <h5 className="font-[600]">Email</h5>
+              <h4 className="text-[#000000a6]">{data.contactEmail}</h4>
+            </div>
+            {/* contact name */}
+            <div className="p-3">
+              <h5 className="font-[600]">Contact Name</h5>
+              <h4 className="text-[#000000a6]">{data.contactName}</h4>
+            </div>
+            {/* contact number */}
+            <div className="p-3">
+              <h5 className="font-[600]">Business Number</h5>
+              <h4 className="text-[#000000a6]">
+                {new Intl.NumberFormat().format(data.contactPhone)}
+              </h4>
+            </div>
+            <div className="p-3">
+              <h5 className="font-[600]">Total Products</h5>
+              <h4 className="text-[#000000a6]">{data.totalProducts}</h4>
+            </div>
+            <div className="p-3">
+              <h5 className="font-[600]">Shop Ratings</h5>
+              <h4 className="text-[#000000b0]">{data.ratings}</h4>
+            </div>
+            <div className="p-3">
+              <h5 className="font-[600]">Joined On</h5>
+              <h4 className="text-[#000000b0]">
+                {data?.createdAt?.slice(0, 10)}
+              </h4>
+            </div>
           </div>
         </div>
       )}

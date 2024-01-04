@@ -22,6 +22,8 @@ const ContactInfo = () => {
   } = useSellerSignupContext();
 
   const [formCompleted, setFormCompleted] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneError, setPhoneError] = useState(null);
 
   const handleOnChange = async (e) => {
     const { name, value } = e.target;
@@ -43,23 +45,6 @@ const ContactInfo = () => {
 
     // update the state
     setThirdStepInfo({ ...thirdStepInfo, [name]: value });
-  };
-
-  const handleOnPhoneChange = (value) => {
-    console.log(value);
-
-    // check if the phone number is valid
-    if (value.error) {
-      setErrors((prevErrors) => ({ ...prevErrors, contactPhone: value.error }));
-    } else {
-      setErrors((prevErrors) => ({ ...prevErrors, contactPhone: "" }));
-    }
-
-    // update the state
-    setThirdStepInfo((prevInfo) => ({
-      ...prevInfo,
-      contactPhone: value.phone,
-    }));
   };
 
   // handle form completion
@@ -87,10 +72,28 @@ const ContactInfo = () => {
     } else {
       setThirdStepCompleted(false);
     }
-
-    console.log("\n");
   }),
     [errors, thirdStepInfo];
+
+  // handle phoneNumber change
+  useEffect(() => {
+    // update the state
+    setThirdStepInfo({ ...thirdStepInfo, contactPhone: phoneNumber });
+  }, [phoneNumber]);
+
+  // handle phoneError change
+  useEffect(() => {
+    // update the state
+    setErrors({ ...errors, contactPhone: phoneError });
+    if (!phoneError) {
+      setErrors({ ...errors, contactPhone: "" });
+    }
+  }, [phoneError]);
+
+  // when comes back from the next step, set the phone number from the context
+  useEffect(() => {
+    setPhoneNumber(thirdStepInfo.contactPhone);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -149,7 +152,16 @@ const ContactInfo = () => {
             </div>
 
             {/* Phone */}
-            <PhoneInput handleOnPhoneChange={handleOnPhoneChange} />
+            <PhoneInput
+              phoneNumber={phoneNumber}
+              setPhoneNumber={setPhoneNumber}
+              setPhoneError={setPhoneError}
+            />
+
+            {/* form control error */}
+            {errors && errors.contactPhone && (
+              <p className={styles.formInputError}>{errors.contactPhone}</p>
+            )}
           </form>
         </div>
       </div>

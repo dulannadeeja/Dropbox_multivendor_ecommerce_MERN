@@ -200,7 +200,7 @@ const Header = () => {
       {/* navbar */}
       <div
         className={`${
-          isFixed === true ? "shadow-sm fixed top-0 left-0 z-10" : null
+          isFixed === true ? "shadow-sm fixed top-0 left-0 z-50" : null
         } transition hidden 800px:flex items-center justify-between w-full bg-indigo-700 h-[70px]`}
       >
         <div
@@ -303,7 +303,7 @@ const Header = () => {
       {/* mobile header */}
       <div
         className={`${
-          mobile === true ? "shadow-sm fixed top-0 left-0 z-10" : null
+          mobile === true ? "shadow-sm fixed top-0 left-0 z-50" : null
         }
       w-full h-[60px] bg-[#fff] z-50 top-0 left-0 shadow-sm 800px:hidden`}
       >
@@ -347,7 +347,7 @@ const Header = () => {
           <div
             className={`fixed w-full bg-[#0000005f] z-20 h-full top-0 left-0`}
           >
-            <div className="fixed w-[70%] bg-[#fff] h-screen top-0 left-0 z-10 overflow-y-scroll px-8 py-10">
+            <div className="fixed w-[70%] bg-[#fff] h-screen top-0 left-0 z-50 overflow-y-scroll px-8 py-10">
               <div className="w-full justify-between flex">
                 <div>
                   <div
@@ -376,7 +376,7 @@ const Header = () => {
                 />
                 {searchTerm && (
                   <div
-                    className="absolute bg-[#fff] z-10 shadow w-full left-0 p-3"
+                    className="absolute bg-[#fff] z-50 shadow w-full left-0 p-3"
                     id="searchDropdown"
                   >
                     {searchResults.map((i) => {

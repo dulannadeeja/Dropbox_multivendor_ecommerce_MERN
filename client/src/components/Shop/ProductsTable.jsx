@@ -8,8 +8,9 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import STATUS from "../../constants/status";
 import { deleteProduct } from "../../redux/actions/deleteProduct";
+import { FiEdit } from "react-icons/fi";
 
-const ProductsTable = ({ shopId, token }) => {
+const ProductsTable = ({ shopId, token, handleUpdateProduct }) => {
   const dispatch = useDispatch();
   const { products, error, productsStatus } = useSelector(
     (state) => state.shop
@@ -50,11 +51,14 @@ const ProductsTable = ({ shopId, token }) => {
     }
   };
 
+  const onEdit = (productId) => {
+    const product = products.find((product) => product._id === productId);
+    handleUpdateProduct({ product });
+  };
+
   // Table columns
   const columns = [
-    { name: "ID", selector: "_id", sortable: true },
     { name: "Title", selector: "name", sortable: true },
-    { name: "Description", selector: "description" },
     { name: "Category", selector: "category", sortable: true },
     { name: "Tags", selector: "tags", sortable: true },
     { name: "price", selector: "originalPrice", sortable: true },
@@ -64,8 +68,29 @@ const ProductsTable = ({ shopId, token }) => {
     {
       name: "Preview",
       cell: (row) => (
-        <button>
+        <button
+          onClick={(e) => {
+            window.open(`/products/${row._id}`, "_blank");
+          }}
+        >
           <AiOutlineEye size={20} />
+        </button>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    },
+    {
+      name: "Edit",
+      cell: (row) => (
+        <button
+          disabled={loading}
+          className={`${loading ? "button-disabled" : ""} ${
+            loading ? "text-red" : ""
+          }`}
+          onClick={(e) => onEdit(row._id)}
+        >
+          <FiEdit size={20} />
         </button>
       ),
       ignoreRowClick: true,
@@ -92,7 +117,7 @@ const ProductsTable = ({ shopId, token }) => {
   ];
 
   return (
-    <>
+    <div className="w-full">
       {productsStatus === STATUS.IDLE ||
         (productsStatus === STATUS.LOADING && <Loader />)}
       {productsStatus === STATUS.FAILURE && (
@@ -101,7 +126,7 @@ const ProductsTable = ({ shopId, token }) => {
         </div>
       )}
       {productsStatus === STATUS.SUCCESS && (
-        <div>
+        <div className="w-full h-full">
           <DataTable
             title="Products"
             columns={columns}
@@ -109,10 +134,11 @@ const ProductsTable = ({ shopId, token }) => {
             pagination
             highlightOnHover
             responsive
+            className="w-full overflow-x-scroll"
           />
         </div>
       )}
-    </>
+    </div>
   );
 };
 

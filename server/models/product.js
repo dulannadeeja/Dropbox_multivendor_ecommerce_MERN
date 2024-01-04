@@ -82,9 +82,5 @@ const productSchema = new mongoose.Schema({
   },
 });
 
-// Custom validator function to check minimum array length
-function arrayMinLengthValidator(value) {
-  return Array.isArray(value) && value.length > 0;
-}
 
 module.exports = mongoose.model("Product", productSchema);
