@@ -7,30 +7,20 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: "21"
 
       - name: Install Dependencies
         run: |
           cd server
           npm install
-          cd ..
-          cd client
-          npm install
-          npm run build
-          cd ..
-
-      - name: Build Server
-        run: |
-          sudo service nginx restart
-
         env:
           CI: true
 
