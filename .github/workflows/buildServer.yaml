@@ -25,10 +25,15 @@ jobs:
           cd client
           npm install
           npm run build
-          pm2 stop 0
+
+          # Check if PM2 process with ID 0 is running
+          if pm2 jlist | grep -q '"pm_id":0'; then
+            pm2 stop 0
+          fi
+
           pm2 start 0
           pm2 save
-          service nginx restart
+          sudo service nginx restart
 
         env:
           CI: true
