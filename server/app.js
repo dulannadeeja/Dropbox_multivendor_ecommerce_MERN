@@ -51,6 +51,7 @@ app.use((req, res, next) => {
 });
 
 // serve static files
+app.use(express.static(path.join(__dirname, '/client/build')));
 app.use('/uploads/images', express.static(path.join(__dirname, 'uploads/images')));
 
 // parse requests of content-type: application/json

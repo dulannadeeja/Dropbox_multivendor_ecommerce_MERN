@@ -62,10 +62,6 @@ const Payment = () => {
 
       if (res.data?.success) {
         toast.success(res.data.message);
-        // clear cart and latest order
-        localStorage.removeItem("latestOrder");
-        localStorage.removeItem("cart");
-        dispatch({ type: "ClearCart" });
         navigate("/order-completed");
       }
     } catch (error) {
@@ -81,10 +77,6 @@ const Payment = () => {
 
       if (res.data?.success) {
         toast.success(res.data.message);
-        // clear cart and latest order
-        localStorage.removeItem("latestOrder");
-        localStorage.removeItem("cart");
-        dispatch({ type: "ClearCart" });
         navigate("/order-completed");
       }
     } catch (error) {
@@ -94,21 +86,19 @@ const Payment = () => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center py-8">
-      <div className="w-[90%] 1000px:w-[70%] block 800px:flex">
-        <div className="w-full 800px:w-[65%]">
-          <PaymentInfo
-            user={user}
-            open={open}
-            setOpen={setOpen}
-            stripePaymentHandler={stripePaymentHandler}
-            cashOnDeliveryHandler={cashOnDeliveryHandler}
-            orderData={orderData}
-          />
-        </div>
-        <div className="w-full 800px:w-[35%] 800px:mt-0 mt-8">
-          <CartData />
-        </div>
+    <div className="max-w-7xl mx-auto lg:grid lg:grid-cols-12 w-full gap-10 flex flex-col">
+      <div className="lg:col-span-8 border-2 rounded border-indigo-300 shadow-lg">
+        <PaymentInfo
+          user={user}
+          open={open}
+          setOpen={setOpen}
+          stripePaymentHandler={stripePaymentHandler}
+          cashOnDeliveryHandler={cashOnDeliveryHandler}
+          orderData={orderData}
+        />
+      </div>
+      <div className="lg:col-span-4 border-2 rounded border-indigo-300 shadow-lg">
+        <CartData />
       </div>
     </div>
   );

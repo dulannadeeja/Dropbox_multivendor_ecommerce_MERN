@@ -38,7 +38,11 @@ const ShopReviews = ({ shopId }) => {
         allReviews.map((review, index) => (
           <div className="w-full flex my-4" key={index}>
             <img
-              src={`${review?.user?.avatar}`}
+              src={
+                review.user.avatar
+                  ? `${server}/${review?.user?.avatar}`
+                  : "../../../assets/placeholders/7309681.jpg"
+              }
               className="w-[50px] h-[50px] rounded-full"
               alt=""
             />

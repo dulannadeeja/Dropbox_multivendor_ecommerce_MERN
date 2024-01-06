@@ -2,40 +2,55 @@ import React from "react";
 import styles from "../../styles/styles";
 import CountDown from "./CountDown";
 import { Link } from "react-router-dom";
+import { server } from "../../server";
 
-const EventCard = ({ active, data }) => {
+const EventCard = ({ data }) => {
+  const maxDescriptionLength = 200;
+  const truncatedDescription =
+    data.description.length > maxDescriptionLength
+      ? `${data.description.slice(0, maxDescriptionLength)}...`
+      : data.description;
+
   return (
     <div
-      className={`w-full block bg-white rounded-lg ${
-        active ? "unset" : "mb-12"
-      } lg:flex p-2`}
+      className={`w-full flex-wrap block bg-white rounded-lg lg:flex p-5 gap-5 border-2 border-slate-100 my-2 shadow-lg`}
     >
-      <div className="w-full lg:-w[50%] m-auto">
-        <img src={`${data.images[0]?.url}`} alt="" />
+      <div className="w-full aspect-video overflow-hidden">
+        <img
+          src={`${server}/${data.banner}`}
+          alt=""
+          className="w-full h-full object-cover"
+        />
       </div>
       <div className="w-full lg:[w-50%] flex flex-col justify-center">
-        <h2 className={`${styles.productTitle}`}>{data.name}</h2>
-        <p>{data.description}</p>
+        <h2 className={`${styles.productTitle}`}>{data.title}</h2>
+        <p>{truncatedDescription}</p>
         <div className="flex py-2 justify-between">
           <div className="flex">
             <h5 className="font-[500] text-[18px] text-[#d55b45] pr-3 line-through">
-              {data.originalPrice}$
+              {data?.product?.originalPrice}$
             </h5>
             <h5 className="font-bold text-[20px] text-[#333] font-Roboto">
-              {data.discountPrice}$
+              {data?.product?.discountPrice - data?.discountAmount}$
             </h5>
           </div>
           <span className="pr-3 font-[400] text-[17px] text-[#44a55e]">
-            {data.sold_out} sold
+            {data?.product?.sold_out} sold
           </span>
         </div>
         <CountDown data={data} />
         <br />
         <div className="flex items-center">
-          <Link to={`/product/${data._id}?isEvent=true`}>
-            <div className={`${styles.button} text-[#fff]`}>See Details</div>
-          </Link>
-          <div className={`${styles.button} text-[#fff] ml-5`}>Add to cart</div>
+          <button
+            onClick={() => {
+              const productId = data.product._id;
+              window.location.href = `/products/${productId}`;
+            }}
+            className={`${styles.button} text-[#fff]`}
+          >
+            See Details
+          </button>
+          <div className={`${styles.button} text-[#fff] ml-5`}>Add to Cart</div>
         </div>
       </div>
     </div>

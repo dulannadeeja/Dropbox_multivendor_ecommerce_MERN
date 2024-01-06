@@ -9,7 +9,7 @@ export const wishlistReducer = createReducer(initialWishlistState, (builder) => 
     builder
         .addCase('LoadWishlist', (state) => {
             // Load wishlist from local storage
-            const wishlist = localStorage.getItem('cart');
+            const wishlist = localStorage.getItem('wishlist');
             if (wishlist) {
 
                 // filter empty objects from wishlist

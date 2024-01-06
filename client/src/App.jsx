@@ -67,11 +67,12 @@ const App = () => {
   useEffect(() => {
     const fetchAuthInfo = async () => {
       try {
-        await dispatch({ type: "LoadCart" });
-        console.log("Fetching auth info");
         await dispatch(loadUser());
       } catch (err) {
         console.error(err);
+      } finally {
+        await dispatch({ type: "LoadWishlist" });
+        await dispatch({ type: "LoadCart" });
       }
     };
 

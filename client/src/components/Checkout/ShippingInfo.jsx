@@ -9,12 +9,16 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useCheckoutContext } from "../../contexts/CheckoutContext";
 import isAddressError from "../../validations/addressValidation";
+import { loadUser } from "../../redux/actions/user";
+import { useDispatch } from "react-redux";
 
-const ShippingInfo = ({}) => {
+const ShippingInfo = ({ addresses }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [checkedId, setCheckedId] = useState(null);
-  const { addresses, loading } = useSelector((state) => state.user);
   const { items } = useSelector((state) => state.cart);
+
+  const [loading, setLoading] = useState(false);
 
   const {
     houseNumber,
@@ -114,9 +118,9 @@ const ShippingInfo = ({}) => {
 
   return (
     <div className="w-full 800px:w-[95%] bg-white rounded-md p-5 pb-8">
-      <h5 className="text-[18px] font-[500]">Shipping Address</h5>
-      <br />
-      <form>
+      <h5 className="mb-10 text-lg font-semibold">Shipping Address</h5>
+
+      <form className="flex flex-col gap-3">
         {/* Contact Name */}
         <div>
           <label htmlFor="contactName" className={styles.formLabel}>
@@ -298,14 +302,14 @@ const ShippingInfo = ({}) => {
         </div>
       </form>
 
-      <h5 className="text-[18px] cursor-pointer inline-block">
+      <h5 className="cursor-pointer inline-block text-slate-500 font-semibold mt-10 mb-5">
         Choose From saved address
       </h5>
 
-      <div>
+      <div className="flex  flex-col gap-3">
         {addresses &&
           addresses.map((item, index) => (
-            <div className="w-full flex mt-1" key={item._id}>
+            <div className="w-full flex gap-3 items-center" key={item._id}>
               {loading && <Loader />}
               <input
                 type="checkbox"
@@ -324,7 +328,10 @@ const ShippingInfo = ({}) => {
                   setPhone(item.phone || "");
                 }}
               />
-              <h2>{item.addressNickname}</h2>
+              <h2>
+                {item.addressNickname ||
+                  item.houseNumber + " " + item.street + " " + item.zip}
+              </h2>
             </div>
           ))}
       </div>

@@ -58,8 +58,8 @@ const DashboardHeader = () => {
           <Link to={`/shop/${shop?._id}`}>
             <img
               src={
-                shop.shopAvatar
-                  ? `${server}/${shop.shopAvatar}`
+                shop?.shopAvatar
+                  ? `${server}/${shop?.shopAvatar}`
                   : "../../../assets/placeholders/7309681.jpg"
               }
               alt=""

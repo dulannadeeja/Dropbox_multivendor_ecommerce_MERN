@@ -1,10 +1,7 @@
-import axios from 'axios';
-import { server } from '../../server'
+
 import { toast } from 'react-toastify';
 import { createOrder } from './createOrder';
-import {
-    CardNumberElement,
-} from "@stripe/react-stripe-js";
+
 
 
 export const makeCashPayment = ({ orderData: order }) => async (dispatch, getState) => {
@@ -16,33 +13,15 @@ export const makeCashPayment = ({ orderData: order }) => async (dispatch, getSta
             type: 'MakePaymentPending',
         });
 
-        let {
-            cartTotal,
-            items,
-            coupon,
-            isCouponApplied,
-            couponDiscount,
-            houseNumber,
-            street,
-            city,
-            state,
-            country,
-            zip,
-            phone,
-            contactName,
-        } = order;
-
         order.paymentMethod = 'Cash On Delivery';
 
-        const { user } = getState().user;
-
         toast.success("Payment Successfull");
+
+        const res = await dispatch(createOrder({ order }));
 
         dispatch({
             type: 'MakePaymentSuccess',
         });
-
-        const res = await dispatch(createOrder({ order }));
 
         return res;
 

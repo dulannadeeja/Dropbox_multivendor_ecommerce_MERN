@@ -79,8 +79,6 @@ module.exports.getAllCoupons = async (req, res, next) => {
     const userId = req.userId;
     const shopId = req.params.shopId;
 
-
-
     // check is the user is the owner of the shop
     try {
         const owner = await User.findOne({ shop: shopId, _id: userId })

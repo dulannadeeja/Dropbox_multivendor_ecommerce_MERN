@@ -11,12 +11,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { loadUserOrders } from "../../../redux/actions/loadUserOrders";
 
-const ReviewPopup = ({
-  product,
-  setReviewPopupOpen,
-  setProducts,
-  setProduct,
-}) => {
+const ReviewPopup = ({ product, setReviewPopupOpen }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const [rating, setRating] = useState(1);
@@ -66,7 +61,7 @@ const ReviewPopup = ({
 
   return (
     <div className="w-full fixed top-0 left-0 h-screen bg-[#0005] z-50 flex items-center justify-center">
-      <div className="w-[50%] h-min bg-[#fff] shadow rounded-md p-3">
+      <div className="w-[50%] h-min max-h-screen overflow-y-scroll md:overflow-hidden bg-[#fff] shadow rounded-md p-5 max-w-lg flex flex-col gap-3">
         <div className="w-full flex justify-end p-3">
           <RxCross1
             size={30}
@@ -78,11 +73,11 @@ const ReviewPopup = ({
           Give a Review
         </h2>
         <br />
-        <div className="w-full flex">
+        <div className="w-full flex flex-col md:flex-row">
           <img
-            src={`${product?.images[0]?.url}`}
+            src={`${server}/${product?.images[0]?.url}`}
             alt=""
-            className="w-[80px] h-[80px]"
+            className="w-40 aspect-square object-cover rounded-sm"
           />
           <div>
             <div className="pl-3 text-[20px]">{product?.name}</div>
@@ -91,9 +86,6 @@ const ReviewPopup = ({
             </h4>
           </div>
         </div>
-
-        <br />
-        <br />
 
         {/* ratings */}
         <h5 className="pl-3 text-[20px] font-[500]">
@@ -120,7 +112,6 @@ const ReviewPopup = ({
             )
           )}
         </div>
-        <br />
         <div className="w-full ml-3">
           <label className="block text-[20px] font-[500]">
             Write a comment
@@ -140,7 +131,7 @@ const ReviewPopup = ({
           ></textarea>
         </div>
         <div
-          className={`${styles.button} text-white text-[20px] ml-3`}
+          className={`${styles.buttonPrimary} w-fit mt-5 self-center cursor-pointer`}
           onClick={handleSubmitReview}
         >
           {isReviewed ? "Update Review" : "Submit Review"}

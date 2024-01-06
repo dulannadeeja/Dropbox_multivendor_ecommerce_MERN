@@ -11,6 +11,7 @@ import { server } from "../server";
 import { useState } from "react";
 import Loader from "../components/Loader";
 import { CheckoutProvider } from "../contexts/CheckoutContext";
+import styles from "../styles/styles";
 
 const CheckoutPage = () => {
   const { user } = useSelector((state) => state.user);
@@ -45,10 +46,14 @@ const CheckoutPage = () => {
   return (
     <div>
       <Header />
-      <CheckoutProvider>
-        <CheckoutSteps active={1} />
-        <Checkout addresses={addresses} loading={loading} />
-      </CheckoutProvider>
+      <div className={`${styles.section} bg-white`}>
+        <div className="max-w-7xl mx-auto py-10">
+          <CheckoutProvider>
+            <CheckoutSteps active={1} />
+            <Checkout addresses={addresses} loading={loading} />
+          </CheckoutProvider>
+        </div>
+      </div>
       <Footer />
     </div>
   );

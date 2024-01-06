@@ -6,14 +6,8 @@ export const loadShopEvents = ({ shopId, token }) => async (dispatch) => {
         dispatch({ type: 'LoadShopEventsRequest' });
 
         //make request to server
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        };
         const res = await axios.get(
             `${server}/event/all/${shopId}`,
-            config
         );
 
         dispatch({

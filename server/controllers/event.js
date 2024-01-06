@@ -1,10 +1,11 @@
 const { validationResult } = require('express-validator');
 const User = require('../models/user');
 const Product = require('../models/product');
+const Coupon = require('../models/coupon');
 const Shop = require('../models/shop');
-const fs = require('fs');
-const path = require('path');
 const Event = require('../models/event');
+const clearImage = require('../utils/imageCleaner');
+const moment = require('moment');
 
 
 
@@ -15,16 +16,10 @@ module.exports.create = async (req, res, next) => {
 
     const title = req.body.title;
     const description = req.body.description;
-    const eventType = req.body.eventType;
-    const discountAmount = req.body.discountAmount;
-    const categories = req.body.categories;
-    const startDate = req.body.startDate;
-    const endDate = req.body.endDate;
-    const couponCode = req.body.couponCode;
-    const minPurchaseAmount = req.body.minPurchaseAmount;
+    const couponId = req.body.coupon;
     const banner = req.file;
     const termsAndConditions = req.body.termsAndConditions;
-    const visibility = req.body.visibility;
+    const productId = req.body.product;
 
     let updatedImagePath;
     const validationErrors = validationResult(req);
@@ -53,12 +48,6 @@ module.exports.create = async (req, res, next) => {
 
         const user = await User.findById(userId);
 
-        if (!user) {
-            const error = new Error('Could not find user.');
-            error.statusCode = 500;
-            throw error;
-        }
-
         const shop = await Shop.findById(user.shop);
 
         if (!shop) {
@@ -67,20 +56,36 @@ module.exports.create = async (req, res, next) => {
             throw error;
         }
 
+        const coupon = await Coupon.findById(couponId);
+
+        if (!coupon) {
+            const error = new Error('Could not find coupon.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            const error = new Error('Could not find product.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        console.log('shop', shop._id);
+
         const event = await Event.create({
             shop: shop._id,
             title: title,
             description: description,
-            eventType: eventType,
-            discountAmount: discountAmount,
-            categories: categories,
-            startDate: startDate,
-            endDate: endDate,
-            couponCode: couponCode,
-            minPurchaseAmount: minPurchaseAmount,
+            eventType: coupon.type,
+            discountAmount: coupon.discountAmount,
+            product: product,
+            startDate: coupon.startDate,
+            endDate: coupon.expirationDate,
             banner: updatedImagePath,
             termsAndConditions: termsAndConditions,
-            visibility: visibility
+            couponCode: coupon.code,
         });
 
         if (!event) {
@@ -170,24 +175,11 @@ module.exports.delete = async (req, res, next) => {
 
 module.exports.getAllByShop = async (req, res, next) => {
     const shopId = req.params.shopId;
-    const userId = req.userId;
 
     try {
-        const user = await User.findById(userId);
 
-        if (!user) {
-            const error = new Error('Could not find user.');
-            error.statusCode = 500;
-            throw error;
-        }
-
-        if (user.shop.toString() !== shopId.toString()) {
-            const error = new Error('Not authorized to get events of this shop.');
-            error.statusCode = 401;
-            throw error;
-        }
-
-        const events = await Event.find({ shop: shopId });
+        const events = await Event.find({ shop: shopId })
+            .populate('product')
 
         if (!events) {
             const error = new Error('Could not get events.');
@@ -214,7 +206,100 @@ module.exports.getAllByShop = async (req, res, next) => {
     }
 }
 
-const clearImage = filePath => {
-    filePath = path.join(__dirname, '..', filePath);
-    fs.unlink(filePath, err => console.log(err));
+module.exports.getFeatured = async (req, res, next) => {
+    try {
+        const currentDate = moment();
+
+        // 10 get best sold events
+
+        const events = await Event.find({ startDate: { $lte: currentDate }, endDate: { $gte: currentDate } }).limit(11)
+            .populate('product')
+            .sort({ 'product.sold': -1 });
+
+
+        console.log('events', events);
+
+        if (!events) {
+            const error = new Error('Could not get events.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        res.status(200).json({
+            message: 'Events fetched successfully.',
+            events: events
+        });
+    } catch (err) {
+        if (!err.message) {
+            err.message = 'Internal server error.';
+        }
+
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+module.exports.getEvent = async (req, res, next) => {
+    const eventId = req.params.eventId;
+
+    try {
+        const event = await Event.findById(eventId).populate('product');
+
+        if (!event) {
+            const error = new Error('Could not find event.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        res.status(200).json({
+            message: 'Event fetched successfully.',
+            event: event
+        });
+
+
+    }
+    catch (err) {
+        if (!err.message) {
+            err.message = 'Internal server error.';
+        }
+
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
+module.exports.getAll = async (req, res, next) => {
+    try {
+
+        // get 30 of events that are not expired and ending soon
+        const currentDate = moment();
+        const events = await Event.find({ startDate: { $lte: currentDate }, endDate: { $gte: currentDate } }).limit(30)
+            .populate('product')
+            .sort({ 'product.sold_out': -1 });
+
+        if (!events) {
+            const error = new Error('Could not get events.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        res.status(200).json({
+            message: 'Events fetched successfully.',
+            events: events
+        });
+    }
+    catch (err) {
+        if (!err.message) {
+            err.message = 'Internal server error.';
+        }
+
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
 }

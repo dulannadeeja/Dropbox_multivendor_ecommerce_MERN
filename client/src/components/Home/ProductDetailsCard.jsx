@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import styles from "../../styles/styles";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../redux/actions/addToCart";
+import { server } from "../../server";
 
 const ProductDetailsCard = ({ setView, product }) => {
   useEffect(() => {
@@ -52,107 +53,138 @@ const ProductDetailsCard = ({ setView, product }) => {
   return (
     <div className="bg-[#fff]">
       {product ? (
-        <div className="fixed w-full h-screen top-0 left-0 bg-[#00000030] z-40 flex items-center justify-center">
-          <div className="w-[90%] 800px:w-[60%] h-[90vh] overflow-y-scroll 800px:h-[75vh] bg-white rounded-md shadow-sm relative p-4">
-            <RxCross1
-              size={30}
-              className="absolute right-3 top-3 z-50"
-              onClick={() => setView(false)}
-            />
+        <div className="fixed w-full h-screen top-0 left-0 bg-[#00000030] z-[100] flex items-center justify-center">
+          <div className="w-[90%]  h-[90vh] max-w-6xl overflow-y-scroll  bg-white rounded-md shadow-sm relative p-4">
+            <div className="mb-10">
+              <RxCross1
+                size={30}
+                className="absolute right-3 top-3 z-50"
+                onClick={() => setView(false)}
+              />
+            </div>
 
-            <div className="block w-full 800px:flex">
-              <div className="w-full 800px:w-[50%]">
-                <img src={`${product.images[0]?.url}`} alt="" />
-                <div className="flex">
-                  <Link to={`/shop/preview/data.shop?.name`} className="flex">
-                    <img
-                      src={`${product.shop.shopAvatar}`}
-                      alt=""
-                      className="w-[50px] h-[50px] rounded-full mr-2"
-                    />
-                    <div>
-                      <h3 className={`${styles.shop_name}`}>
-                        {product.shop.name}
-                      </h3>
-                      <h5 className="pb-3 text-[15px]">
-                        {product.shop.name} Ratings
-                      </h5>
+            <div className="block w-full mt-10">
+              <div className="md:grid md:grid-cols-2 md:gap-10 md:items-center md:justify-start lg:grid-cols-12">
+                <div className="flex my-10 items-center justify-center w-full aspect-square overflow-hidden rounded-md  max-w-sm lg:col-span-4">
+                  <img
+                    src={`${server}/${product.images[0]?.url}`}
+                    alt="product image"
+                  />
+                </div>
+                <div className="w-full  lg:col-span-8 flex flex-col gap-5">
+                  {/* shop info */}
+                  <div className="grid grid-cols-4 items-center ">
+                    <div className="flex items-center col-span-3">
+                      <Link
+                        to={`shop/${product.shop._id}`}
+                        className="flex items-center justify-center gap-4"
+                      >
+                        <img
+                          src={`${server}/${product.shop.shopAvatar}`}
+                          alt=""
+                          className="w-20 h-20 object-cover rounded-full mr-2"
+                        />
+                        <div>
+                          <h3 className={`${styles.shop_name}`}>
+                            {product.shop.name}
+                          </h3>
+                          <h5 className="pb-3 text-[15px]">
+                            {product.shop.name} Ratings
+                          </h5>
+                        </div>
+                      </Link>
                     </div>
-                  </Link>
+                    <div
+                      className={`${styles.buttonPrimary} self-center col-span-1`}
+                    >
+                      <span className="text-[#fff] flex items-center">
+                        Send Message <AiOutlineMessage className="ml-1" />
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-10 my-5 border-b-2">
+                    {/* product price */}
+                    <div className="flex">
+                      <h4 className={`${styles.productDiscountPrice}`}>
+                        {product.discountPrice}$
+                      </h4>
+                      <h3 className={`${styles.price}`}>
+                        {product.originalPrice + "$"}
+                      </h3>
+                    </div>
+                    {/* sold out */}
+                    <h5 className="text-[16px] text-[red]">
+                      ({product.sold_out}) Sold out
+                    </h5>
+                  </div>
+
+                  {/* actions */}
+                  <div className="flex  justify-between items-center">
+                    <div className="flex gap-5 items-center">
+                      {/* add to cart */}
+                      <div className="flex gap-3">
+                        {/* increment */}
+                        <button
+                          onClick={() => setCount(count - 1)}
+                          className={styles.button}
+                        >
+                          -
+                        </button>
+                        {/* quantity */}
+                        <span className="bg-gray-200 text-gray-800 font-medium px-4 py-[11px]">
+                          {count}
+                        </span>
+                        {/* decrement */}
+                        <button
+                          onClick={() => setCount(count + 1)}
+                          className={styles.button}
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      {/* add to cart button */}
+                      <div className=" ">
+                        <button
+                          onClick={() => handleAddToCart(product)}
+                          className={`${styles.buttonPrimary} flex items-center gap-3 text-md`}
+                        >
+                          <span>Add to cart</span>
+                          <AiOutlineShoppingCart />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* wishlist */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        {click ? (
+                          <AiFillHeart
+                            size={30}
+                            className="cursor-pointer"
+                            color={click ? "red" : "#333"}
+                            title="Remove from wishlist"
+                            onClick={() => handleDeleteFromWishlist(product)}
+                          />
+                        ) : (
+                          <AiOutlineHeart
+                            size={30}
+                            className="cursor-pointer"
+                            title="Add to wishlist"
+                            onClick={() => handleAddToWishlist(product)}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div
-                  className={`${styles.button} bg-[#000] mt-4 rounded-[4px] h-11`}
-                >
-                  <span className="text-[#fff] flex items-center">
-                    Send Message <AiOutlineMessage className="ml-1" />
-                  </span>
-                </div>
-                <h5 className="text-[16px] text-[red] mt-5">
-                  ({product.sold_out}) Sold out
-                </h5>
               </div>
 
-              <div className="w-full 800px:w-[50%] pt-5 pl-[5px] pr-[5px]">
+              <div className="w-full pt-5 pl-[5px] pr-[5px] ">
                 <h1 className={`${styles.productTitle} text-[20px]`}>
                   {product.name}
                 </h1>
                 <p>{product.description}</p>
-
-                <div className="flex pt-3">
-                  <h4 className={`${styles.productDiscountPrice}`}>
-                    {product.discountPrice}$
-                  </h4>
-                  <h3 className={`${styles.price}`}>
-                    {product.originalPrice + "$"}
-                  </h3>
-                </div>
-                <div className="flex items-center mt-12 justify-between pr-3">
-                  <div>
-                    <button
-                      onClick={() => setCount(count - 1)}
-                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
-                    >
-                      -
-                    </button>
-                    <span className="bg-gray-200 text-gray-800 font-medium px-4 py-[11px]">
-                      {count}
-                    </span>
-                    <button
-                      onClick={() => setCount(count + 1)}
-                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <div>
-                    {click ? (
-                      <AiFillHeart
-                        size={30}
-                        className="cursor-pointer"
-                        color={click ? "red" : "#333"}
-                        title="Remove from wishlist"
-                        onClick={() => handleDeleteFromWishlist(product)}
-                      />
-                    ) : (
-                      <AiOutlineHeart
-                        size={30}
-                        className="cursor-pointer"
-                        title="Add to wishlist"
-                        onClick={() => handleAddToWishlist(product)}
-                      />
-                    )}
-                  </div>
-                </div>
-                <div
-                  className={`${styles.button} mt-6 rounded-[4px] h-11 flex items-center`}
-                >
-                  <span
-                    className="text-[#fff] flex items-center"
-                    onClick={() => handleAddToCart(product)}
-                  >
-                    Add to cart <AiOutlineShoppingCart className="ml-1" />
-                  </span>
-                </div>
               </div>
             </div>
           </div>

@@ -45,12 +45,12 @@ const ShopDashboardPage = () => {
       ) : (
         <div>
           <DashboardHeader />
-          <div className="flex gap-2 w-full">
-            <div className="w-[80px] 800px:w-[330px] min-h-screen">
+          <div className="grid grid-cols-12 gap-2 min-h-screen">
+            <div className="col-span-2">
               <DashboardSideBar active={active} setActive={setActive} />
             </div>
-            <div className="w-full">
-              <DashboardContent active={active} />
+            <div className="col-span-10">
+              <DashboardContent active={active} setActive={setActive} />
             </div>
           </div>
         </div>

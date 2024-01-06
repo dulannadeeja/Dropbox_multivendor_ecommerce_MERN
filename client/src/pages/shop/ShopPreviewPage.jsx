@@ -8,6 +8,7 @@ import Footer from "../../components/Layouts/Footer";
 
 const ShopPreviewPage = () => {
   const { shopId } = useParams();
+  console.log(shopId);
   return (
     <>
       <Header />
@@ -16,7 +17,7 @@ const ShopPreviewPage = () => {
           <div className="col-span-4 rounded-lg shadow-lg overflow-hidden">
             <ShopInfo />
           </div>
-          <div className="col-span-8 rounded-lg shadow-lg overflow-hidden p-5">
+          <div className="col-span-8 rounded-lg shadow-lg overflow-hidden p-5 bg-white">
             <ShopContent shopId={shopId} />
           </div>
         </div>

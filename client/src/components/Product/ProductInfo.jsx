@@ -9,7 +9,7 @@ const ProductDetailsInfo = ({ product }) => {
   const [active, setActive] = useState(1);
 
   return (
-    <div className="bg-[#f5f6fb] px-3 800px:px-10 py-2 rounded">
+    <div className="bg-slate-50 rounded mt-10 shadow-lg px-10 py-5">
       <div className="w-full flex justify-between border-b pt-10 pb-2">
         <div className="relative">
           <h5
@@ -93,7 +93,11 @@ const ProductDetailsInfo = ({ product }) => {
             <Link to={`/shop/preview/${product.shop._id}`}>
               <div className="flex items-center">
                 <img
-                  src={`${product?.shop?.avatar?.url}`}
+                  src={
+                    product.shop?.shopAvatar
+                      ? `${server}/${product?.shop?.shopAvatar}`
+                      : "../../../assets/placeholders/7309681.jpg"
+                  }
                   className="w-[50px] h-[50px] rounded-full"
                   alt=""
                 />

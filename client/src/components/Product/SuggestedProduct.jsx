@@ -5,6 +5,9 @@ import { server } from "../../server";
 import axios from "axios";
 
 const SuggestedProduct = ({ data }) => {
+  console.log("suggested product");
+  console.log(data);
+
   const [productsData, setProductsData] = useState();
 
   useEffect(() => {
@@ -13,7 +16,8 @@ const SuggestedProduct = ({ data }) => {
         const res = await axios.get(
           `${server}/product/suggestions/${data._id}`
         );
-        setProductsData(res.products);
+        setProductsData(res.data.products);
+        console.log(res);
       } catch (err) {
         console.log(err);
       }
@@ -22,9 +26,9 @@ const SuggestedProduct = ({ data }) => {
   }, []);
 
   return (
-    <div>
+    <div className="max-w-6xl mx-auto">
       {data ? (
-        <div className={`p-4 ${styles.section}`}>
+        <div>
           <h2
             className={`${styles.heading} text-[25px] font-[500] border-b mb-5`}
           >

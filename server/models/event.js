@@ -5,20 +5,21 @@ const eventSchema = new mongoose.Schema({
     shop: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'User'
+        ref: 'Shop'
     },
     title: {
         type: String,
         required: true,
         trim: true,
         minlength: 2,
-        maxlength: 20,
+        maxlength: 95,
     },
     description: {
         type: String,
         required: true,
         trim: true,
-        minlength: 2,
+        minlength: 20,
+        maxlength: 1000,
     },
     eventType: {
         type: String,
@@ -29,12 +30,6 @@ const eventSchema = new mongoose.Schema({
         type: Number,
         required: true,
         min: 0,
-    },
-    categories: {
-        type: [String],
-        required: true,
-        trim: true,
-        message: 'Categories are required and must be an array.',
     },
     startDate: {
         type: Date,
@@ -58,11 +53,6 @@ const eventSchema = new mongoose.Schema({
         minlength: 2,
         maxlength: 20,
     },
-    minPurchaseAmount: {
-        type: Number,
-        required: true,
-        min: 0,
-    },
     banner: {
         type: String,
         required: true,
@@ -75,10 +65,10 @@ const eventSchema = new mongoose.Schema({
         minlength: 2,
         maxlength: 200,
     },
-    visibility: {
-        type: String,
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
-        trim: true,
+        ref: 'Product'
     },
 });
 

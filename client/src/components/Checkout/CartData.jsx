@@ -44,62 +44,66 @@ const CartData = () => {
   };
 
   return (
-    <div className="w-full bg-[#fff] rounded-md p-5 pb-8">
-      <div className="flex justify-between">
-        <h3 className="text-[16px] font-[400] text-[#000000a4]">subtotal:</h3>
-        <h5 className="text-[18px] font-[600]">${cartTotal}</h5>
-      </div>
-      <br />
-      <div className="flex justify-between">
-        <h3 className="text-[16px] font-[400] text-[#000000a4]">shipping:</h3>
-        <h5 className="text-[18px] font-[600]">${shippingPrice.toFixed(2)}</h5>
-      </div>
-      <br />
-      <div className="flex justify-between border-b pb-3">
-        <h3 className="text-[16px] font-[400] text-[#000000a4]">Discount:</h3>
-        <h5 className="text-[18px] font-[600]">
-          - {couponDiscount ? "$" + couponDiscount.toString() : null}
+    <div className="w-full bg-[#fff] rounded-md p-5 pb-8 flex flex-col justify-between h-full">
+      <div className="flex flex-col gap-3">
+        <div className="flex justify-between">
+          <h3 className="text-lg font-semibold text-indigo-500">Subtotal:</h3>
+          <h5 className="text-[18px] font-[600]">${cartTotal}</h5>
+        </div>
+
+        <div className="flex justify-between">
+          <h3 className="text-lg font-semibold text-indigo-500">Shipping:</h3>
+          <h5 className="text-[18px] font-[600]">
+            ${shippingPrice.toFixed(2)}
+          </h5>
+        </div>
+
+        <div className="flex justify-between border-b pb-3">
+          <h3 className="text-lg font-semibold text-indigo-500">Discount:</h3>
+          <h5 className="text-[18px] font-[600] text-green-500">
+            - {couponDiscount ? "$" + couponDiscount.toString() : null}
+          </h5>
+        </div>
+        <h5 className=" text-end pt-3 text-lg font-semibold">
+          ${cartTotal - couponDiscount + shippingPrice}
         </h5>
       </div>
-      <h5 className="text-[18px] font-[600] text-end pt-3">
-        ${cartTotal - couponDiscount + shippingPrice}
-      </h5>
-      <br />
-      {isCouponApplied && (
-        <div className="bg-lime-200 border-2 border-lime-600 px-3 py-2 inline-flex justify-center items-center text-sm rounded-sm text-lime-950">
-          <button
-            className="flex items-center"
-            onClick={() => {
-              dispatch({ type: "RemoveCoupon" });
-            }}
-          >
-            <span className="mr-2">{coupon}</span>
-            <span className="font-bold">
-              <RxCross1 />
-            </span>
-          </button>
-        </div>
-      )}
 
-      <br />
-      <form onSubmit={(e) => handleCouponSubmit(e)}>
-        <input
-          type="text"
-          className={`${styles.input} h-[40px] pl-2`}
-          placeholder="Coupoun code"
-          required
-          value={couponCode}
-          onChange={(e) => setCouponCode(e.target.value)}
-        />
-        <input
-          className={`w-full h-[40px] border border-[#f63b60] text-center text-[#f63b60] rounded-[3px] mt-8 cursor-pointer ${
-            isCouponLoading ? "opacity-50 pointer-events-none" : null
-          }`}
-          required
-          value="Apply code"
-          type="submit"
-        />
-      </form>
+      <div>
+        {isCouponApplied && (
+          <div className="inline-flex gap-2 items-center rounded-md bg-indigo-50 px-3 py-2 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 mb-3">
+            <button
+              className="flex items-center"
+              onClick={() => {
+                dispatch({ type: "RemoveCoupon" });
+              }}
+            >
+              <span className="mr-2">{coupon}</span>
+              <span className="font-bold">
+                <RxCross1 />
+              </span>
+            </button>
+          </div>
+        )}
+        <form onSubmit={(e) => handleCouponSubmit(e)}>
+          <input
+            type="text"
+            className={`${styles.input} h-[40px] pl-2`}
+            placeholder="Coupoun code"
+            required
+            value={couponCode}
+            onChange={(e) => setCouponCode(e.target.value)}
+          />
+          <input
+            className={`w-full h-[40px] border border-[#f63b60] text-center text-[#f63b60] rounded-[3px] mt-8 cursor-pointer ${
+              isCouponLoading ? "opacity-50 pointer-events-none" : null
+            }`}
+            required
+            value="Apply code"
+            type="submit"
+          />
+        </form>
+      </div>
     </div>
   );
 };

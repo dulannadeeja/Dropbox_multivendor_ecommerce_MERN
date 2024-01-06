@@ -9,9 +9,13 @@ import { useSelector } from "react-redux";
 const Cart = ({ setOpenCart }) => {
   const { items: cart, cartTotal } = useSelector((state) => state.cart);
 
+  const formattedPrice = (price) => {
+    return price.toFixed(2);
+  };
+
   return (
     <div className="fixed top-0 left-0 w-full bg-[#0000004b] h-screen z-10">
-      <div className="fixed top-0 right-0 h-full w-[80%] 800px:w-[25%] bg-white flex flex-col overflow-y-scroll justify-between shadow-sm">
+      <div className="fixed max-w-lg min-w-[60%] md:min-w-[30%] top-0 right-0 h-full bg-white flex flex-col overflow-y-scroll justify-between shadow-sm">
         {cart && cart.length === 0 ? (
           <div className="w-full h-screen flex items-center justify-center">
             <div className="flex w-full justify-end pt-5 pr-5 fixed top-3 right-3">
@@ -34,11 +38,14 @@ const Cart = ({ setOpenCart }) => {
                 />
               </div>
               {/* Item length */}
-              <div className={`${styles.noramlFlex} p-4`}>
-                <IoBagHandleOutline size={25} />
-                <h5 className="pl-2 text-[20px] font-[500]">
-                  {cart && cart.length} items
-                </h5>
+              <div className={`${styles.noramlFlex} p-4 flex gap-10 flex-wrap`}>
+                <div className="flex gap-1">
+                  <IoBagHandleOutline size={25} />
+                  <h5 className="pl-2 text-[20px] font-[500]">
+                    {cart && cart.length} items
+                  </h5>
+                </div>
+                <h5>Total: {formattedPrice(cartTotal)}</h5>
               </div>
 
               {/* cart Single Items */}
@@ -56,7 +63,7 @@ const Cart = ({ setOpenCart }) => {
                   className={`h-[45px] flex items-center justify-center w-[100%] bg-[#e44343] rounded-[5px]`}
                 >
                   <h1 className="text-[#fff] text-[18px] font-[600]">
-                    Checkout Now (USD${cartTotal})
+                    Checkout Now ( USD${formattedPrice(cartTotal)} )
                   </h1>
                 </div>
               </Link>

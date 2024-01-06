@@ -96,6 +96,10 @@ module.exports.create = async (req, res, next) => {
             throw error;
         }
 
+        shop.noOfProducts = shop.noOfProducts + 1;
+
+        await shop.save();
+
         res.status(201).json({
             message: 'Product created successfully.',
             product: product
@@ -238,8 +242,17 @@ module.exports.delete = async (req, res, next) => {
     try {
         const user = await User.findById(userId);
 
+
         if (!user) {
             const error = new Error('Could not find user.');
+            error.statusCode = 500;
+            throw error;
+        }
+
+        const shop = await Shop.findById(user.shop);
+
+        if (!shop) {
+            const error = new Error('Could not find shop.');
             error.statusCode = 500;
             throw error;
         }
@@ -258,11 +271,6 @@ module.exports.delete = async (req, res, next) => {
             throw error;
         }
 
-        // delete images from server
-        // product.images.forEach(image => {
-        //     clearImage(image.url);
-        // });
-
         await Product.findByIdAndDelete(productId);
 
         if (!product) {
@@ -270,6 +278,10 @@ module.exports.delete = async (req, res, next) => {
             error.statusCode = 500;
             throw error;
         }
+
+        shop.noOfProducts = shop.noOfProducts - 1;
+
+        await shop.save();
 
         res.status(200).json({
             message: 'Product deleted successfully.'
@@ -480,7 +492,7 @@ module.exports.getProductById = async (req, res, next) => {
         // get object Id from product id
         const productObjectId = new mongoose.Types.ObjectId(productId);
         const product = await Product.findById(productObjectId)
-            .populate('shop', 'name shopAvatar').populate('seller', 'name avatar')
+            .populate('shop', 'name shopAvatar rating createdAt noOfReviews noOfProducts').populate('seller', 'name avatar')
             .populate('reviews.user', 'name avatar createdAt rating noOfProducts');
 
         if (!product) {
@@ -527,10 +539,13 @@ module.exports.getSuggestedProducts = async (req, res, next) => {
             throw error;
         }
 
+        // remove current product from suggested products
+        const suggestedProducts = products.filter(product => product._id.toString() !== productId.toString());
+
 
         res.status(200).json({
             message: 'Suggested products fetched successfully.',
-            products: products
+            products: suggestedProducts
         });
 
     } catch (err) {
@@ -599,6 +614,27 @@ module.exports.createReview = async (req, res, next) => {
 
             // calculate rating by reviews
             product.rating = getProductRatingByReviews(product.reviews);
+
+            // update shop rating
+            const shop = await Shop.findById(product.shop);
+
+            if (!shop) {
+                const error = new Error('Could not find shop.');
+                error.statusCode = 500;
+                throw error;
+            }
+
+
+
+            // Calculate new rating of the shop
+            const userRating = rating
+            const sanitizedRating = Math.max(0, Math.min(5, userRating));
+            const newRating = ((shop.rating * shop.noOfReviews) + sanitizedRating) / (shop.noOfReviews + 1);
+
+            shop.rating = newRating;
+            shop.noOfReviews = shop.noOfReviews + 1;
+
+            await shop.save();
 
             await product.save();
 

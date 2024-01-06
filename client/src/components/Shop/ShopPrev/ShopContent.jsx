@@ -4,8 +4,11 @@ import ShopProducts from "./ShopProducts";
 import { loadShopProducts } from "../../../redux/actions/loadShopProducts";
 import { useDispatch } from "react-redux";
 import ShopReviews from "./ShopReviews";
+import ShopEvents from "./ShopEvents.jsx";
 
 const ShopContent = ({ shopId }) => {
+  console.log("shop content rendered" + shopId);
+
   const [activeTab, setActiveTab] = useState(1);
 
   const dispatch = useDispatch();
@@ -57,8 +60,11 @@ const ShopContent = ({ shopId }) => {
           </h5>
         </div>
       </div>
-      {activeTab === 1 && <ShopProducts />}
-      {activeTab === 3 && <ShopReviews shopId={shopId} />}
+      <div className="w-full">
+        {activeTab === 1 && <ShopProducts shopId={shopId} />}
+        {activeTab === 2 && <ShopEvents shopId={shopId} />}
+        {activeTab === 3 && <ShopReviews shopId={shopId} />}
+      </div>
     </>
   );
 };

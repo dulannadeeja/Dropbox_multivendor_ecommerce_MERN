@@ -8,6 +8,7 @@ import { loadProduct } from "../redux/actions/LoadProduct";
 import { useDispatch, useSelector } from "react-redux";
 import STATUS from "../constants/status";
 import Loader from "../components/Loader";
+import styles from "../styles/styles";
 
 const ProductDetailsPage = () => {
   const dispatch = useDispatch();
@@ -19,8 +20,6 @@ const ProductDetailsPage = () => {
     // fetch product
     const fetchProduct = async () => {
       try {
-        console.log(productId);
-
         await dispatch(loadProduct({ productId }));
       } catch (error) {
         console.log(error);
@@ -34,16 +33,21 @@ const ProductDetailsPage = () => {
     if (productStatus === STATUS.FAILURE) {
       window.location.href = "/404";
     }
+    console.log("product fetched");
+    console.log(product);
   }, [productStatus]);
 
   return (
     <div>
       <Header />
-      <ProductDetails />
-      {productStatus === STATUS.LOADING && <Loader />}
-      {productStatus === STATUS.SUCCESS && product && (
-        <SuggestedProduct data={product} />
-      )}
+      <div className={`${styles.section} bg-white`}>
+        <ProductDetails />
+        {productStatus === STATUS.LOADING && <Loader />}
+        {productStatus === STATUS.SUCCESS && product && (
+          <SuggestedProduct data={product} />
+        )}
+      </div>
+
       <Footer />
     </div>
   );

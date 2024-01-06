@@ -87,11 +87,6 @@ function PaypalPayment({ orderData }) {
         dispatch(createOrderAction({ order: orderData }))
           .then((res) => {
             if (res.status === 201) {
-              // clear cart and latest order
-              localStorage.removeItem("latestOrder");
-              localStorage.removeItem("cart");
-              dispatch({ type: "ClearCart" });
-              window.location.reload();
               toast.success("Order placed successfully!");
               navigate("/order-completed");
             }

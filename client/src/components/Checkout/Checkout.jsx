@@ -6,7 +6,7 @@ import { useCheckoutContext } from "../../contexts/CheckoutContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const Checkout = () => {
+const Checkout = ({ addresses }) => {
   const navigate = useNavigate();
   const { isCouponLoading } = useSelector((state) => state.cart);
   const { saveShippingInfo, validateFields } = useCheckoutContext();
@@ -22,22 +22,25 @@ const Checkout = () => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center py-8">
-      <div className="w-[90%] 1000px:w-[70%] block 800px:flex">
-        <div className="w-full 800px:w-[65%]">
-          <ShippingInfo />
+    <div className="w-full flex flex-col items-center ">
+      <div className="flex flex-col md:grid md:grid-cols-12 md:gap-10 gap-10">
+        <div className="w-full md:col-span-8 md:gap-20 border-2 border-indigo-200 shadow-lg">
+          <ShippingInfo addresses={addresses} />
         </div>
-        <div className="w-full 800px:w-[35%] 800px:mt-0 mt-8">
+        <div className="w-full md:col-span-4 border-2 border-indigo-200 shadow-lg">
           <CartData />
         </div>
       </div>
-      <div className={`${styles.button} w-[150px] 800px:w-[280px] mt-10`}>
+      <div>
         {isCouponLoading ? (
           <h5 className="text-white">Loading...</h5>
         ) : (
-          <h5 className="text-white" onClick={() => paymentSubmit()}>
+          <button
+            className={styles.buttonPrimary + " px-8 py-2 mt-8"}
+            onClick={() => paymentSubmit()}
+          >
             Go to Payment
-          </h5>
+          </button>
         )}
       </div>
     </div>

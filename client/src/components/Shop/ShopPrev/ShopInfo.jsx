@@ -64,7 +64,13 @@ const ShopInfo = () => {
                 : data.description}
             </p>
           </div>
-          <div className="grid grid-cols-2 p-5 gap-2 bg-slate-100">
+
+          {/* horizontal line that separate rows */}
+          <hr className="border-[#00000029] w-full" />
+
+          {/* shop info */}
+
+          <div className="grid grid-cols-2 p-5 gap-2">
             {/* country */}
             <div className="p-3">
               <h5 className="font-[600]">Country</h5>

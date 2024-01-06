@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import STATUS from "../../constants/status";
 import { loadShopEvents } from "../../redux/actions/loadShopEvents";
 import { deleteEvent } from "../../redux/actions/deleteEvent";
+import moment from "moment";
 
 const EventsTable = ({ shopId, token }) => {
   console.log("events table rendered");
@@ -23,12 +24,14 @@ const EventsTable = ({ shopId, token }) => {
   }, [eventStatus, events]);
 
   useEffect(() => {
-    asyncFetchProducts();
+    asyncFetchEvents();
   }, []);
 
-  const asyncFetchProducts = async () => {
+  const asyncFetchEvents = async () => {
     try {
       await dispatch(loadShopEvents({ token, shopId }));
+      console.log("events fetched");
+      console.log(events);
     } catch (error) {
       toast.error(error);
     }
@@ -50,26 +53,35 @@ const EventsTable = ({ shopId, token }) => {
 
   // Table columns
   const columns = [
-    { name: "ID", selector: "_id", sortable: true },
     { name: "Title", selector: "title", sortable: true },
-    { name: "Description", selector: "description" },
     { name: "Event Type", selector: "eventType", sortable: true },
     { name: "Discount Amount", selector: "discountAmount", sortable: true },
-    { name: "Categories", selector: "categories", sortable: true },
-    { name: "Start Date", selector: "startDate", sortable: true },
-    { name: "End Date", selector: "endDate", sortable: true },
-    { name: "Coupon Code", selector: "couponCode", sortable: true },
-    { name: "Minimum Purchase", selector: "minPurchaseAmount", sortable: true },
-    { name: "Visibility", selector: "visibility", sortable: true },
     {
-      name: "Terms & Conditions",
-      selector: "termsAndConditions",
+      name: "Start Date",
+      selector: "startDate",
       sortable: true,
+      format: (row) => moment(row.startDate).format("MMM D, YYYY"),
     },
+    {
+      name: "End Date",
+      selector: "endDate",
+      sortable: true,
+      format: (row) => moment(row.endDate).format("MMM D, YYYY"),
+    },
+    { name: "Coupon Code", selector: "couponCode", sortable: true },
+    { name: "product", selector: "product.name", sortable: true },
     {
       name: "Preview",
       cell: (row) => (
-        <button>
+        <button
+          disabled={loading}
+          className={`${loading ? "button-disabled" : ""} ${
+            loading ? "text-red" : ""
+          }`}
+          onClick={(e) =>
+            (window.location.href = `/products/${row.product._id}`)
+          }
+        >
           <AiOutlineEye size={20} />
         </button>
       ),

@@ -8,18 +8,14 @@ import { CreateEventProvider } from "../../../contexts/CreateEventContext.jsx";
 import { CreateCouponProvider } from "../../../contexts/CreateCouponContext.jsx";
 import AllOrdersTable from "../AllOrders.jsx";
 
-const DashboardContent = ({ active }) => {
+const DashboardContent = ({ active, setActive }) => {
   return (
     <>
       {active === 2 && <AllOrdersTable />}
       {active === 4 && <CreateProduct />}
       {active === 3 && <AllProducts />}
       {active === 5 && <AllEvents />}
-      {active === 6 && (
-        <CreateEventProvider>
-          <CreateEvent />
-        </CreateEventProvider>
-      )}
+      {active === 6 && <CreateEvent setActive={setActive} />}
       {active === 9 && (
         <CreateCouponProvider>
           <DiscountCodes />
