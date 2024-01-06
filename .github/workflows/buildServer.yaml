@@ -27,8 +27,7 @@ jobs:
           npm run build
           cd ..
 
-          pm2 stop "start Server"
-          pm2 start --name "start Server" npm -- start
+      - name: Build Server
           sudo service nginx restart
 
         env:
