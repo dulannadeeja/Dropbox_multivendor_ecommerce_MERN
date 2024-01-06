@@ -28,6 +28,7 @@ jobs:
           cd ..
 
       - name: Build Server
+        run: |
           sudo service nginx restart
 
         env:
