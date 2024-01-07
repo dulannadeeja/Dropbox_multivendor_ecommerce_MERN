@@ -8,6 +8,8 @@ module.exports.signup = async (req, res, next) => {
 
     const userId = req.userId;
 
+    console.log(userId);
+
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
     const email = req.body.email;

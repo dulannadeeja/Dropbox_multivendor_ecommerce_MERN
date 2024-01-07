@@ -100,7 +100,7 @@ const PORT = process.env.SERVER_PORT || 8080;
 const startServer = async () => {
 
     return new Promise((resolve, reject) => {
-        const server = app.listen(11634, err => {
+        const server = app.listen(0, err => {
             if (err) {
                 reject(err);
                 return;

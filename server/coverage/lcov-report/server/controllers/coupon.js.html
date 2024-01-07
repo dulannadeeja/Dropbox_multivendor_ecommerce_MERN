@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">7.2% </span>
+                <span class="strong">7.03% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>9/125</span>
+                <span class='fraction'>9/128</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/40</span>
+                <span class='fraction'>0/42</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">7.5% </span>
+                <span class="strong">7.31% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>9/120</span>
+                <span class='fraction'>9/123</span>
             </div>
         
             
@@ -341,7 +341,15 @@
 <a name='L276'></a><a href='#L276'>276</a>
 <a name='L277'></a><a href='#L277'>277</a>
 <a name='L278'></a><a href='#L278'>278</a>
-<a name='L279'></a><a href='#L279'>279</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<a name='L279'></a><a href='#L279'>279</a>
+<a name='L280'></a><a href='#L280'>280</a>
+<a name='L281'></a><a href='#L281'>281</a>
+<a name='L282'></a><a href='#L282'>282</a>
+<a name='L283'></a><a href='#L283'>283</a>
+<a name='L284'></a><a href='#L284'>284</a>
+<a name='L285'></a><a href='#L285'>285</a>
+<a name='L286'></a><a href='#L286'>286</a>
+<a name='L287'></a><a href='#L287'>287</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -404,6 +412,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -423,8 +432,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -441,6 +448,15 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -634,7 +650,7 @@ module.exports.createCoupon = <span class="fstat-no" title="function not covered
     const shopId = <span class="cstat-no" title="statement not covered" >req.body.shopId;</span>
 &nbsp;
 &nbsp;
-    const { code, type, discountAmount, minOrderAmount, expirationDate, startDate, categories } = <span class="cstat-no" title="statement not covered" >req.body;</span>
+    const { code, type, discountAmount, minOrderAmount, expirationDate, startDate, categories, maxDiscountAmount } = <span class="cstat-no" title="statement not covered" >req.body;</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    try {</span>
 &nbsp;
@@ -675,6 +691,7 @@ module.exports.createCoupon = <span class="fstat-no" title="function not covered
             type,
             discountAmount,
             minOrderAmount,
+            maxDiscountAmount,
             expirationDate,
             startDate,
             products: productsList
@@ -700,8 +717,6 @@ module.exports.getAllCoupons = <span class="fstat-no" title="function not covere
     const userId = <span class="cstat-no" title="statement not covered" >req.userId;</span>
     const shopId = <span class="cstat-no" title="statement not covered" >req.params.shopId;</span>
 &nbsp;
-&nbsp;
-&nbsp;
     // check is the user is the owner of the shop
 <span class="cstat-no" title="statement not covered" >    try {</span>
         const owner = <span class="cstat-no" title="statement not covered" >await User.findOne({ shop: shopId, _id: userId })</span>
@@ -719,6 +734,15 @@ module.exports.getAllCoupons = <span class="fstat-no" title="function not covere
             const error = <span class="cstat-no" title="statement not covered" >new Error('No coupons found');</span>
 <span class="cstat-no" title="statement not covered" >            error.statusCode = 404;</span>
 <span class="cstat-no" title="statement not covered" >            throw error;</span>
+        }
+&nbsp;
+        // if coupons are empty then set it to an empty array and send response
+<span class="cstat-no" title="statement not covered" >        if (!coupons.length) {</span>
+<span class="cstat-no" title="statement not covered" >            coupons = [];</span>
+<span class="cstat-no" title="statement not covered" >            return res.status(204).json({</span>
+                success: true,
+                coupons
+            });
         }
 &nbsp;
         // send response
@@ -904,7 +928,7 @@ module.exports.applyCoupon = <span class="fstat-no" title="function not covered"
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-01-02T04:27:26.920Z
+                at 2024-01-07T12:20:24.169Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

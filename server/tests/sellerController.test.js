@@ -117,12 +117,15 @@ describe('Seller Controller - Signup', () => {
             businessApartment: '123',
             contactName: 'John Doe',
             contactEmail: 'john.doe@example.com',
-            contactPhone: '1234567890'
+            contactPhone: '1234567890',
+            shopAvatar: '',
+            shopBanner: '',
+            shopDescription: 'This is a test shop',
         };
 
         // Make a request to the signup endpoint
         const response = await request(app)
-            .put('/seller/signup')
+            .post('/seller/signup') // Make sure the route and method match your implementation
             .set('Authorization', `Bearer ${token}`)
             .send(testData)
             .expect(201);
@@ -135,9 +138,6 @@ describe('Seller Controller - Signup', () => {
         // Optionally, you can perform additional assertions to check the database state
         const createdUser = await User.findById(response.body.userId);
         const createdShop = await Shop.findById(response.body.shopId);
-
-        createdUserId = response.body.userId;
-        createdShopId = response.body.shopId;
 
         // Perform additional assertions as needed
         expect(createdUser).toHaveProperty('firstName', testData.firstName);
