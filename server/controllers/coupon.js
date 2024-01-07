@@ -13,7 +13,7 @@ module.exports.createCoupon = async (req, res, next) => {
     const shopId = req.body.shopId;
 
 
-    const { code, type, discountAmount, minOrderAmount, expirationDate, startDate, categories } = req.body;
+    const { code, type, discountAmount, minOrderAmount, expirationDate, startDate, categories, maxDiscountAmount } = req.body;
 
     try {
 
@@ -54,6 +54,7 @@ module.exports.createCoupon = async (req, res, next) => {
             type,
             discountAmount,
             minOrderAmount,
+            maxDiscountAmount,
             expirationDate,
             startDate,
             products: productsList
@@ -96,6 +97,15 @@ module.exports.getAllCoupons = async (req, res, next) => {
             const error = new Error('No coupons found');
             error.statusCode = 404;
             throw error;
+        }
+
+        // if coupons are empty then set it to an empty array and send response
+        if (!coupons.length) {
+            coupons = [];
+            return res.status(204).json({
+                success: true,
+                coupons
+            });
         }
 
         // send response

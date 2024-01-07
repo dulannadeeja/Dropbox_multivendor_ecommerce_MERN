@@ -18,4 +18,7 @@ router.get('/get-shop-info/:shopId', shopController.getShopInfo);
 // GET /shop/reviews/:shopId
 router.get('/reviews/:shopId', shopController.getReviews);
 
+// GET /shop/stats/:shopId
+router.get('/stats/:shopId', shopController.getStatistics);
+
 module.exports = router;

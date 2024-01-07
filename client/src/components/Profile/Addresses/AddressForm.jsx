@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "../../../styles/styles";
 import { Country, State, City } from "country-state-city";
 import { useState } from "react";
@@ -9,8 +9,9 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { server } from "../../../server";
 import { useSelector } from "react-redux";
+import PhoneInputComponent from "../../SellerSignup/PhoneInput";
 
-const AddressForm = ({ setOpen }) => {
+const AddressForm = ({ setOpen, addresses, addressAdded }) => {
   const { token } = useSelector((state) => state.user);
 
   const [houseNumber, setHouseNumber] = useState("");
@@ -20,37 +21,71 @@ const AddressForm = ({ setOpen }) => {
   const [state, setState] = useState("");
   const [country, setCountry] = useState("");
   const [addressNickname, setAddressNickname] = useState("");
+  const [contactName, setContactName] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+
+  const [isSubmitAllowed, setIsSubmitAllowed] = useState(false);
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    // check if all conditions are met to allow address addition
+    setIsSubmitAllowed(
+      houseNumber &&
+        street &&
+        city &&
+        zip &&
+        state &&
+        country &&
+        addressNickname &&
+        contactName &&
+        contactNumber &&
+        !errors.houseNumber &&
+        !errors.street &&
+        !errors.city &&
+        !errors.zip &&
+        !errors.state &&
+        !errors.country &&
+        !errors.addressNickname &&
+        !errors.contactName &&
+        !errors.contactNumber
+    );
+  }, [
+    errors,
+    houseNumber,
+    street,
+    city,
+    zip,
+    state,
+    country,
+    addressNickname,
+    contactName,
+    contactNumber,
+  ]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    //check if the errors object is empty
-    if (hasValues(errors)) return toast.error("Please fill all the fields!");
-
-    //check if the all fields are filled
-    if (
-      houseNumber === "" ||
-      street === "" ||
-      city === "" ||
-      zip === "" ||
-      state === "" ||
-      country === ""
-    )
-      return toast.error("Please fill all the fields!");
-
     //craete a new form data object
     const formData = new FormData();
+
+    // Get the country and state names based on isoCodes
+    const countryName = Country.getCountryByCode(country)?.name || "";
+    const stateName = State.getStateByCode(country, state)?.name || "";
+
+    console.log(country, state);
+    console.log(countryName, stateName);
 
     //append the data to the form data object
     formData.append("houseNumber", houseNumber);
     formData.append("street", street);
     formData.append("city", city);
     formData.append("zip", zip);
-    formData.append("state", state);
-    formData.append("country", country);
+    formData.append("state", stateName);
+    formData.append("country", countryName);
     formData.append("addressNickname", addressNickname);
+    formData.append("contactName", contactName);
+    formData.append("contactNumber", contactNumber);
 
     try {
       const config = {
@@ -67,6 +102,7 @@ const AddressForm = ({ setOpen }) => {
 
       if (res.status === 201) {
         toast.success(res.data.message);
+        addressAdded(res.data.address);
         setOpen(false);
       }
     } catch (err) {
@@ -117,9 +153,31 @@ const AddressForm = ({ setOpen }) => {
       case "addressNickname":
         setAddressNickname(value);
         break;
+      case "contactName":
+        setContactName(value);
+        break;
       default:
         break;
     }
+  };
+
+  const handleNicknameChange = (e) => {
+    const { name, value } = e.target;
+
+    // check if the nickname is taken
+    const isTaken = addresses.find(
+      (address) => address.addressNickname.toLowerCase() === value.toLowerCase()
+    );
+
+    if (isTaken) {
+      setErrors({ ...errors, [name]: "Nickname already taken" });
+    }
+
+    if (!isTaken) {
+      setErrors({ ...errors, [name]: "" });
+    }
+
+    setAddressNickname(value);
   };
 
   return (
@@ -142,6 +200,44 @@ const AddressForm = ({ setOpen }) => {
       <div className="mt-8 sm:mx-auto sm:w-full">
         <div>
           <form className="space-y-6">
+            <div className="md:grid md:grid-cols-2 gap-5">
+              {/* contact Name */}
+              <div>
+                <label htmlFor="contactName" className={styles.formLabel}>
+                  Contact Name
+                </label>
+                <input
+                  type="text"
+                  name="contactName"
+                  required
+                  value={contactName}
+                  onChange={(e) => handleOnChange(e)}
+                  className={styles.formInput}
+                />
+                {/* form control error */}
+                {errors && errors.contactName && (
+                  <p className={styles.formInputError}>{errors.contactName}</p>
+                )}
+              </div>
+
+              {/* contact Number */}
+              <div>
+                <PhoneInputComponent
+                  phoneNumber={contactNumber}
+                  setPhoneNumber={setContactNumber}
+                  setPhoneError={(error) =>
+                    setErrors({ ...errors, contactNumber: error })
+                  }
+                />
+                {/* form control error */}
+                {errors && errors.contactNumber && (
+                  <p className={styles.formInputError}>
+                    {errors.contactNumber}
+                  </p>
+                )}
+              </div>
+            </div>
+
             {/* Home */}
             <div>
               <label htmlFor="houseNumber" className={styles.formLabel}>
@@ -290,7 +386,7 @@ const AddressForm = ({ setOpen }) => {
                 name="addressNickname"
                 required
                 value={addressNickname}
-                onChange={(e) => handleOnChange(e)}
+                onChange={(e) => handleNicknameChange(e)}
                 className={styles.formInput}
               />
               {/* form control error */}
@@ -305,16 +401,14 @@ const AddressForm = ({ setOpen }) => {
           {/* cancel and save buttons */}
           <div className="flex justify-end mt-5 gap-5">
             <button
-              className={`${styles.buttonSecondary}`}
-              onClick={() => setOpen(false)}
-            >
-              Cancel
-            </button>
-            <button
-              className={`${styles.button}`}
+              className={
+                isSubmitAllowed
+                  ? `${styles.button}`
+                  : `${styles.button} ${styles.buttonDisabled}`
+              }
               onClick={(e) => handleSubmit(e)}
             >
-              Save
+              Save Address
             </button>
           </div>
         </div>

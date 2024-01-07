@@ -113,12 +113,12 @@ const Header = ({ searchTerm, setSearchTerm }) => {
         <div className="hidden 800px:h-[50px] 800px:my-[20px] 800px:flex items-center justify-between">
           {/* brand logo */}
           <div className="flex items-center">
-            <Link to="/">
-              <img
-                src={brandLogo}
-                alt="logo"
-                className="h-[30px] w-[30px] mr-[10px]"
-              />
+            <Link to="/" className="flex gap-3 items-center">
+              <img src={brandLogo} alt="logo" className="w-10 h-10" />
+              <h1 className="font-bold text-4xl">
+                <span className="text-[#1083DD]">Drop</span>
+                <span>Box</span>
+              </h1>
             </Link>
           </div>
           {/* search box */}

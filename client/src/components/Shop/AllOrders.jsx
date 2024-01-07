@@ -68,26 +68,6 @@ const AllOrdersTable = () => {
       allowOverflow: true,
       button: true,
     },
-    {
-      name: "Review",
-      cell: (row) => (
-        <button
-          disabled={loading}
-          className={`${loading ? "button-disabled" : ""} ${
-            loading ? "text-red" : ""
-          }`}
-        >
-          <AiOutlineStar
-            size={20}
-            color="#f6ba00"
-            className="mr-2 cursor-pointer"
-          />
-        </button>
-      ),
-      ignoreRowClick: true,
-      allowOverflow: true,
-      button: true,
-    },
   ];
 
   return (

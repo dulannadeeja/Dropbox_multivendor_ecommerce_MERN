@@ -65,7 +65,11 @@ const ProductDetailsInfo = ({ product }) => {
             product.reviews.map((item, index) => (
               <div className="w-full flex my-2">
                 <img
-                  src={`${item?.user?.avatar?.url}`}
+                  src={
+                    item?.user?.avatar?.url
+                      ? `${server}/${item?.user?.avatar?.url}`
+                      : "../../assets/placeholders/7309681.jpg"
+                  }
                   alt=""
                   className="w-[50px] h-[50px] rounded-full"
                 />

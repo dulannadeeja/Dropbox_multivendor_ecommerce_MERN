@@ -11,6 +11,6 @@ const STATUS = {
     DELIVERED: 'DELIVERED',
     SHIPPED: 'SHIPPED',
     REFUNDED: 'REFUNDED',
-}
+};
 
-export default STATUS;
+module.exports = STATUS;

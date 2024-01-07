@@ -81,6 +81,12 @@ module.exports.createOrder = async (req, res, next) => {
             product.stock -= item.quantity;
         });
 
+        // increase sales of each product in products array by quantity
+        products.forEach(product => {
+            const item = itemsArray.find(item => item._id.toString() === product._id.toString());
+            product.sold_out += item.quantity;
+        });
+
         // save products
         await Promise.all(products.map(product => product.save()));
 
@@ -179,23 +185,12 @@ module.exports.createOrder = async (req, res, next) => {
 
             const savedOrder = await newOrder.save();
 
+
             if (!savedOrder) {
                 const error = new Error('Error in saving order');
                 error.statusCode = 500;
                 throw error;
             }
-
-            // send socket notification to the seller
-            const io = require('../socket').getIO();
-
-            //get receiverId from shop
-            const user = await User.findOne({ shop: shop.toString() });
-
-            const receiverId = user._id.toString();
-            const messageId = savedOrder._id.toString();
-            const message = 'You made a new sale of ' + savedOrder.cartTotal + ' from ' + savedOrder.products.length + ' products';
-
-            io.emit('order', { receiverId, messageId, message });
 
 
         }

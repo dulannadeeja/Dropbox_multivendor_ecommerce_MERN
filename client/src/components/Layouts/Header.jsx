@@ -21,6 +21,9 @@ import { useLocation } from "react-router-dom";
 import { server } from "../../server";
 import Cart from "../cart/Cart";
 import Wishlist from "../Wishlist/Wishlist";
+import axios from "axios";
+import { useEffect } from "react";
+import STATUS from "../../constants/status";
 
 const Header = () => {
   const { items: cart } = useSelector((state) => state.cart);
@@ -39,6 +42,24 @@ const Header = () => {
   const [openWishlist, setOpenWishlist] = React.useState(false);
   const [mobile, setMobile] = React.useState(false);
   const location = useLocation();
+  const [allProducts, setAllProducts] = React.useState([]);
+  const [status, setStatus] = React.useState("");
+
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      setStatus(STATUS.LOADING);
+      try {
+        const res = await axios.get(`${server}/product/all`);
+        setAllProducts(res.data.products);
+        setStatus(STATUS.SUCCESS);
+        console.log(res.data.products);
+      } catch (err) {
+        console.log(err);
+        setStatus(STATUS.FAILURE);
+      }
+    };
+    fetchAllProducts();
+  }, []);
 
   const handleScroll = () => {
     if (window.scrollY > 100) {
@@ -107,15 +128,11 @@ const Header = () => {
     const term = e.target.value;
     setSearchTerm(term);
 
-    if (term !== "") {
-      const newProducts = productData.filter((product) => {
-        return Object.values(product)
-          .join(" ")
-          .toLowerCase()
-          .includes(term.toLowerCase());
-      });
-      setSearchResults(newProducts);
-    }
+    const results = allProducts.filter((product) =>
+      product.name.toLowerCase().includes(term.toLowerCase())
+    );
+
+    setSearchResults(results);
   };
 
   return (
@@ -125,12 +142,12 @@ const Header = () => {
         <div className="hidden 800px:h-[50px] 800px:my-[20px] 800px:flex items-center justify-between">
           {/* brand logo */}
           <div className="flex items-center">
-            <Link to="/">
-              <img
-                src={brandLogo}
-                alt="logo"
-                className="h-[30px] w-[30px] mr-[10px]"
-              />
+            <Link to="/" className="flex gap-3 items-center">
+              <img src={brandLogo} alt="logo" className="w-10 h-10" />
+              <h1 className="font-bold text-4xl">
+                <span className="text-[#1083DD]">Drop</span>
+                <span>Box</span>
+              </h1>
             </Link>
           </div>
           {/* search box */}
@@ -154,14 +171,14 @@ const Header = () => {
                 {searchResults.map((product, index) => {
                   return (
                     <Link
-                      to={`/product/${product.id}`}
+                      to={`/products/${product._id}`}
                       key={index}
                       className="px-[10px] hover:bg-gray-200 transition-all duration-300 ease-in-out flex gap-2 py-3"
                     >
                       <img
-                        src={product.image_Url[0].url}
-                        alt={product.image_Url[0].name}
-                        className="h-[40px] w-[40px] mr-[10px]"
+                        src={`${server}/${product.images[0].url}`}
+                        alt={product.name}
+                        className="h-[40px] w-[40px] mr-[10px] object-cover"
                       />
                       {product.name.replace(/\b\w/g, (l) => l.toUpperCase())}
                     </Link>

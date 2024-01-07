@@ -418,7 +418,9 @@ module.exports.loadUser = async (req, res, next) => {
             throw error;
         }
 
-        const user = await User.findById(userId);
+        const user = await User.findById(userId)
+            .populate('addresses')
+            .populate('defaultShippingAddress');
 
         if (!user) {
             const error = new Error('Could not find user.');
@@ -439,7 +441,9 @@ module.exports.loadUser = async (req, res, next) => {
             addresses: user.addresses,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
-            token: req.token
+            token: req.token,
+            defaultShippingAddress: user.defaultShippingAddress,
+            phone: user.phone
         };
 
         res.status(200).json({

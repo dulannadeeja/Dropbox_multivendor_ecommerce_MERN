@@ -31,8 +31,8 @@ const PhoneInputComponent = ({
   };
 
   return (
-    <div id="phoneInput">
-      <label htmlFor="phone" className={styles.formLabel}>
+    <div id="phoneInput" className="flex flex-col gap-1">
+      <label htmlFor="phone" className={`${styles.formLabel}`}>
         Phone
       </label>
       <PhoneInput

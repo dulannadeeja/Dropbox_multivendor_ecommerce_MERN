@@ -44,19 +44,41 @@ const DiscountCodes = () => {
   };
 
   return (
-    <>
-      <div className="w-full bg-white ">
-        <div className="w-full flex items-center justify-between px-3 py-5">
-          <h3 className="text-2xl font-bold">Discount Codes</h3>
-          <button className={styles.button} onClick={() => setOpen(true)}>
-            Genarate New
-          </button>
+    <div className={`bg-white min-h-screen`}>
+      <div className="max-w-6xl mx-auto px-5 py-5">
+        <div>
+          <div>
+            <h3 className="text-2xl font-bold">Discount Codes</h3>
+            <p className="text-sm text-gray-500">
+              Manage your discount codes here for your shop. You can create new
+              discount codes and delete existing ones.
+            </p>
+          </div>
+          {/* total codes active */}
+          <div className="flex justify-between items-center mt-5 border-b-2 pb-5 mb-10">
+            <div>
+              <p className="text-sm text-gray-500">
+                Total codes active:{" "}
+                <span className="text-gray-800 font-bold">
+                  {allCoupons.length}
+                </span>
+              </p>
+            </div>
+            <div>
+              <button
+                className={`${styles.button} px-5 py-2`}
+                onClick={() => setOpen(true)}
+              >
+                Create New
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-      <div>
-        {allCoupons.map((item) => {
-          return <CouponCard item={item} key={item._id} />;
-        })}
+        <div>
+          {allCoupons.map((item) => {
+            return <CouponCard item={item} key={item._id} />;
+          })}
+        </div>
       </div>
       {/* Create coupon code popup */}
       {open && (
@@ -67,7 +89,7 @@ const DiscountCodes = () => {
         </div>
       )}
       {/* <CategoryPopup /> */}
-    </>
+    </div>
   );
 };
 

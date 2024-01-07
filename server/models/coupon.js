@@ -23,6 +23,10 @@ const couponSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    maxDiscountAmount: {
+        type: Number,
+        default: 0,
+    },
     expirationDate: {
         type: Date,
         required: true,

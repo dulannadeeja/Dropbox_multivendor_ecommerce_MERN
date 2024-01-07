@@ -61,7 +61,7 @@ export default function AllProductsPage() {
       setStatus(STATUS.LOADING);
       try {
         const res = await axios.get(
-          `${server}/product/all/?page=${currentPage}&limit=${productLimit}&search=${searchTerm}&sort=${sort}&category=${category}`
+          `${server}/product/all/?page=${currentPage}&limit=${productLimit}&search=${searchTerm}&sort=${sort}`
         );
         setAllProducts(res.data.products);
         setTotalProducts(res.data.totalProducts);
@@ -80,12 +80,17 @@ export default function AllProductsPage() {
 
   useEffect(() => {
     const fetchAllProducts = async () => {
+      console.log("search term changed");
+      console.log(searchTerm);
+
       setStatus(STATUS.LOADING);
       setCurrentPage(1);
       try {
-        const res = await axios.get(
-          `${server}/product/all/?page=${1}&limit=${productLimit}&search=${searchTerm}&sort=${sort}&category=${category}`
-        );
+        console.log("request sent");
+
+        const req = `${server}/product/all/?page=${1}&limit=${productLimit}&search=${searchTerm}&sort=${sort}`;
+        console.log(req);
+        const res = await axios.get(req);
         setAllProducts(res.data.products);
         setTotalProducts(res.data.totalProducts);
         setLastPage(res.data.lastPage);

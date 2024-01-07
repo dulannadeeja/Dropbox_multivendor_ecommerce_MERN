@@ -50,7 +50,7 @@ const ProfileSidebar = ({ setActive, active }) => {
         </div>
       )}
       {/* Profile Sidebar */}
-      <div className="w-full bg-white shadow-sm rounded-[10px] p-4 pt-8">
+      <div className="w-full p-4 py-8">
         {/* Profile Tab */}
         <div
           className="flex items-center cursor-pointer w-full mb-8"

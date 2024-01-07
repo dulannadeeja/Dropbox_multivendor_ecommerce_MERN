@@ -15,6 +15,7 @@ import { server } from "../../../server";
 import { loadShopProducts } from "../../../redux/actions/loadShopProducts";
 import { useDispatch } from "react-redux";
 import { AiOutlineSearch } from "react-icons/ai";
+import STATUS from "../../../constants/status";
 
 const CreateEvent = ({ setActive }) => {
   const dispatch = useDispatch();
@@ -31,6 +32,8 @@ const CreateEvent = ({ setActive }) => {
   const [description, setDescription] = useState("");
   const [termsAndConditions, setTermsAndConditions] = useState("");
   const [bannerImage, setBannerImage] = useState("");
+
+  const [status, setStatus] = useState(STATUS.IDLE);
 
   // form control variables
   const [loading, setLoading] = useState(false);
@@ -60,7 +63,7 @@ const CreateEvent = ({ setActive }) => {
 
   // fetch all the coupons
   const fetchAllCoupons = async () => {
-    setLoading(true);
+    setStatus(STATUS.LOADING);
     try {
       const config = {
         headers: {
@@ -77,10 +80,13 @@ const CreateEvent = ({ setActive }) => {
         setAllCoupons(res.data.coupons);
         console.log(res.data);
       }
+
+      if (res.status === 204) {
+        setStatus(STATUS.FAILURE);
+      }
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
+      setStatus(STATUS.FAILURE);
     }
   };
 
@@ -222,8 +228,8 @@ const CreateEvent = ({ setActive }) => {
   return (
     <div className="bg-white h-full shadow rounded-[4px] p-3 overflow-y-scroll relative">
       {/* if coupons not found notify user to create a coupon first */}
-      {allCoupons && allCoupons.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      {status === STATUS.FAILURE && allCoupons && allCoupons.length === 0 && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
           <div className="bg-white p-8 rounded-md text-center max-w-xs md:max-w-md ">
             <p className="text-lg font-semibold mb-4">
               Welcome! It looks like you haven't created any coupon codes yet.

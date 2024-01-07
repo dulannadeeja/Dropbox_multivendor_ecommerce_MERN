@@ -1,9 +1,7 @@
-const { validationResult } = require('express-validator');
 const Shop = require('../models/shop');
-const bcrypt = require('bcrypt');
-const fs = require('fs');
-const path = require('path');
 const Product = require('../models/product');
+const Order = require('../models/order');
+const STATUS = require('../constants/status');
 
 
 module.exports.getShop = async (req, res, next) => {
@@ -189,8 +187,83 @@ const calcProductRatings = reviews => {
     return productRatings || 0;
 }
 
+module.exports.getStatistics = async (req, res, next) => {
+    const shopId = req.params.shopId;
 
-const clearImage = filePath => {
-    filePath = path.join(__dirname, '..', filePath);
-    fs.unlink(filePath, err => console.log(err));
+    let pendingOrders = 0;
+    let totalNumberOfOrders = 0;
+    let totalNumberOfProducts = 0;
+    let outOfStockProducts = 0;
+    let totalRevenue = 0;
+
+    try {
+
+        const shop = await Shop.findById(shopId);
+
+        if (!shop) {
+            const error = new Error('Could not find shop.');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        const products = await Product.find({ shop: shopId });
+
+        if (!products) {
+            const error = new Error('Could not find products.');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        totalNumberOfProducts = products.length;
+
+        // get out of stock products
+        products.forEach(product => {
+            if (product.quantity === 0) {
+                outOfStockProducts++;
+            }
+        });
+
+        const orders = await Order.find({ shop: shopId });
+
+        totalNumberOfOrders = orders.length;
+
+        // get pending orders
+        orders.forEach(order => {
+            if (order.orderStatus === STATUS.PENDING || order.orderStatus === STATUS.PROCESSING) {
+                pendingOrders++;
+            }
+        });
+
+        // get total revenue by adding all orders total prices
+        orders.forEach(order => {
+            totalRevenue += order.cartTotal - order.couponDiscount;
+        });
+
+        // calculate total revenue by deducting the service fee
+        const serviceFee = totalRevenue * 0.1;
+        totalRevenue -= serviceFee;
+
+        // shop statistics object
+        const shopStatistics = {
+            totalNumberOfProducts: totalNumberOfProducts,
+            outOfStockProducts: outOfStockProducts,
+            totalRevenue: totalRevenue,
+            totalNumberOfOrders: totalNumberOfOrders,
+            pendingOrders: pendingOrders
+        };
+
+        res.status(200).json({
+            message: 'Shop statistics fetched.',
+            shopStatistics: shopStatistics
+        });
+    }
+    catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
 }
+
+
+

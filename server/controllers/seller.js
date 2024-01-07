@@ -109,7 +109,9 @@ module.exports.signup = async (req, res, next) => {
                 country: country,
                 state: state,
                 city: city,
-                phone: phone
+                phone: contactPhone,
+                addressNickname: 'Business',
+                contactName: contactName,
             }
         );
 
@@ -130,7 +132,7 @@ module.exports.signup = async (req, res, next) => {
         user.firstName = firstName;
         user.lastName = lastName;
         user.email = email;
-        user.addresses = [addressDoc._id]
+        user.addresses = [...user.addresses, addressDoc._id]
         user.phone = phone;
         user.isSeller = true;
         user.shop = shop._id;

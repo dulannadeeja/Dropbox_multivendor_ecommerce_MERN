@@ -30,7 +30,7 @@ const CheckoutPage = () => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const res = await axios.get(`${server}/user/get-addresses`, config);
+      const res = await axios.get(`${server}/user/addresses`, config);
       console.log(res.data.addresses);
       setAddresses(res.data.addresses);
     } catch (error) {

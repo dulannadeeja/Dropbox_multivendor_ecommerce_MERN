@@ -48,6 +48,7 @@ input[type="number"] {
 
 #phoneInput .react-tel-input .form-control {
   border: 1px solid #6b7280;
+  width: 100%;
 }
 
 .react-tel-input .form-control:focus {

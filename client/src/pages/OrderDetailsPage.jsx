@@ -8,7 +8,7 @@ const OrderDetailsPage = () => {
   return (
     <div>
       <Header />
-      <div className={`${styles.section} bg-white py-10`}>
+      <div className={`${styles.section} bg-white py-10 px-10 md:px-5`}>
         <OrderDetails />
       </div>
       <Footer />
